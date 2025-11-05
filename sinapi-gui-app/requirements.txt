@@ -1,0 +1,5 @@
+Flask
+tkinter
+pandas
+requests
+pytest
