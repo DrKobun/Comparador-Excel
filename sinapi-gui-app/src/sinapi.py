@@ -37,7 +37,7 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
             # com retificação 01 (2022)
             elif ano == 2022 and mes in (1, 2, 3, 4):
                 # exemplo: ..._082023_NaoDesonerado.zip (usando base_url_ma)
-                url = base_url_ma + f"01a04.zip"+ f"{t}Retificacao01.zip"
+                url = base_url_ma + f"{t}Retificacao01.zip"
                 links.append(url)
             
             # com retificação 02 (2022)
@@ -66,7 +66,11 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
                 links.append(url)
                 break    
                 
-            
+                
+            # original:
+            # https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_012022_NaoDesoneradoRetificacao01.zip
+            # código:
+            # https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-TO/SINAPI_ref_Insumos_Composicoes_TO_012022_NaoDesoneradoRetificacao01.zip
             
             # 2020 9a12 ✅
             elif ano == 2020 and mes in (9, 10, 11, 12):

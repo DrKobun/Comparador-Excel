@@ -9,6 +9,7 @@ import os
 # força carregar o módulo a partir da pasta do src (garante consistência ao rodar main.py)
 try:
     from sinapi import gerar_links_sinapi, abrir_links_no_navegador
+    from aninhar import aninhar_arquivos
 except Exception:
     src_dir = os.path.dirname(__file__)  # pasta src
     if src_dir not in sys.path:
@@ -58,7 +59,7 @@ class SinapiApp:
         Radiobutton(self.master, text="Desonerado", variable=self.selected_type, value=1).pack()
         Radiobutton(self.master, text="Não Desonerado", variable=self.selected_type, value=2).pack()
 
-        Label(self.master, text="Select States:").pack()
+        Label(self.master, text="Selecione os estados:").pack()
 
         # arrange state checkbuttons into 3 rows
         num_rows = 3
@@ -73,8 +74,13 @@ class SinapiApp:
             cb = Checkbutton(rows[row_idx], text=estado, variable=self.selected_states[estado])
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
-        Button(self.master, text="Concluir", command=self.execute_sinapi).pack(side='left', padx=5, pady=10)
-        Button(self.master, text="+1", command=self.add_state).pack(side='left', padx=5, pady=10)
+        # bottom button row: Concluir, Aninhar (to right of Concluir), +1
+        bottom_frame = Frame(self.master)
+        bottom_frame.pack(pady=10, fill='x')
+
+        Button(bottom_frame, text="Concluir", command=self.execute_sinapi).pack(side='left', padx=5)
+        Button(bottom_frame, text="Aninhar", command=aninhar_arquivos).pack(side='left', padx=5)
+        Button(bottom_frame, text="+1", command=self.add_state).pack(side='left', padx=5)
 
     def execute_sinapi(self, estado: str = None):
         """
@@ -85,7 +91,7 @@ class SinapiApp:
             ano = int(self.selected_year.get())
             mes = int(self.selected_month.get())
         except ValueError:
-            messagebox.showerror("Error", "Invalid date selection. Please choose year and month.")
+            messagebox.showerror("Erro", "Seleção de data inválida. Selecione mês e ano.")
             return
 
         tipo = ["Ambos", "Desonerado", "NaoDesonerado"][self.selected_type.get()]
@@ -96,14 +102,13 @@ class SinapiApp:
             target_states = [s for s, v in self.selected_states.items() if v.get() == 1]
 
         if not target_states:
-            messagebox.showwarning("Warning", "Please select at least one state.")
+            messagebox.showwarning("Aviso", "Escolha pelo menos um estado.")
             return
 
         # Para cada estado selecionado, chama gerar_links_sinapi apenas para esse estado
         for st in target_states:
             links = gerar_links_sinapi(ano, mes, tipo, estados_list=[st])
             if links:
-                # abre em thread separada para não travar a GUI
                 threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
 
     def add_state(self):
