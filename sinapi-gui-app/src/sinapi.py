@@ -2,6 +2,9 @@ import webbrowser
 import time
 from datetime import datetime
 
+
+
+
 def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None):
     # lista padrão se nenhum estado for informada
     estados_padrao = ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
@@ -14,6 +17,8 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
     aa_mm = f"{ano}{mes:02d}"
     links = []
 
+    
+    
     for estado in estados:
         base_url = f"https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-{estado}/SINAPI_ref_Insumos_Composicoes_{estado}_{aa_mm}_"
         base_url_ma = f"https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-{estado}/SINAPI_ref_Insumos_Composicoes_{estado}_{mes:02d}{ano}_"
@@ -60,11 +65,14 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
             elif ano == 2021 and mes in (5, 6):
                 url = base_url_ma + f"{t}_Retificacao01.zip"
                 links.append(url)
+                
             # exclusivo 2021 (1a4) ✅
             elif ano == 2021 and mes in (1,2,3,4):
                 url = base_url_multiplos_meses + f"01a04" + f"_Retificacao01.zip"
                 links.append(url)
-                break    
+                if mes == 1:
+                    janeiro_2021 = True
+                break
                 
                 
             # original:
