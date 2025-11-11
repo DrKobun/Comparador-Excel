@@ -4,6 +4,42 @@ from datetime import datetime
 
 
 
+_janeiro_2021 = False  # privada (por convenção, com "_")
+_fevereiro_2021 = False
+_marco_2021 = False
+_abril_2021 = False
+
+
+def obter_valor_janeiro_2021():
+    return _janeiro_2021
+
+def definir_valor_janeiro_2021(valor: bool):
+    global _janeiro_2021
+    _janeiro_2021 = valor
+
+def obter_valor_fevereiro_2021():
+    return _fevereiro_2021
+
+def definir_valor_fevereiro_2021(valor: bool):
+    global _fevereiro_2021
+    _fevereiro_2021 = valor
+    
+def obter_valor_marco_2021():
+    return _marco_2021
+
+def definir_valor_marco_2021(valor: bool):
+    global _marco_2021
+    _marco_2021 = valor
+
+def obter_valor_abril_2021():
+    return _abril_2021
+
+def definir_valor_abril_2021(valor: bool):
+    global _abril_2021
+    _abril_2021 = valor
+
+
+
 
 def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None):
     # lista padrão se nenhum estado for informada
@@ -61,6 +97,7 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
             elif ano == 2021 and mes in (7, 8, 9, 10, 11, 12):
                 url = base_url_ma + f"{t}.zip"
                 links.append(url)
+                
             # 2021 com refiticação ✅
             elif ano == 2021 and mes in (5, 6):
                 url = base_url_ma + f"{t}_Retificacao01.zip"
@@ -71,8 +108,15 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
                 url = base_url_multiplos_meses + f"01a04" + f"_Retificacao01.zip"
                 links.append(url)
                 if mes == 1:
-                    janeiro_2021 = True
-                break
+                    definir_valor_janeiro_2021(True)
+                if mes == 2:
+                    definir_valor_fevereiro_2021(True)
+                if mes == 3:
+                    definir_valor_marco_2021(True)
+                if mes == 4:
+                    definir_valor_abril_2021(True)
+                
+            
                 
                 
             # original:

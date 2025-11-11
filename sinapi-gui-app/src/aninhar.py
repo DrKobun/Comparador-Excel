@@ -5,6 +5,14 @@ import re
 from datetime import datetime
 from typing import List, Tuple, Optional
 import pandas as pd
+import sinapi
+
+print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(True))
+print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(False))
+print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+
 
 def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
     """
@@ -21,7 +29,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
     # determina base_dir (Sinapi downloads na Área de Trabalho)
     if base_dir is None:
         desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
-        base_dir = os.path.join(desktop_dir, "Sinapi downloads")
+        base_dir = os.path.join(desktop_dir, "SinapiDownloads")
     os.makedirs(base_dir, exist_ok=True)
     base_dir = os.path.abspath(base_dir)
 
@@ -54,6 +62,8 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
     # 2) extrair todos os .zip no diretório base (não recursivo)
     extracted_root = os.path.join(base_dir, "__extracted_zips__")
     os.makedirs(extracted_root, exist_ok=True)
+    
+    # Primeira extração - zips da pasta base para __extracted_zips__
     zip_files = [f for f in os.listdir(base_dir) if f.lower().endswith(".zip")]
     for zname in zip_files:
         zpath = os.path.join(base_dir, zname)
@@ -67,9 +77,78 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
         except Exception as e:
             print(f"Falha ao extrair {zpath}: {e}")
 
+    # 2b) Extrair recursivamente todos os arquivos .zip dentro de __extracted_zips__
+    while True:
+        # Encontra todos os arquivos .zip em todas as subpastas de __extracted_zips__
+        nested_zips = []
+        for root, _, files in os.walk(extracted_root):
+            for file in files:
+                if file.lower().endswith(".zip"):
+                    nested_zips.append(os.path.join(root, file))
+
+        # Se não houver mais zips para extrair, o processo está completo.
+        if not nested_zips:
+            break
+
+        # Itera sobre os zips encontrados para extraí-los
+        for zip_path in nested_zips:
+            # O destino da extração é a pasta onde o zip se encontra.
+            extract_dir = os.path.dirname(zip_path)
+            try:
+                with zipfile.ZipFile(zip_path, "r") as zf:
+                    # Usar extractall para extrair na pasta pai do zip.
+                    zf.extractall(extract_dir)
+                
+                # Remove o arquivo zip após a extração bem-sucedida para evitar reprocessamento.
+                os.remove(zip_path)
+
+            except zipfile.BadZipFile:
+                print(f"Zip interno inválido, pulando: {zip_path}")
+            except Exception as e:
+                print(f"Falha ao extrair zip interno {zip_path}: {e}")
+                
+    # filtrar arquivos de 2021 (1a4)
+    lista_manter = []
+    
+    # Condicional, caso a variável seja verdadeira
+    if sinapi.obter_valor_janeiro_2021() == True:
+        lista_manter.append("202101")
+        sinapi.definir_valor_janeiro_2021(False)
+    
+    if sinapi.obter_valor_fevereiro_2021() == True:
+        lista_manter.append("202102")
+        sinapi.definir_valor_fevereiro_2021(False)
+    
+    if sinapi.obter_valor_marco_2021() == True:
+        lista_manter.append("202103")
+        sinapi.definir_valor_marco_2021(False)
+        
+    if sinapi.obter_valor_abril_2021() == True:
+        lista_manter.append("202104")
+        sinapi.definir_valor_abril_2021(False)
+    
+    # Deletar arquivos que não estão na lista_manter
+    if lista_manter: # Apenas executa se a lista não estiver vazia
+        print(f"Itens a manter: {lista_manter}")
+        for root, _, files in os.walk(extracted_root):
+            for file in files:
+                file_path = os.path.join(root, file)
+                manter_arquivo = False
+                for item in lista_manter:
+                    if item in file:
+                        manter_arquivo = True
+                        break
+                
+                if not manter_arquivo:
+                    try:
+                        os.remove(file_path)
+                        print(f"Arquivo deletado: {file_path}")
+                    except OSError as e:
+                        print(f"Erro ao deletar o arquivo {file_path}: {e}")
+
     # 3) localizar arquivos Excel relevantes (recursivo, inclui conteúdo extraído)
     exts = {'.xls', '.xlsx', '.xlsm', '.xlsb'}
-    tokens = ("sintetico", "insumos")
+    tokens = ("Sintetico", "Insumos")
     matches: List[str] = []
     output_dir = os.path.join(base_dir, "aninhar")
     os.makedirs(output_dir, exist_ok=True)
@@ -121,6 +200,8 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
         name = os.path.splitext(os.path.basename(fname))[0]
         low = name.lower()
 
+        print(low)
+        
         # prefixo
         if "sintetico" in low:
             pref = "SINA-SIN"
@@ -158,9 +239,11 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
                     date_token = f"{m.group(2)}{m.group(1)}"
 
         # tipo abreviado
-        if "desonerado" in low:
+        if "naodesonerado" in low:
             tipo_abbr = "DES"
-        elif "naodesonerado" in low or "nao desonerado" in low or "naodesonerado" in low or "não desonerado" in low:
+        # elif "NaoDesonerado" in low or "naoDesonerado" in low or "nao" in low or "não" in low:
+        #     tipo_abbr = "NDS"
+        elif "desonerado" in low:
             tipo_abbr = "NDS"
         else:
             tipo_abbr = "UNK"
@@ -224,4 +307,3 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
 
     print(f"Arquivo aninhado criado em: {out_path}")
     return moved, out_path
-

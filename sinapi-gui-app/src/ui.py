@@ -23,7 +23,7 @@ from resources.states import estados
 class SinapiApp:
     def __init__(self, master):
         self.master = master
-        master.title("SINAPI GUI App")
+        master.title("SINAPI")
 
         self.selected_service = StringVar(value="SINAPI")
         # replace single date entry with separate year/month dropdowns
