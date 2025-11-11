@@ -14,6 +14,24 @@ print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(False))
 print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
 
 
+def apagar_dados_sinapi():
+    """Apaga todos os arquivos e pastas da pasta SinapiDownloads."""
+    desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
+    base_dir = os.path.join(desktop_dir, "SinapiDownloads")
+    if os.path.isdir(base_dir):
+        for item in os.listdir(base_dir):
+            item_path = os.path.join(base_dir, item)
+            try:
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                print(f"Item deletado: {item_path}")
+            except Exception as e:
+                print(f'Falha ao deletar {item_path}. Razão: {e}')
+                
+                
+
 def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
     """
     1) Move todos os arquivos da pasta Downloads cujo nome contém 'sinapi'
@@ -128,23 +146,28 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
         sinapi.definir_valor_abril_2021(False)
     
     # Deletar arquivos que não estão na lista_manter
-    if lista_manter: # Apenas executa se a lista não estiver vazia
-        print(f"Itens a manter: {lista_manter}")
-        for root, _, files in os.walk(extracted_root):
-            for file in files:
-                file_path = os.path.join(root, file)
-                manter_arquivo = False
-                for item in lista_manter:
-                    if item in file:
-                        manter_arquivo = True
-                        break
-                
-                if not manter_arquivo:
-                    try:
-                        os.remove(file_path)
-                        print(f"Arquivo deletado: {file_path}")
-                    except OSError as e:
-                        print(f"Erro ao deletar o arquivo {file_path}: {e}")
+    specific_folder_path = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2021_01a04_Retificacao01")
+    if os.path.isdir(specific_folder_path):
+        if lista_manter: # Apenas executa se a lista não estiver vazia
+            print(f"Itens a manter: {lista_manter}")
+            for root, _, files in os.walk(specific_folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    manter_arquivo = False
+                    for item in lista_manter:
+                        if item in file:
+                            manter_arquivo = True
+                            break
+                    
+                    # Condição adicional para deletar arquivos com "Analitico" no nome ou que sejam .pdf
+                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+
+                    if not manter_arquivo or deletar_por_regra_adicional:
+                        try:
+                            os.remove(file_path)
+                            print(f"Arquivo deletado: {file_path}")
+                        except OSError as e:
+                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
 
     # 3) localizar arquivos Excel relevantes (recursivo, inclui conteúdo extraído)
     exts = {'.xls', '.xlsx', '.xlsm', '.xlsb'}
@@ -240,11 +263,11 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
 
         # tipo abreviado
         if "naodesonerado" in low:
-            tipo_abbr = "DES"
+            tipo_abbr = "NDS"
         # elif "NaoDesonerado" in low or "naoDesonerado" in low or "nao" in low or "não" in low:
         #     tipo_abbr = "NDS"
         elif "desonerado" in low:
-            tipo_abbr = "NDS"
+            tipo_abbr = "DES"
         else:
             tipo_abbr = "UNK"
 

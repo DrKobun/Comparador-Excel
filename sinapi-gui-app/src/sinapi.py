@@ -107,14 +107,7 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
             elif ano == 2021 and mes in (1,2,3,4):
                 url = base_url_multiplos_meses + f"01a04" + f"_Retificacao01.zip"
                 links.append(url)
-                if mes == 1:
-                    definir_valor_janeiro_2021(True)
-                if mes == 2:
-                    definir_valor_fevereiro_2021(True)
-                if mes == 3:
-                    definir_valor_marco_2021(True)
-                if mes == 4:
-                    definir_valor_abril_2021(True)
+               
                 
             
                 
