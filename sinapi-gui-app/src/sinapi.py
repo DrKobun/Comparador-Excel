@@ -38,6 +38,122 @@ def definir_valor_abril_2021(valor: bool):
     global _abril_2021
     _abril_2021 = valor
 
+_setembro_2020 = False
+_outubro_2020 = False
+_novembro_2020 = False
+_dezembro_2020 = False
+
+def obter_valor_setembro_2020():
+    return _setembro_2020
+
+def definir_valor_setembro_2020(valor: bool):
+    global _setembro_2020
+    _setembro_2020 = valor
+
+def obter_valor_outubro_2020():
+    return _outubro_2020
+
+def definir_valor_outubro_2020(valor: bool):
+    global _outubro_2020
+    _outubro_2020 = valor
+
+def obter_valor_novembro_2020():
+    return _novembro_2020
+
+def definir_valor_novembro_2020(valor: bool):
+    global _novembro_2020
+    _novembro_2020 = valor
+
+def obter_valor_dezembro_2020():
+    return _dezembro_2020
+
+def definir_valor_dezembro_2020(valor: bool):
+    global _dezembro_2020
+    _dezembro_2020 = valor
+
+_maio_2020 = False
+_junho_2020 = False
+_julho_2020 = False
+_agosto_2020 = False
+
+def obter_valor_maio_2020():
+    return _maio_2020
+
+def definir_valor_maio_2020(valor: bool):
+    global _maio_2020
+    _maio_2020 = valor
+
+def obter_valor_junho_2020():
+    return _junho_2020
+
+def definir_valor_junho_2020(valor: bool):
+    global _junho_2020
+    _junho_2020 = valor
+
+def obter_valor_julho_2020():
+    return _julho_2020
+
+def definir_valor_julho_2020(valor: bool):
+    global _julho_2020
+    _julho_2020 = valor
+
+def obter_valor_agosto_2020():
+    return _agosto_2020
+
+def definir_valor_agosto_2020(valor: bool):
+    global _agosto_2020
+    _agosto_2020 = valor
+
+_janeiro_2020 = False
+_fevereiro_2020 = False
+_marco_2020 = False
+_abril_2020 = False
+
+def obter_valor_janeiro_2020():
+    return _janeiro_2020
+
+def definir_valor_janeiro_2020(valor: bool):
+    global _janeiro_2020
+    _janeiro_2020 = valor
+
+def obter_valor_fevereiro_2020():
+    return _fevereiro_2020
+
+def definir_valor_fevereiro_2020(valor: bool):
+    global _fevereiro_2020
+    _fevereiro_2020 = valor
+
+def obter_valor_marco_2020():
+    return _marco_2020
+
+def definir_valor_marco_2020(valor: bool):
+    global _marco_2020
+    _marco_2020 = valor
+
+def obter_valor_abril_2020():
+    return _abril_2020
+
+def definir_valor_abril_2020(valor: bool):
+    global _abril_2020
+    _abril_2020 = valor
+
+_julho_2018 = False
+_agosto_2018 = False
+
+def obter_valor_julho_2018():
+    return _julho_2018
+
+def definir_valor_julho_2018(valor: bool):
+    global _julho_2018
+    _julho_2018 = valor
+
+def obter_valor_agosto_2018():
+    return _agosto_2018
+
+def definir_valor_agosto_2018(valor: bool):
+    global _agosto_2018
+    _agosto_2018 = valor
+
 
 
 
@@ -103,7 +219,7 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
                 url = base_url_ma + f"{t}_Retificacao01.zip"
                 links.append(url)
                 
-            # exclusivo 2021 (1a4) ✅
+            # exclusivo 2021 (1a4) ✅✅
             elif ano == 2021 and mes in (1,2,3,4):
                 url = base_url_multiplos_meses + f"01a04" + f"_Retificacao01.zip"
                 links.append(url)

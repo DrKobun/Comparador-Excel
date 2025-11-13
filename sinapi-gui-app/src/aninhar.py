@@ -131,19 +131,111 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
     # Condicional, caso a variável seja verdadeira
     if sinapi.obter_valor_janeiro_2021() == True:
         lista_manter.append("202101")
+        lista_manter.append("012021")
+        print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_janeiro_2021(False)
     
     if sinapi.obter_valor_fevereiro_2021() == True:
         lista_manter.append("202102")
+        lista_manter.append("022021")
+        print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_fevereiro_2021(False)
     
     if sinapi.obter_valor_marco_2021() == True:
         lista_manter.append("202103")
+        lista_manter.append("032021")
+        print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_marco_2021(False)
         
     if sinapi.obter_valor_abril_2021() == True:
         lista_manter.append("202104")
+        lista_manter.append("042021")
+        print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_abril_2021(False)
+
+    if sinapi.obter_valor_setembro_2020() == True:
+        lista_manter.append("202009")
+        lista_manter.append("092020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_setembro_2020(False)
+    
+    if sinapi.obter_valor_outubro_2020() == True:
+        lista_manter.append("202010")
+        lista_manter.append("102020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_outubro_2020(False)
+
+    if sinapi.obter_valor_novembro_2020() == True:
+        lista_manter.append("202011")
+        lista_manter.append("112020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_novembro_2020(False)
+
+    if sinapi.obter_valor_dezembro_2020() == True:
+        lista_manter.append("202012")
+        lista_manter.append("122020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_dezembro_2020(False)
+
+    if sinapi.obter_valor_maio_2020() == True:
+        lista_manter.append("202005")
+        lista_manter.append("052020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_maio_2020(False)
+    
+    if sinapi.obter_valor_junho_2020() == True:
+        lista_manter.append("202006")
+        lista_manter.append("062020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_junho_2020(False)
+
+    if sinapi.obter_valor_julho_2020() == True:
+        lista_manter.append("202007")
+        lista_manter.append("072020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_julho_2020(False)
+
+    if sinapi.obter_valor_agosto_2020() == True:
+        lista_manter.append("202008")
+        lista_manter.append("082020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_agosto_2020(False)
+
+    if sinapi.obter_valor_janeiro_2020() == True:
+        lista_manter.append("202001")
+        lista_manter.append("012020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_janeiro_2020(False)
+    
+    if sinapi.obter_valor_fevereiro_2020() == True:
+        lista_manter.append("202002")
+        lista_manter.append("022020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_fevereiro_2020(False)
+
+    if sinapi.obter_valor_marco_2020() == True:
+        lista_manter.append("202003")
+        lista_manter.append("032020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_marco_2020(False)
+
+    if sinapi.obter_valor_abril_2020() == True:
+        lista_manter.append("202004")
+        lista_manter.append("042020")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_abril_2020(False)
+
+    if sinapi.obter_valor_julho_2018() == True:
+        lista_manter.append("201807")
+        lista_manter.append("072018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_julho_2018(False)
+    
+    if sinapi.obter_valor_agosto_2018() == True:
+        lista_manter.append("201808")
+        lista_manter.append("082018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_agosto_2018(False)
     
     # Deletar arquivos que não estão na lista_manter
     specific_folder_path = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2021_01a04_Retificacao01")
@@ -160,6 +252,94 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
                             break
                     
                     # Condição adicional para deletar arquivos com "Analitico" no nome ou que sejam .pdf
+                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+
+                    if not manter_arquivo or deletar_por_regra_adicional:
+                        try:
+                            os.remove(file_path)
+                            print(f"Arquivo deletado: {file_path}")
+                        except OSError as e:
+                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+    
+    specific_folder_path_2020_09a12 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_09a12_Retificacao01")
+    if os.path.isdir(specific_folder_path_2020_09a12):
+        if lista_manter: # Apenas executa se a lista não estiver vazia
+            print(f"Itens a manter: {lista_manter}")
+            for root, _, files in os.walk(specific_folder_path_2020_09a12):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    manter_arquivo = False
+                    for item in lista_manter:
+                        if item in file:
+                            manter_arquivo = True
+                            break
+                    
+                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+
+                    if not manter_arquivo or deletar_por_regra_adicional:
+                        try:
+                            os.remove(file_path)
+                            print(f"Arquivo deletado: {file_path}")
+                        except OSError as e:
+                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+    
+    specific_folder_path_2020_05a08 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_05a08")
+    if os.path.isdir(specific_folder_path_2020_05a08):
+        if lista_manter: # Apenas executa se a lista não estiver vazia
+            print(f"Itens a manter: {lista_manter}")
+            for root, _, files in os.walk(specific_folder_path_2020_05a08):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    manter_arquivo = False
+                    for item in lista_manter:
+                        if item in file:
+                            manter_arquivo = True
+                            break
+                    
+                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+
+                    if not manter_arquivo or deletar_por_regra_adicional:
+                        try:
+                            os.remove(file_path)
+                            print(f"Arquivo deletado: {file_path}")
+                        except OSError as e:
+                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+    
+    specific_folder_path_2020_01a04 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_01a04")
+    if os.path.isdir(specific_folder_path_2020_01a04):
+        if lista_manter: # Apenas executa se a lista não estiver vazia
+            print(f"Itens a manter: {lista_manter}")
+            for root, _, files in os.walk(specific_folder_path_2020_01a04):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    manter_arquivo = False
+                    for item in lista_manter:
+                        if item in file:
+                            manter_arquivo = True
+                            break
+                    
+                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+
+                    if not manter_arquivo or deletar_por_regra_adicional:
+                        try:
+                            os.remove(file_path)
+                            print(f"Arquivo deletado: {file_path}")
+                        except OSError as e:
+                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+
+    specific_folder_path_2018_07e08 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2018_07e08_Retificacao")
+    if os.path.isdir(specific_folder_path_2018_07e08):
+        if lista_manter: # Apenas executa se a lista não estiver vazia
+            print(f"Itens a manter: {lista_manter}")
+            for root, _, files in os.walk(specific_folder_path_2018_07e08):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    manter_arquivo = False
+                    for item in lista_manter:
+                        if item in file:
+                            manter_arquivo = True
+                            break
+                    
                     deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
 
                     if not manter_arquivo or deletar_por_regra_adicional:
