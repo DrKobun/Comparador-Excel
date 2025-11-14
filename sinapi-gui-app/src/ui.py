@@ -75,6 +75,7 @@ class SinapiApp:
         self.selected_year = StringVar(value=default_year)
         self.selected_month = StringVar(value=datetime.now().strftime("%m"))
         self.selected_type = IntVar(value=0)
+        self.selected_file_type = StringVar(value="Ambos")
         self.selected_states = {estado: IntVar(value=0) for estado in estados}
 
         # Vars for months 1-4 checkboxes
@@ -196,10 +197,24 @@ class SinapiApp:
         self.months_1_to_4_frame = Frame(self.master)
         self.months_1_to_4_frame.pack()
 
-        Label(self.master, text="").pack()
-        Radiobutton(self.master, text="Ambos", variable=self.selected_type, value=0).pack()
-        Radiobutton(self.master, text="Desonerado", variable=self.selected_type, value=1).pack()
-        Radiobutton(self.master, text="Não Desonerado", variable=self.selected_type, value=2).pack()
+        radio_frame = Frame(self.master)
+        radio_frame.pack(pady=2)
+
+        type_frame = Frame(radio_frame)
+        type_frame.pack(side='left', padx=10)
+        
+        Label(type_frame, text="Tipo:").pack(anchor='w')
+        Radiobutton(type_frame, text="Ambos", variable=self.selected_type, value=0).pack(anchor='w')
+        Radiobutton(type_frame, text="Desonerado", variable=self.selected_type, value=1).pack(anchor='w')
+        Radiobutton(type_frame, text="Não Desonerado", variable=self.selected_type, value=2).pack(anchor='w')
+
+        file_type_frame = Frame(radio_frame)
+        file_type_frame.pack(side='left', padx=10)
+
+        Label(file_type_frame, text="Tipo de Arquivo:").pack(anchor='w')
+        Radiobutton(file_type_frame, text="Ambos", variable=self.selected_file_type, value="Ambos").pack(anchor='w')
+        Radiobutton(file_type_frame, text="Insumos", variable=self.selected_file_type, value="Insumos").pack(anchor='w')
+        Radiobutton(file_type_frame, text="Sintéticos", variable=self.selected_file_type, value="Sintetico").pack(anchor='w')
 
         Label(self.master, text="Selecione os estados:").pack()
 
@@ -218,10 +233,15 @@ class SinapiApp:
         bottom_frame = Frame(self.master)
         bottom_frame.pack(pady=10, fill='x')
 
-        Button(bottom_frame, text="Concluir", command=self.execute_sinapi).pack(side='left', padx=5)
-        Button(bottom_frame, text="Aninhar", command=aninhar_arquivos).pack(side='left', padx=5)
+        Button(bottom_frame, text="Baixar", command=self.execute_sinapi).pack(side='left', padx=5)
+        Button(bottom_frame, text="Aninhar", command=self.execute_aninhar).pack(side='left', padx=5)
         Button(bottom_frame, text="+1", command=self.add_state).pack(side='left', padx=5)
         Button(bottom_frame, text="apagar dados", command=apagar_dados_sinapi).pack(side='right', padx=5)
+
+    def execute_aninhar(self):
+        tipo_arquivo = self.selected_file_type.get()
+        # Executa aninhar_arquivos em uma thread para não bloquear a UI
+        threading.Thread(target=aninhar_arquivos, args=(None, tipo_arquivo), daemon=True).start()
 
     def execute_sinapi(self, estado: str = None):
         ano_str = self.selected_year.get()

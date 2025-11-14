@@ -32,7 +32,7 @@ def apagar_dados_sinapi():
                 
                 
 
-def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
+def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos") -> Tuple[List[str], str]:
     """
     1) Move todos os arquivos da pasta Downloads cujo nome contém 'sinapi'
        (case-insensitive) para a pasta "Sinapi downloads" na Área de Trabalho
@@ -237,121 +237,44 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
         print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_agosto_2018(False)
     
-    # Deletar arquivos que não estão na lista_manter
-    specific_folder_path = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2021_01a04_Retificacao01")
-    if os.path.isdir(specific_folder_path):
-        if lista_manter: # Apenas executa se a lista não estiver vazia
-            print(f"Itens a manter: {lista_manter}")
-            for root, _, files in os.walk(specific_folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    manter_arquivo = False
-                    for item in lista_manter:
-                        if item in file:
-                            manter_arquivo = True
-                            break
-                    
-                    # Condição adicional para deletar arquivos com "Analitico" no nome ou que sejam .pdf
-                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
-
-                    if not manter_arquivo or deletar_por_regra_adicional:
-                        try:
-                            os.remove(file_path)
-                            print(f"Arquivo deletado: {file_path}")
-                        except OSError as e:
-                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
     
-    specific_folder_path_2020_09a12 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_09a12_Retificacao01")
-    if os.path.isdir(specific_folder_path_2020_09a12):
-        if lista_manter: # Apenas executa se a lista não estiver vazia
-            print(f"Itens a manter: {lista_manter}")
-            for root, _, files in os.walk(specific_folder_path_2020_09a12):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    manter_arquivo = False
-                    for item in lista_manter:
-                        if item in file:
-                            manter_arquivo = True
-                            break
-                    
-                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
-
-                    if not manter_arquivo or deletar_por_regra_adicional:
-                        try:
-                            os.remove(file_path)
-                            print(f"Arquivo deletado: {file_path}")
-                        except OSError as e:
-                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
     
-    specific_folder_path_2020_05a08 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_05a08")
-    if os.path.isdir(specific_folder_path_2020_05a08):
-        if lista_manter: # Apenas executa se a lista não estiver vazia
-            print(f"Itens a manter: {lista_manter}")
-            for root, _, files in os.walk(specific_folder_path_2020_05a08):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    manter_arquivo = False
-                    for item in lista_manter:
-                        if item in file:
-                            manter_arquivo = True
-                            break
-                    
-                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
-
-                    if not manter_arquivo or deletar_por_regra_adicional:
-                        try:
-                            os.remove(file_path)
-                            print(f"Arquivo deletado: {file_path}")
-                        except OSError as e:
-                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
     
-    specific_folder_path_2020_01a04 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2020_01a04")
-    if os.path.isdir(specific_folder_path_2020_01a04):
-        if lista_manter: # Apenas executa se a lista não estiver vazia
-            print(f"Itens a manter: {lista_manter}")
-            for root, _, files in os.walk(specific_folder_path_2020_01a04):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    manter_arquivo = False
-                    for item in lista_manter:
-                        if item in file:
-                            manter_arquivo = True
-                            break
-                    
-                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
+    # Deletar arquivos que não estão na lista_manter de forma dinâmica
+    if lista_manter:
+        print(f"Itens a manter: {lista_manter}")
+        
+        # Padrão regex para encontrar as pastas SINAPI relevantes
+        estados_br = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+        anos = ['2021', '2020', '2018']
+        agrupamentos = ['01a04', '05a08', '09a12', '07e08']
+        
+        padrao_pasta = re.compile(
+            r"SINAPI_ref_Insumos_Composicoes_"
+            r"({})_({})_({})".format("|".join(estados_br), "|".join(anos), "|".join(agrupamentos)) +
+            r"(_Retificacao\d{1,2})?"
+        )
 
-                    if not manter_arquivo or deletar_por_regra_adicional:
-                        try:
-                            os.remove(file_path)
-                            print(f"Arquivo deletado: {file_path}")
-                        except OSError as e:
-                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+        for nome_pasta in os.listdir(extracted_root):
+            caminho_pasta = os.path.join(extracted_root, nome_pasta)
+            if os.path.isdir(caminho_pasta) and padrao_pasta.match(nome_pasta):
+                print(f"Verificando pasta: {caminho_pasta}")
+                for root, _, files in os.walk(caminho_pasta):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        manter_arquivo = any(item in file for item in lista_manter)
+                        
+                        deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
 
-    specific_folder_path_2018_07e08 = os.path.join(extracted_root, "SINAPI_ref_Insumos_Composicoes_AC_2018_07e08_Retificacao")
-    if os.path.isdir(specific_folder_path_2018_07e08):
-        if lista_manter: # Apenas executa se a lista não estiver vazia
-            print(f"Itens a manter: {lista_manter}")
-            for root, _, files in os.walk(specific_folder_path_2018_07e08):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    manter_arquivo = False
-                    for item in lista_manter:
-                        if item in file:
-                            manter_arquivo = True
-                            break
-                    
-                    deletar_por_regra_adicional = "Analitico" in file or file.lower().endswith('.pdf')
-
-                    if not manter_arquivo or deletar_por_regra_adicional:
-                        try:
-                            os.remove(file_path)
-                            print(f"Arquivo deletado: {file_path}")
-                        except OSError as e:
-                            print(f"Erro ao deletar o arquivo {file_path}: {e}")
+                        if not manter_arquivo or deletar_por_regra_adicional:
+                            try:
+                                os.remove(file_path)
+                                print(f"Arquivo deletado: {file_path}")
+                            except OSError as e:
+                                print(f"Erro ao deletar o arquivo {file_path}: {e}")
 
     # 3) localizar arquivos Excel relevantes (recursivo, inclui conteúdo extraído)
     exts = {'.xls', '.xlsx', '.xlsm', '.xlsb'}
-    tokens = ("Sintetico", "Insumos")
     matches: List[str] = []
     output_dir = os.path.join(base_dir, "aninhar")
     os.makedirs(output_dir, exist_ok=True)
@@ -366,13 +289,24 @@ def aninhar_arquivos(base_dir: Optional[str] = None) -> Tuple[List[str], str]:
             # só considerar arquivos Excel
             if ext not in exts:
                 continue
-            # condições solicitadas:
-            # - inclui se o nome contém "sintetico"
-            # - inclui se o nome contém "insumos" desde que NÃO contenha "família" (ou "familia")
+            
+            # condições solicitadas com base no tipo_arquivo:
             has_sint = "sintetico" in low
             has_insumos = "insumos" in low
             has_familia = "família" in low or "familia" in low
-            if has_sint or (has_insumos and not has_familia):
+
+            add_file = False
+            if tipo_arquivo == "Insumos":
+                if has_insumos and not has_familia:
+                    add_file = True
+            elif tipo_arquivo == "Sintetico":
+                if has_sint:
+                    add_file = True
+            elif tipo_arquivo == "Ambos":
+                if has_sint or (has_insumos and not has_familia):
+                    add_file = True
+            
+            if add_file:
                 matches.append(os.path.join(root, fname))
 
     if not matches:
