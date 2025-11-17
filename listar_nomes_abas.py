@@ -2,7 +2,7 @@ import openpyxl
 import os
 
 # Caminho do arquivo
-caminho = r"C:\Users\walyson.ferreira\Desktop\SinapiDownloads\aninhar\aninhado_20251113_101941.xlsx"
+caminho = r"C:\Users\walyson.ferreira\Desktop\SinapiDownloads\aninhar\aninhado_20251114_120757.xlsx"
 contagem_abas = 0
 contagem_des = 0
 contagem_nds = 0

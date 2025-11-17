@@ -236,7 +236,210 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
         lista_manter.append("082018")
         print("Valor atual da lista: ", lista_manter)
         sinapi.definir_valor_agosto_2018(False)
+
+    if sinapi.obter_valor_janeiro_2019() == True:
+        lista_manter.append("201901")
+        lista_manter.append("012019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_janeiro_2019(False)
     
+    if sinapi.obter_valor_fevereiro_2019() == True:
+        lista_manter.append("201902")
+        lista_manter.append("022019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_fevereiro_2019(False)
+
+    if sinapi.obter_valor_marco_2019() == True:
+        lista_manter.append("201903")
+        lista_manter.append("032019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_marco_2019(False)
+
+    if sinapi.obter_valor_abril_2019() == True:
+        lista_manter.append("201904")
+        lista_manter.append("042019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_abril_2019(False)
+
+    if sinapi.obter_valor_maio_2019() == True:
+        lista_manter.append("201905")
+        lista_manter.append("052019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_maio_2019(False)
+
+    if sinapi.obter_valor_junho_2019() == True:
+        lista_manter.append("201906")
+        lista_manter.append("062019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_junho_2019(False)
+
+    if sinapi.obter_valor_julho_2019() == True:
+        lista_manter.append("201907")
+        lista_manter.append("072019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_julho_2019(False)
+
+    if sinapi.obter_valor_agosto_2019() == True:
+        lista_manter.append("201908")
+        lista_manter.append("082019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_agosto_2019(False)
+
+    if sinapi.obter_valor_setembro_2019() == True:
+        lista_manter.append("201909")
+        lista_manter.append("092019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_setembro_2019(False)
+
+    if sinapi.obter_valor_outubro_2019() == True:
+        lista_manter.append("201910")
+        lista_manter.append("102019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_outubro_2019(False)
+
+    if sinapi.obter_valor_novembro_2019() == True:
+        lista_manter.append("201911")
+        lista_manter.append("112019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_novembro_2019(False)
+
+    if sinapi.obter_valor_dezembro_2019() == True:
+        lista_manter.append("201912")
+        lista_manter.append("122019")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_dezembro_2019(False)
+
+    if sinapi.obter_valor_janeiro_2018() == True:
+        lista_manter.append("201801")
+        lista_manter.append("012018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_janeiro_2018(False)
+
+    if sinapi.obter_valor_fevereiro_2018() == True:
+        lista_manter.append("201802")
+        lista_manter.append("022018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_fevereiro_2018(False)
+
+    if sinapi.obter_valor_marco_2018() == True:
+        lista_manter.append("201803")
+        lista_manter.append("032018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_marco_2018(False)
+
+    if sinapi.obter_valor_abril_2018() == True:
+        lista_manter.append("201804")
+        lista_manter.append("042018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_abril_2018(False)
+
+    if sinapi.obter_valor_maio_2018() == True:
+        lista_manter.append("201805")
+        lista_manter.append("052018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_maio_2018(False)
+
+    if sinapi.obter_valor_junho_2018() == True:
+        lista_manter.append("201806")
+        lista_manter.append("062018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_junho_2018(False)
+
+    if sinapi.obter_valor_setembro_2018() == True:
+        lista_manter.append("201809")
+        lista_manter.append("092018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_setembro_2018(False)
+
+    if sinapi.obter_valor_outubro_2018() == True:
+        lista_manter.append("201810")
+        lista_manter.append("102018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_outubro_2018(False)
+
+    if sinapi.obter_valor_novembro_2018() == True:
+        lista_manter.append("201811")
+        lista_manter.append("112018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_novembro_2018(False)
+
+    if sinapi.obter_valor_dezembro_2018() == True:
+        lista_manter.append("201812")
+        lista_manter.append("122018")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_dezembro_2018(False)
+
+    if sinapi.obter_valor_janeiro_2017() == True:
+        lista_manter.append("201701")
+        lista_manter.append("012017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_janeiro_2017(False)
+
+    if sinapi.obter_valor_fevereiro_2017() == True:
+        lista_manter.append("201702")
+        lista_manter.append("022017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_fevereiro_2017(False)
+
+    if sinapi.obter_valor_marco_2017() == True:
+        lista_manter.append("201703")
+        lista_manter.append("032017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_marco_2017(False)
+
+    if sinapi.obter_valor_abril_2017() == True:
+        lista_manter.append("201704")
+        lista_manter.append("042017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_abril_2017(False)
+
+    if sinapi.obter_valor_maio_2017() == True:
+        lista_manter.append("201705")
+        lista_manter.append("052017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_maio_2017(False)
+
+    if sinapi.obter_valor_junho_2017() == True:
+        lista_manter.append("201706")
+        lista_manter.append("062017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_junho_2017(False)
+
+    if sinapi.obter_valor_julho_2017() == True:
+        lista_manter.append("201707")
+        lista_manter.append("072017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_julho_2017(False)
+
+    if sinapi.obter_valor_agosto_2017() == True:
+        lista_manter.append("201708")
+        lista_manter.append("082017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_agosto_2017(False)
+
+    if sinapi.obter_valor_setembro_2017() == True:
+        lista_manter.append("201709")
+        lista_manter.append("092017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_setembro_2017(False)
+
+    if sinapi.obter_valor_outubro_2017() == True:
+        lista_manter.append("201710")
+        lista_manter.append("102017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_outubro_2017(False)
+
+    if sinapi.obter_valor_novembro_2017() == True:
+        lista_manter.append("201711")
+        lista_manter.append("112017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_novembro_2017(False)
+
+    if sinapi.obter_valor_dezembro_2017() == True:
+        lista_manter.append("201712")
+        lista_manter.append("122017")
+        print("Valor atual da lista: ", lista_manter)
+        sinapi.definir_valor_dezembro_2017(False)
     
     
     
@@ -246,8 +449,8 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
         
         # Padrão regex para encontrar as pastas SINAPI relevantes
         estados_br = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
-        anos = ['2021', '2020', '2018']
-        agrupamentos = ['01a04', '05a08', '09a12', '07e08']
+        anos = ['2021', '2020', '2019', '2018', '2017']
+        agrupamentos = ['01a04', '05a08', '09a12', '07e08', '01a06', '07a12']
         
         padrao_pasta = re.compile(
             r"SINAPI_ref_Insumos_Composicoes_"

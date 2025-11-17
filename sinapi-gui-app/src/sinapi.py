@@ -2,8 +2,6 @@ import webbrowser
 import time
 from datetime import datetime
 
-
-
 _janeiro_2021 = False  # privada (por convenção, com "_")
 _fevereiro_2021 = False
 _marco_2021 = False
@@ -153,6 +151,305 @@ def obter_valor_agosto_2018():
 def definir_valor_agosto_2018(valor: bool):
     global _agosto_2018
     _agosto_2018 = valor
+
+_julho_2017 = False
+_agosto_2017 = False
+
+def obter_valor_julho_2017():
+    return _julho_2017
+
+def definir_valor_julho_2017(valor: bool):
+    global _julho_2017
+    _julho_2017 = valor
+
+def obter_valor_agosto_2017():
+    return _agosto_2017
+
+def definir_valor_agosto_2017(valor: bool):
+    global _agosto_2017
+    _agosto_2017 = valor
+
+
+
+_janeiro_2019 = False
+_fevereiro_2019 = False
+_marco_2019 = False
+_abril_2019 = False
+
+def obter_valor_janeiro_2019():
+    return _janeiro_2019
+
+def definir_valor_janeiro_2019(valor: bool):
+    global _janeiro_2019
+    _janeiro_2019 = valor
+
+def obter_valor_fevereiro_2019():
+    return _fevereiro_2019
+
+def definir_valor_fevereiro_2019(valor: bool):
+    global _fevereiro_2019
+    _fevereiro_2019 = valor
+
+def obter_valor_marco_2019():
+    return _marco_2019
+
+def definir_valor_marco_2019(valor: bool):
+    global _marco_2019
+    _marco_2019 = valor
+
+def obter_valor_abril_2019():
+    return _abril_2019
+
+def definir_valor_abril_2019(valor: bool):
+    global _abril_2019
+    _abril_2019 = valor
+
+_maio_2019 = False
+_junho_2019 = False
+_julho_2019 = False
+_agosto_2019 = False
+
+def obter_valor_maio_2019():
+    return _maio_2019
+
+def definir_valor_maio_2019(valor: bool):
+    global _maio_2019
+    _maio_2019 = valor
+
+def obter_valor_junho_2019():
+    return _junho_2019
+
+def definir_valor_junho_2019(valor: bool):
+    global _junho_2019
+    _junho_2019 = valor
+
+def obter_valor_julho_2019():
+    return _julho_2019
+
+def definir_valor_julho_2019(valor: bool):
+    global _julho_2019
+    _julho_2019 = valor
+
+def obter_valor_agosto_2019():
+    return _agosto_2019
+
+def definir_valor_agosto_2019(valor: bool):
+    global _agosto_2019
+    _agosto_2019 = valor
+
+_setembro_2019 = False
+_outubro_2019 = False
+_novembro_2019 = False
+_dezembro_2019 = False
+
+def obter_valor_setembro_2019():
+    return _setembro_2019
+
+def definir_valor_setembro_2019(valor: bool):
+    global _setembro_2019
+    _setembro_2019 = valor
+
+def obter_valor_outubro_2019():
+    return _outubro_2019
+
+def definir_valor_outubro_2019(valor: bool):
+    global _outubro_2019
+    _outubro_2019 = valor
+
+def obter_valor_novembro_2019():
+    return _novembro_2019
+
+def definir_valor_novembro_2019(valor: bool):
+    global _novembro_2019
+    _novembro_2019 = valor
+
+def obter_valor_dezembro_2019():
+    return _dezembro_2019
+
+def definir_valor_dezembro_2019(valor: bool):
+    global _dezembro_2019
+    _dezembro_2019 = valor
+
+_janeiro_2018 = False
+_fevereiro_2018 = False
+_marco_2018 = False
+_abril_2018 = False
+_maio_2018 = False
+_junho_2018 = False
+
+def obter_valor_janeiro_2018():
+    return _janeiro_2018
+
+def definir_valor_janeiro_2018(valor: bool):
+    global _janeiro_2018
+    _janeiro_2018 = valor
+
+def obter_valor_fevereiro_2018():
+    return _fevereiro_2018
+
+def definir_valor_fevereiro_2018(valor: bool):
+    global _fevereiro_2018
+    _fevereiro_2018 = valor
+
+def obter_valor_marco_2018():
+    return _marco_2018
+
+def definir_valor_marco_2018(valor: bool):
+    global _marco_2018
+    _marco_2018 = valor
+
+def obter_valor_abril_2018():
+    return _abril_2018
+
+def definir_valor_abril_2018(valor: bool):
+    global _abril_2018
+    _abril_2018 = valor
+
+def obter_valor_maio_2018():
+    return _maio_2018
+
+def definir_valor_maio_2018(valor: bool):
+    global _maio_2018
+    _maio_2018 = valor
+
+def obter_valor_junho_2018():
+    return _junho_2018
+
+def definir_valor_junho_2018(valor: bool):
+    global _junho_2018
+    _junho_2018 = valor
+
+_setembro_2018 = False
+_outubro_2018 = False
+_novembro_2018 = False
+_dezembro_2018 = False
+
+def obter_valor_setembro_2018():
+    return _setembro_2018
+
+def definir_valor_setembro_2018(valor: bool):
+    global _setembro_2018
+    _setembro_2018 = valor
+
+def obter_valor_outubro_2018():
+    return _outubro_2018
+
+def definir_valor_outubro_2018(valor: bool):
+    global _outubro_2018
+    _outubro_2018 = valor
+
+def obter_valor_novembro_2018():
+    return _novembro_2018
+
+def definir_valor_novembro_2018(valor: bool):
+    global _novembro_2018
+    _novembro_2018 = valor
+
+def obter_valor_dezembro_2018():
+    return _dezembro_2018
+
+def definir_valor_dezembro_2018(valor: bool):
+    global _dezembro_2018
+    _dezembro_2018 = valor
+
+_janeiro_2017 = False
+_fevereiro_2017 = False
+_marco_2017 = False
+_abril_2017 = False
+_maio_2017 = False
+_junho_2017 = False
+
+def obter_valor_janeiro_2017():
+    return _janeiro_2017
+
+def definir_valor_janeiro_2017(valor: bool):
+    global _janeiro_2017
+    _janeiro_2017 = valor
+
+def obter_valor_fevereiro_2017():
+    return _fevereiro_2017
+
+def definir_valor_fevereiro_2017(valor: bool):
+    global _fevereiro_2017
+    _fevereiro_2017 = valor
+
+def obter_valor_marco_2017():
+    return _marco_2017
+
+def definir_valor_marco_2017(valor: bool):
+    global _marco_2017
+    _marco_2017 = valor
+
+def obter_valor_abril_2017():
+    return _abril_2017
+
+def definir_valor_abril_2017(valor: bool):
+    global _abril_2017
+    _abril_2017 = valor
+
+def obter_valor_maio_2017():
+    return _maio_2017
+
+def definir_valor_maio_2017(valor: bool):
+    global _maio_2017
+    _maio_2017 = valor
+
+def obter_valor_junho_2017():
+    return _junho_2017
+
+def definir_valor_junho_2017(valor: bool):
+    global _junho_2017
+    _junho_2017 = valor
+
+_julho_2017 = False
+_agosto_2017 = False
+_setembro_2017 = False
+_outubro_2017 = False
+_novembro_2017 = False
+_dezembro_2017 = False
+
+def obter_valor_julho_2017():
+    return _julho_2017
+
+def definir_valor_julho_2017(valor: bool):
+    global _julho_2017
+    _julho_2017 = valor
+
+def obter_valor_agosto_2017():
+    return _agosto_2017
+
+def definir_valor_agosto_2017(valor: bool):
+    global _agosto_2017
+    _agosto_2017 = valor
+
+def obter_valor_setembro_2017():
+    return _setembro_2017
+
+def definir_valor_setembro_2017(valor: bool):
+    global _setembro_2017
+    _setembro_2017 = valor
+
+def obter_valor_outubro_2017():
+    return _outubro_2017
+
+def definir_valor_outubro_2017(valor: bool):
+    global _outubro_2017
+    _outubro_2017 = valor
+
+def obter_valor_novembro_2017():
+    return _novembro_2017
+
+def definir_valor_novembro_2017(valor: bool):
+    global _novembro_2017
+    _novembro_2017 = valor
+
+def obter_valor_dezembro_2017():
+    return _dezembro_2017
+
+def definir_valor_dezembro_2017(valor: bool):
+    global _dezembro_2017
+    _dezembro_2017 = valor
+
 
 
 
