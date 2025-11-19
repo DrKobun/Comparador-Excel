@@ -125,323 +125,46 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             except Exception as e:
                 print(f"Falha ao extrair zip interno {zip_path}: {e}")
                 
-    # filtrar arquivos de 2021 (1a4)
+    # Mapeamento de funções e datas para construir a lista_manter
+    date_check_map = [
+        #(função_obter, função_definir, ano, mês)
+        (sinapi.obter_valor_janeiro_2021, sinapi.definir_valor_janeiro_2021, "2021", "01"),
+        (sinapi.obter_valor_fevereiro_2021, sinapi.definir_valor_fevereiro_2021, "2021", "02"),
+        (sinapi.obter_valor_marco_2021, sinapi.definir_valor_marco_2021, "2021", "03"),
+        (sinapi.obter_valor_abril_2021, sinapi.definir_valor_abril_2021, "2021", "04"),
+        (sinapi.obter_valor_maio_2020, sinapi.definir_valor_maio_2020, "2020", "05"),
+        (sinapi.obter_valor_junho_2020, sinapi.definir_valor_junho_2020, "2020", "06"),
+        (sinapi.obter_valor_julho_2020, sinapi.definir_valor_julho_2020, "2020", "07"),
+        (sinapi.obter_valor_agosto_2020, sinapi.definir_valor_agosto_2020, "2020", "08"),
+        (sinapi.obter_valor_setembro_2020, sinapi.definir_valor_setembro_2020, "2020", "09"),
+        (sinapi.obter_valor_outubro_2020, sinapi.definir_valor_outubro_2020, "2020", "10"),
+        (sinapi.obter_valor_novembro_2020, sinapi.definir_valor_novembro_2020, "2020", "11"),
+        (sinapi.obter_valor_dezembro_2020, sinapi.definir_valor_dezembro_2020, "2020", "12"),
+        (sinapi.obter_valor_janeiro_2020, sinapi.definir_valor_janeiro_2020, "2020", "01"),
+        (sinapi.obter_valor_fevereiro_2020, sinapi.definir_valor_fevereiro_2020, "2020", "02"),
+        (sinapi.obter_valor_marco_2020, sinapi.definir_valor_marco_2020, "2020", "03"),
+        (sinapi.obter_valor_abril_2020, sinapi.definir_valor_abril_2020, "2020", "04"),
+        (sinapi.obter_valor_janeiro_2019, sinapi.definir_valor_janeiro_2019, "2019", "01"),
+        (sinapi.obter_valor_fevereiro_2019, sinapi.definir_valor_fevereiro_2019, "2019", "02"),
+        (sinapi.obter_valor_marco_2019, sinapi.definir_valor_marco_2019, "2019", "03"),
+        (sinapi.obter_valor_abril_2019, sinapi.definir_valor_abril_2019, "2019", "04"),
+        (sinapi.obter_valor_maio_2019, sinapi.definir_valor_maio_2019, "2019", "05"),
+        (sinapi.obter_valor_junho_2019, sinapi.definir_valor_junho_2019, "2019", "06"),
+        (sinapi.obter_valor_julho_2019, sinapi.definir_valor_julho_2019, "2019", "07"),
+        (sinapi.obter_valor_agosto_2019, sinapi.definir_valor_agosto_2019, "2019", "08"),
+        (sinapi.obter_valor_setembro_2019, sinapi.definir_valor_setembro_2019, "2019", "09"),
+        (sinapi.obter_valor_outubro_2019, sinapi.definir_valor_outubro_2019, "2019", "10"),
+        (sinapi.obter_valor_novembro_2019, sinapi.definir_valor_novembro_2019, "2019", "11"),
+        (sinapi.obter_valor_dezembro_2019, sinapi.definir_valor_dezembro_2019, "2019", "12"),
+        # Adicione outras datas para 2018 e 2017 aqui seguindo o mesmo padrão
+    ]
+
     lista_manter = []
-    
-    # Condicional, caso a variável seja verdadeira
-    if sinapi.obter_valor_janeiro_2021() == True:
-        lista_manter.append("202101")
-        lista_manter.append("012021")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_janeiro_2021(False)
-    
-    if sinapi.obter_valor_fevereiro_2021() == True:
-        lista_manter.append("202102")
-        lista_manter.append("022021")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_fevereiro_2021(False)
-    
-    if sinapi.obter_valor_marco_2021() == True:
-        lista_manter.append("202103")
-        lista_manter.append("032021")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_marco_2021(False)
-        
-    if sinapi.obter_valor_abril_2021() == True:
-        lista_manter.append("202104")
-        lista_manter.append("042021")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_abril_2021(False)
-
-    if sinapi.obter_valor_setembro_2020() == True:
-        lista_manter.append("202009")
-        lista_manter.append("092020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_setembro_2020(False)
-    
-    if sinapi.obter_valor_outubro_2020() == True:
-        lista_manter.append("202010")
-        lista_manter.append("102020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_outubro_2020(False)
-
-    if sinapi.obter_valor_novembro_2020() == True:
-        lista_manter.append("202011")
-        lista_manter.append("112020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_novembro_2020(False)
-
-    if sinapi.obter_valor_dezembro_2020() == True:
-        lista_manter.append("202012")
-        lista_manter.append("122020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_dezembro_2020(False)
-
-    if sinapi.obter_valor_maio_2020() == True:
-        lista_manter.append("202005")
-        lista_manter.append("052020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_maio_2020(False)
-    
-    if sinapi.obter_valor_junho_2020() == True:
-        lista_manter.append("202006")
-        lista_manter.append("062020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_junho_2020(False)
-
-    if sinapi.obter_valor_julho_2020() == True:
-        lista_manter.append("202007")
-        lista_manter.append("072020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_julho_2020(False)
-
-    if sinapi.obter_valor_agosto_2020() == True:
-        lista_manter.append("202008")
-        lista_manter.append("082020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_agosto_2020(False)
-
-    if sinapi.obter_valor_janeiro_2020() == True:
-        lista_manter.append("202001")
-        lista_manter.append("012020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_janeiro_2020(False)
-    
-    if sinapi.obter_valor_fevereiro_2020() == True:
-        lista_manter.append("202002")
-        lista_manter.append("022020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_fevereiro_2020(False)
-
-    if sinapi.obter_valor_marco_2020() == True:
-        lista_manter.append("202003")
-        lista_manter.append("032020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_marco_2020(False)
-
-    if sinapi.obter_valor_abril_2020() == True:
-        lista_manter.append("202004")
-        lista_manter.append("042020")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_abril_2020(False)
-
-    if sinapi.obter_valor_julho_2018() == True:
-        lista_manter.append("201807")
-        lista_manter.append("072018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_julho_2018(False)
-    
-    if sinapi.obter_valor_agosto_2018() == True:
-        lista_manter.append("201808")
-        lista_manter.append("082018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_agosto_2018(False)
-
-    if sinapi.obter_valor_janeiro_2019() == True:
-        lista_manter.append("201901")
-        lista_manter.append("012019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_janeiro_2019(False)
-    
-    if sinapi.obter_valor_fevereiro_2019() == True:
-        lista_manter.append("201902")
-        lista_manter.append("022019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_fevereiro_2019(False)
-
-    if sinapi.obter_valor_marco_2019() == True:
-        lista_manter.append("201903")
-        lista_manter.append("032019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_marco_2019(False)
-
-    if sinapi.obter_valor_abril_2019() == True:
-        lista_manter.append("201904")
-        lista_manter.append("042019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_abril_2019(False)
-
-    if sinapi.obter_valor_maio_2019() == True:
-        lista_manter.append("201905")
-        lista_manter.append("052019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_maio_2019(False)
-
-    if sinapi.obter_valor_junho_2019() == True:
-        lista_manter.append("201906")
-        lista_manter.append("062019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_junho_2019(False)
-
-    if sinapi.obter_valor_julho_2019() == True:
-        lista_manter.append("201907")
-        lista_manter.append("072019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_julho_2019(False)
-
-    if sinapi.obter_valor_agosto_2019() == True:
-        lista_manter.append("201908")
-        lista_manter.append("082019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_agosto_2019(False)
-
-    if sinapi.obter_valor_setembro_2019() == True:
-        lista_manter.append("201909")
-        lista_manter.append("092019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_setembro_2019(False)
-
-    if sinapi.obter_valor_outubro_2019() == True:
-        lista_manter.append("201910")
-        lista_manter.append("102019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_outubro_2019(False)
-
-    if sinapi.obter_valor_novembro_2019() == True:
-        lista_manter.append("201911")
-        lista_manter.append("112019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_novembro_2019(False)
-
-    if sinapi.obter_valor_dezembro_2019() == True:
-        lista_manter.append("201912")
-        lista_manter.append("122019")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_dezembro_2019(False)
-
-    if sinapi.obter_valor_janeiro_2018() == True:
-        lista_manter.append("201801")
-        lista_manter.append("012018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_janeiro_2018(False)
-
-    if sinapi.obter_valor_fevereiro_2018() == True:
-        lista_manter.append("201802")
-        lista_manter.append("022018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_fevereiro_2018(False)
-
-    if sinapi.obter_valor_marco_2018() == True:
-        lista_manter.append("201803")
-        lista_manter.append("032018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_marco_2018(False)
-
-    if sinapi.obter_valor_abril_2018() == True:
-        lista_manter.append("201804")
-        lista_manter.append("042018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_abril_2018(False)
-
-    if sinapi.obter_valor_maio_2018() == True:
-        lista_manter.append("201805")
-        lista_manter.append("052018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_maio_2018(False)
-
-    if sinapi.obter_valor_junho_2018() == True:
-        lista_manter.append("201806")
-        lista_manter.append("062018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_junho_2018(False)
-
-    if sinapi.obter_valor_setembro_2018() == True:
-        lista_manter.append("201809")
-        lista_manter.append("092018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_setembro_2018(False)
-
-    if sinapi.obter_valor_outubro_2018() == True:
-        lista_manter.append("201810")
-        lista_manter.append("102018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_outubro_2018(False)
-
-    if sinapi.obter_valor_novembro_2018() == True:
-        lista_manter.append("201811")
-        lista_manter.append("112018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_novembro_2018(False)
-
-    if sinapi.obter_valor_dezembro_2018() == True:
-        lista_manter.append("201812")
-        lista_manter.append("122018")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_dezembro_2018(False)
-
-    if sinapi.obter_valor_janeiro_2017() == True:
-        lista_manter.append("201701")
-        lista_manter.append("012017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_janeiro_2017(False)
-
-    if sinapi.obter_valor_fevereiro_2017() == True:
-        lista_manter.append("201702")
-        lista_manter.append("022017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_fevereiro_2017(False)
-
-    if sinapi.obter_valor_marco_2017() == True:
-        lista_manter.append("201703")
-        lista_manter.append("032017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_marco_2017(False)
-
-    if sinapi.obter_valor_abril_2017() == True:
-        lista_manter.append("201704")
-        lista_manter.append("042017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_abril_2017(False)
-
-    if sinapi.obter_valor_maio_2017() == True:
-        lista_manter.append("201705")
-        lista_manter.append("052017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_maio_2017(False)
-
-    if sinapi.obter_valor_junho_2017() == True:
-        lista_manter.append("201706")
-        lista_manter.append("062017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_junho_2017(False)
-
-    if sinapi.obter_valor_julho_2017() == True:
-        lista_manter.append("201707")
-        lista_manter.append("072017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_julho_2017(False)
-
-    if sinapi.obter_valor_agosto_2017() == True:
-        lista_manter.append("201708")
-        lista_manter.append("082017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_agosto_2017(False)
-
-    if sinapi.obter_valor_setembro_2017() == True:
-        lista_manter.append("201709")
-        lista_manter.append("092017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_setembro_2017(False)
-
-    if sinapi.obter_valor_outubro_2017() == True:
-        lista_manter.append("201710")
-        lista_manter.append("102017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_outubro_2017(False)
-
-    if sinapi.obter_valor_novembro_2017() == True:
-        lista_manter.append("201711")
-        lista_manter.append("112017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_novembro_2017(False)
-
-    if sinapi.obter_valor_dezembro_2017() == True:
-        lista_manter.append("201712")
-        lista_manter.append("122017")
-        print("Valor atual da lista: ", lista_manter)
-        sinapi.definir_valor_dezembro_2017(False)
-    
-    
+    for get_func, set_func, year, month in date_check_map:
+        if get_func():
+            lista_manter.append(f"{year}{month}")
+            lista_manter.append(f"{month}{year}")
+            set_func(False)
     
     # Deletar arquivos que não estão na lista_manter de forma dinâmica
     if lista_manter:
