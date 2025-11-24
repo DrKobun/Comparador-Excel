@@ -59,7 +59,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     if os.path.isdir(downloads_dir):
         for root, _, files in os.walk(downloads_dir):
             for fname in files:
-                if token in fname.lower():
+                if token in fname.lower() or "orse" in fname.lower():
                     src = os.path.join(root, fname)
                     dst = os.path.join(base_dir, fname)
                     base, ext = os.path.splitext(fname)
@@ -166,6 +166,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             lista_manter.append(f"{month}{year}")
             set_func(False)
     
+    # CORRIGIR FUTURAMENTE LÓGICA DE DELETE DOS ARQUIVOS
     # Deletar arquivos que não estão na lista_manter de forma dinâmica
     if lista_manter:
         print(f"Itens a manter: {lista_manter}")
@@ -232,7 +233,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
                 if has_sint or (has_insumos and not has_familia):
                     add_file = True
             
-            if add_file:
+            if add_file or low.startswith("orse"):
                 matches.append(os.path.join(root, fname))
 
     if not matches:
