@@ -252,7 +252,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             s = "sheet"
         return s[:31]
 
-    def _format_tab_name_from_filename(fname: str) -> str:
+    def _format_tab_name_from_filename(fname: str) -> Optional[str]:
         """
         Constrói o prefixo do nome da aba a partir do nome do arquivo:
           - Sintético -> 'SINA-SIN'
@@ -263,6 +263,9 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
         """
         name = os.path.splitext(os.path.basename(fname))[0]
         low = name.lower()
+
+        if not low.startswith("sinapi"):
+            return None
 
         print(low)
         
@@ -340,10 +343,14 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             if isinstance(sheets, dict):
                 for sname, df in sheets.items():
                     # preferir nome baseado em arquivo; adicionar sufixo da aba original se necessário para distinguir
-                    candidate = file_based_tab
-                    if len(sheets) > 1:
-                        # anexar parte da aba original curta para evitar colisão quando múltiplas abas por arquivo
-                        candidate = _safe_sheet_name(f"{candidate}_{sname}")[:31]
+                    if file_based_tab:
+                        candidate = file_based_tab
+                        if len(sheets) > 1:
+                            # anexar parte da aba original curta para evitar colisão quando múltiplas abas por arquivo
+                            candidate = _safe_sheet_name(f"{candidate}_{sname}")[:31]
+                    else:
+                        candidate = _safe_sheet_name(sname)
+                    
                     orig = candidate
                     i = 1
                     while candidate in used_sheet_names:
@@ -356,7 +363,11 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
                     except Exception as e:
                         print(f"Erro ao escrever aba '{candidate}' de '{fpath}': {e}")
             else:
-                candidate = file_based_tab
+                if file_based_tab:
+                    candidate = file_based_tab
+                else:
+                    candidate = _safe_sheet_name(base_name)
+
                 orig = candidate
                 i = 1
                 while candidate in used_sheet_names:

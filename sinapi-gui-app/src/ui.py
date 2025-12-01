@@ -78,12 +78,14 @@ try:
         definir_valor_dezembro_2017
     )
     from aninhar import aninhar_arquivos, apagar_dados_sinapi
+    import sicro
 except Exception:
     src_dir = os.path.dirname(__file__)  # pasta src
     if src_dir not in sys.path:
         sys.path.insert(0, src_dir)
     sinapi_mod = importlib.import_module("sinapi")
     aninhar_mod = importlib.import_module("aninhar")
+    sicro = importlib.import_module("sicro")
     
     gerar_links_sinapi = getattr(sinapi_mod, "gerar_links_sinapi")
     abrir_links_no_navegador = getattr(sinapi_mod, "abrir_links_no_navegador")
@@ -109,6 +111,11 @@ class SinapiApp:
         self.selected_file_type = StringVar(value="Ambos")
         self.selected_states = {estado: IntVar(value=0) for estado in estados}
         self.selected_orse_type = StringVar(value="ambos")
+        
+        # SICRO related
+        self.sicro_links_data = sicro.parse_sicro_links()
+        self.selected_sicro_state = StringVar(value=estados[0] if estados else "")
+
 
         # Vars for months 1-4 checkboxes
         self.jan_2021 = BooleanVar(value=False)
@@ -173,8 +180,10 @@ class SinapiApp:
 
         self.months_1_to_4_frame = None
         self.month_menu = None
+        self.year_menu = None
         self.orse_widgets = None
         self.sinapi_widgets = None
+        self.sicro_widgets = None
         self.baixar_button = None
         self.aninhar_button = None
         self.add_state_button = None
@@ -185,6 +194,8 @@ class SinapiApp:
         self.selected_year.trace_add("write", self._on_year_change)
         self.selected_month.trace_add("write", self._on_month_change)
         self.selected_service.trace_add("write", self._on_service_change)
+        self.selected_sicro_state.trace_add("write", self._on_sicro_params_change)
+        self.selected_year.trace_add("write", self._on_sicro_params_change)
         
         self._on_year_change()
         self._on_service_change()
@@ -192,31 +203,45 @@ class SinapiApp:
     def _on_service_change(self, *args):
         service = self.selected_service.get()
         
+        # Hide all service-specific widgets initially
+        if self.sinapi_widgets: self.sinapi_widgets.pack_forget()
+        if self.orse_widgets: self.orse_widgets.pack_forget()
+        if self.sicro_widgets: self.sicro_widgets.pack_forget()
+        
+        # Configure UI based on selected service
         if service == "ORSE":
-            if self.sinapi_widgets:
-                self.sinapi_widgets.pack_forget()
-            if self.orse_widgets:
-                self.orse_widgets.pack(pady=2)
-            if self.baixar_button:
-                self.baixar_button.config(command=self.execute_orse)
-            
-            # Ocultar botões que não são relevantes para ORSE
+            years = [str(y) for y in range(2021, 2025)]
+            if self.orse_widgets: self.orse_widgets.pack(pady=2)
+            if self.baixar_button: self.baixar_button.config(command=self.execute_orse)
             if self.aninhar_button: self.aninhar_button.pack_forget()
             if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack_forget()
 
-        else:  # SINAPI, SICRO, etc.
-            if self.orse_widgets:
-                self.orse_widgets.pack_forget()
-            if self.sinapi_widgets:
-                self.sinapi_widgets.pack(pady=2)
-            if self.baixar_button:
-                self.baixar_button.config(command=self.execute_sinapi)
+        elif service == "SICRO":
+            years = [str(y) for y in range(2017, datetime.now().year + 1)]
+            if self.sicro_widgets: self.sicro_widgets.pack(pady=2)
+            if self.baixar_button: self.baixar_button.config(command=self.execute_sicro)
+            if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
+            if self.add_state_button: self.add_state_button.pack_forget()
+            if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
+            self._on_sicro_params_change()
 
-            # Mostrar botões relevantes para SINAPI
+        else:  # SINAPI
+            years = [str(y) for y in range(2017, 2025)]
+            if self.sinapi_widgets: self.sinapi_widgets.pack(pady=2)
+            if self.baixar_button: self.baixar_button.config(command=self.execute_sinapi)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
             if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
+
+        # Update year dropdown
+        menu = self.year_menu["menu"]
+        menu.delete(0, "end")
+        for year in years:
+            menu.add_command(label=year, command=lambda value=year: self.selected_year.set(value))
+        
+        if self.selected_year.get() not in years:
+            self.selected_year.set(years[-1] if years else "")
         
         # Atualiza os meses com base no serviço selecionado
         self._on_year_change()
@@ -224,6 +249,10 @@ class SinapiApp:
     def _on_year_change(self, *args):
         year = self.selected_year.get()
         service = self.selected_service.get()
+
+        if service == "SICRO":
+            self._on_sicro_params_change()
+            return
         
         new_months = []
         if service == "ORSE":
@@ -378,8 +407,8 @@ class SinapiApp:
         date_frame.pack(pady=2)
 
         years = [str(y) for y in range(2017, 2025)]
-        year_menu = OptionMenu(date_frame, self.selected_year, *years)
-        year_menu.pack(side='left', padx=(0, 6))
+        self.year_menu = OptionMenu(date_frame, self.selected_year, *years)
+        self.year_menu.pack(side='left', padx=(0, 6))
         
         self.month_menu = OptionMenu(date_frame, self.selected_month, "")
         self.month_menu.pack(side='left')
@@ -436,9 +465,54 @@ class SinapiApp:
         Radiobutton(orse_type_frame, text="Insumos", variable=self.selected_orse_type, value="insumos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Serviços", variable=self.selected_orse_type, value="servicos").pack(anchor='w')
 
+        # --- Widgets SICRO ---
+        self.sicro_widgets = Frame(content_frame)
+        sicro_state_frame = Frame(self.sicro_widgets)
+        sicro_state_frame.pack(pady=5)
+        Label(sicro_state_frame, text="Selecione o estado:").pack(anchor='w')
+        OptionMenu(sicro_state_frame, self.selected_sicro_state, *estados).pack(anchor='w')
+
     def execute_aninhar(self):
         tipo_arquivo = self.selected_file_type.get()
         threading.Thread(target=aninhar_arquivos, args=(None, tipo_arquivo), daemon=True).start()
+
+    def execute_sicro(self):
+        state = self.selected_sicro_state.get()
+        year = self.selected_year.get()
+        month = self.selected_month.get()
+
+        if not all([state, year, month]):
+            messagebox.showwarning("Aviso", "Por favor, selecione estado, ano e mês.")
+            return
+
+        link = sicro.get_sicro_link(self.sicro_links_data, state, year, month)
+        
+        if link:
+            threading.Thread(target=abrir_links_no_navegador, args=([link],), daemon=True).start()
+        else:
+            messagebox.showerror("Erro", f"Link de download não encontrado para {state}/{year}/{month}.")
+
+    def _on_sicro_params_change(self, *args):
+        if self.selected_service.get() != "SICRO":
+            return
+
+        state = self.selected_sicro_state.get()
+        year = self.selected_year.get()
+        
+        new_months = sicro.get_available_months(self.sicro_links_data, state, year)
+        
+        current_month = self.selected_month.get()
+        menu = self.month_menu["menu"]
+        menu.delete(0, "end")
+        
+        if new_months:
+            for month in new_months:
+                menu.add_command(label=month, command=lambda value=month: self.selected_month.set(value))
+            
+            if current_month not in new_months:
+                self.selected_month.set(new_months[0])
+        else:
+            self.selected_month.set("")
 
     def execute_orse(self):
         try:
@@ -464,7 +538,7 @@ class SinapiApp:
     def _run_orse_and_reenable(self, ano, mes, tipo):
         try:
             funcao_orse(ano, mes, tipo)
-            messagebox.showinfo("Sucesso", "Download do ORSE concluído com sucesso!")
+            # messagebox.showinfo("Sucesso", "Download do ORSE concluído com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Execução", f"Falha ao executar o download do ORSE: {e}")
         finally:
