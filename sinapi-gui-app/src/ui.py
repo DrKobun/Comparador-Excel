@@ -98,7 +98,7 @@ from resources.states import estados
 class SinapiApp:
     def __init__(self, master):
         self.master = master
-        master.title("SINAPI & ORSE Downloader")
+        master.title("SINAPI, ORSE e SICRO downloads")
         master.geometry("800x450")
         master.resizable(False, False)
 
