@@ -5,7 +5,13 @@ import re
 from datetime import datetime
 from typing import List, Tuple, Optional
 import pandas as pd
+import openpyxl
 import sinapi
+
+# List of Brazilian state abbreviations to identify relevant files
+ESTADOS_BR = {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+              'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+              'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}
 
 print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
 print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(True))
@@ -51,18 +57,170 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     os.makedirs(base_dir, exist_ok=True)
     base_dir = os.path.abspath(base_dir)
 
+    def _safe_sheet_name(name: str) -> str:
+        invalid = ['\\','/','*','[',']',':','?']
+        s = "".join("_" if c in invalid else c for c in name)
+        s = s.strip()
+        if len(s) == 0:
+            s = "sheet"
+        return s[:31]
+
+    def _format_tab_name_sicro(fname: str) -> Optional[str]:
+        """
+        Generates a new sheet name based on the filename according to specific rules.
+        Example: "AC 01-2024 Relatório Sintético de ComposiçΣes de Custos.xlsx" -> "SICRO-SIN-COMP-2024-01"
+        """
+        filename = os.path.basename(fname)
+        
+        parse_name = filename
+        # Handle files that might have been prefixed with 'SICRO-'
+        if filename.upper().startswith("SICRO-"):
+            parse_name = filename[len("SICRO-"):].strip()
+
+        low_name = parse_name.lower()
+        
+        # Rule: Must match pattern like "AC 01-2024..." and be a valid state
+        match = re.match(r"([A-Z]{2})\s+(\d{2})-(\d{4})", parse_name, re.IGNORECASE)
+        if not (match and match.group(1).upper() in ESTADOS_BR):
+            return None  # Not a target file if it doesn't start with a valid State and Date pattern
+
+        state, month, year = match.group(1).upper(), match.group(2), match.group(3)
+
+        parts = []
+        # Rule: "SICRO" because it starts with a state abbreviation
+        parts.append("SICRO")
+
+        # Rule: "SIN" if it contains "Sintético"
+        if "sintético" in low_name:
+            parts.append("SIN")
+        else:
+            return None  # All target files are "Sintético"
+
+        # Rule: Type part based on keyword
+        type_part = None
+        if "composi" in low_name:  # For "Composições"
+            type_part = "COMP"
+        elif "equipamentos" in low_name:
+            type_part = "EQP"
+        elif "materiais" in low_name:
+            type_part = "MAT"
+        
+        if type_part:
+            parts.append(type_part)
+        else:
+            return None  # If no type is found, it's not one of the target files
+
+        # Per the user's example, the state is omitted from the final tab name.
+        # parts.append(state)
+        
+        parts.append(year)
+        parts.append(month)
+
+        # Rule: Suffix for "desoneração"
+        if "equipamentos" in low_name and "com desonera" in low_name:
+            parts.append("DES")
+
+        return "-".join(parts)
+
+    def _format_tab_name_from_filename(fname: str) -> Optional[str]:
+        """
+        Constrói o prefixo do nome da aba a partir do nome do arquivo:
+          - Sintético -> 'SINA-SIN'
+          - Insumos   -> 'SINA-INS'
+        Extrai sigla do estado (ex: 'AC') e data no formato YYYYMM (ex: '202401').
+        Sufixo de tipo: 'DES' para Desonerado, 'NDS' para Não Desonerado.
+        Retorna string já curta; caller deve garantir unicidade.
+        """
+        name = os.path.splitext(os.path.basename(fname))[0]
+        low = name.lower()
+
+        if not low.startswith("sinapi"):
+            return None
+
+        print(low)
+        
+        # prefixo
+        if "sintetico" in low:
+            pref = "SINA-SIN"
+        elif "insumos" in low:
+            pref = "SINA-INS"
+        else:
+            pref = "SINA-UNK"
+
+        # estado: procurar token de duas letras entre underscores ou token standalone uppercase
+        estado = ""
+        m = re.search(r"_([A-Z]{2})_", name)
+        if m:
+            estado = m.group(1)
+        else:
+            # tentar tokens passando por '_' separador
+            parts = name.split("_")
+            for p in parts:
+                if re.fullmatch(r"[A-Z]{2}", p):
+                    estado = p
+                    break
+
+        # data: procurar YYYYMM ou MMYYYY ou YYYY_MM
+        date_token = ""
+        m = re.search(r"(\d{4}_\d{2})", name)
+        if m:
+            date_token = m.group(1).replace("_", "")
+        else:
+            m = re.search(r"(\d{6})", name)
+            if m:
+                date_token = m.group(1)
+            else:
+                m = re.search(r"_(\d{2})(\d{4})_", "_" + name + "_")
+                if m:
+                    # found _MMYYYY_
+                    date_token = f"{m.group(2)}{m.group(1)}"
+
+        # tipo abreviado
+        if "naodesonerado" in low:
+            tipo_abbr = "NDS"
+        # elif "NaoDesonerado" in low or "naoDesonerado" in low or "nao" in low or "não" in low:
+        #     tipo_abbr = "NDS"
+        elif "desonerado" in low:
+            tipo_abbr = "DES"
+        else:
+            tipo_abbr = "UNK"
+
+        # montar partes (omitir vazios)
+        parts = [pref]
+        if estado:
+            parts.append(estado)
+        if date_token:
+            parts.append(date_token)
+        parts.append(tipo_abbr)
+        tab = "-".join(parts)
+        # garantir limite de 31 caracteres
+        return _safe_sheet_name(tab)
+
     # 1) mover arquivos da pasta Downloads que contenham 'sinapi'
     downloads_dir = os.path.join(os.path.expanduser("~"), "Downloads")
     moved: List[str] = []
     token = "sinapi"
 
+    # mover também arquivos que comecem com sigla de estado (ex: "AC_arquivo.xlsx" ou "acarquivo.xlsx")
+    estados_prefix_codes = {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+                            'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+                            'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}
+
     if os.path.isdir(downloads_dir):
         for root, _, files in os.walk(downloads_dir):
             for fname in files:
-                if token in fname.lower() or "orse" in fname.lower():
+                low = fname.lower()
+                base_name, ext = os.path.splitext(fname)
+                # remover underscores/hífens iniciais para checar as duas primeiras letras reais
+                trimmed = base_name.lstrip("_- ")
+                starts_state = False
+                if len(trimmed) >= 2 and trimmed[:2].isalpha() and trimmed[:2].upper() in estados_prefix_codes:
+                    starts_state = True
+
+                if token in low or "orse" in low or starts_state:
                     src = os.path.join(root, fname)
                     dst = os.path.join(base_dir, fname)
-                    base, ext = os.path.splitext(fname)
+                    base, ext = base_name, ext
                     counter = 1
                     while os.path.exists(dst):
                         dst = os.path.join(base_dir, f"{base}_{counter}{ext}")
@@ -76,6 +234,41 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     print(f"Arquivos movidos ({len(moved)}):")
     for p in moved:
         print(p)
+
+    # Renomear arquivos movidos: adicionar prefixo "SICRO-" quando as
+    # duas primeiras letras do nome forem uma sigla de estado do Brasil.
+    estados_br = {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+                  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+                  'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}
+
+    for i, dst in enumerate(list(moved)):  # iterar sobre uma cópia, pois moveremos/alteraremos paths
+        try:
+            fname = os.path.basename(dst)
+            base, ext = os.path.splitext(fname)
+            # já possui o prefixo?
+            if base.upper().startswith("SICRO-"):
+                continue
+
+            # verificar as duas primeiras letras do nome do arquivo (ignorar underscores)
+            # Ex.: "AC_arquivo.xlsx" ou "ACarquivo.xlsx" -> 'AC'
+            # usar a base como está, sem contar diretórios
+            first_two = base[:2].upper()
+            if first_two in estados_br:
+                new_base = f"SICRO-{base}"
+                new_name = f"{new_base}{ext}"
+                new_dst = os.path.join(base_dir, new_name)
+
+                # evitar sobrescrever um arquivo existente
+                counter = 1
+                while os.path.exists(new_dst):
+                    new_dst = os.path.join(base_dir, f"{new_base}_{counter}{ext}")
+                    counter += 1
+
+                os.rename(dst, new_dst)
+                moved[i] = new_dst  # atualizar lista moved para refletir novo nome
+                print(f"Renomeado: {dst} -> {new_dst}")
+        except Exception as e:
+            print(f"Falha ao renomear {dst}: {e}")
 
     # 2) extrair todos os .zip no diretório base (não recursivo)
     extracted_root = os.path.join(base_dir, "__extracted_zips__")
@@ -124,6 +317,44 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
                 print(f"Zip interno inválido, pulando: {zip_path}")
             except Exception as e:
                 print(f"Falha ao extrair zip interno {zip_path}: {e}")
+
+    # ==============================================================================
+    # NOVA ETAPA: Renomear abas dos arquivos SICRO originais (in-place)
+    # Esta lógica é baseada no script abas_sicro.py
+    # ==============================================================================
+    print("\nIniciando renomeação de abas para arquivos SICRO...")
+    for root, _, files in os.walk(base_dir):
+        # Apenas processar arquivos em pastas cujo caminho contenha "SICRO"
+        path_parts = root.split(os.sep)
+        is_in_sicro_path = any(part.upper().startswith("SICRO") for part in path_parts)
+
+        if is_in_sicro_path:
+            for filename in files:
+                if not filename.lower().endswith(('.xlsx', '.xls')):
+                    continue
+
+                # A função _format_tab_name_sicro espera o caminho completo
+                full_path = os.path.join(root, filename)
+                new_sheet_name = _format_tab_name_sicro(full_path)
+                
+                if new_sheet_name:
+                    try:
+                        workbook = openpyxl.load_workbook(full_path)
+                        if workbook.sheetnames:
+                            first_sheet_name = workbook.sheetnames[0]
+                            sheet_to_rename = workbook[first_sheet_name]
+                            sheet_to_rename.title = new_sheet_name
+                            
+                            workbook.save(full_path)
+                            print(f"SUCESSO: Aba renomeada em '{full_path}' para '{new_sheet_name}'")
+                        else:
+                            print(f"INFO: Pulando '{full_path}' - sem abas encontradas.")
+                    except Exception as e:
+                        print(f"ERRO: Falha ao renomear aba no arquivo '{full_path}': {e}")
+    print("Renomeação de abas SICRO concluída.\n")
+    # ==============================================================================
+    # Fim da nova etapa
+    # ==============================================================================
                 
     # Mapeamento de funções e datas para construir a lista_manter
     date_check_map = [
@@ -244,87 +475,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_path = os.path.join(output_dir, f"aninhado_{timestamp}.xlsx")
 
-    def _safe_sheet_name(name: str) -> str:
-        invalid = ['\\','/','*','[',']',':','?']
-        s = "".join("_" if c in invalid else c for c in name)
-        s = s.strip()
-        if len(s) == 0:
-            s = "sheet"
-        return s[:31]
-
-    def _format_tab_name_from_filename(fname: str) -> Optional[str]:
-        """
-        Constrói o prefixo do nome da aba a partir do nome do arquivo:
-          - Sintético -> 'SINA-SIN'
-          - Insumos   -> 'SINA-INS'
-        Extrai sigla do estado (ex: 'AC') e data no formato YYYYMM (ex: '202401').
-        Sufixo de tipo: 'DES' para Desonerado, 'NDS' para Não Desonerado.
-        Retorna string já curta; caller deve garantir unicidade.
-        """
-        name = os.path.splitext(os.path.basename(fname))[0]
-        low = name.lower()
-
-        if not low.startswith("sinapi"):
-            return None
-
-        print(low)
-        
-        # prefixo
-        if "sintetico" in low:
-            pref = "SINA-SIN"
-        elif "insumos" in low:
-            pref = "SINA-INS"
-        else:
-            pref = "SINA-UNK"
-
-        # estado: procurar token de duas letras entre underscores ou token standalone uppercase
-        estado = ""
-        m = re.search(r"_([A-Z]{2})_", name)
-        if m:
-            estado = m.group(1)
-        else:
-            # tentar tokens passando por '_' separador
-            parts = name.split("_")
-            for p in parts:
-                if re.fullmatch(r"[A-Z]{2}", p):
-                    estado = p
-                    break
-
-        # data: procurar YYYYMM ou MMYYYY ou YYYY_MM
-        date_token = ""
-        m = re.search(r"(\d{4}_\d{2})", name)
-        if m:
-            date_token = m.group(1).replace("_", "")
-        else:
-            m = re.search(r"(\d{6})", name)
-            if m:
-                date_token = m.group(1)
-            else:
-                m = re.search(r"_(\d{2})(\d{4})_", "_" + name + "_")
-                if m:
-                    # found _MMYYYY_
-                    date_token = f"{m.group(2)}{m.group(1)}"
-
-        # tipo abreviado
-        if "naodesonerado" in low:
-            tipo_abbr = "NDS"
-        # elif "NaoDesonerado" in low or "naoDesonerado" in low or "nao" in low or "não" in low:
-        #     tipo_abbr = "NDS"
-        elif "desonerado" in low:
-            tipo_abbr = "DES"
-        else:
-            tipo_abbr = "UNK"
-
-        # montar partes (omitir vazios)
-        parts = [pref]
-        if estado:
-            parts.append(estado)
-        if date_token:
-            parts.append(date_token)
-        parts.append(tipo_abbr)
-        tab = "-".join(parts)
-        # garantir limite de 31 caracteres
-        return _safe_sheet_name(tab)
+    # Helper functions moved to the top of aninhar_arquivos to fix UnboundLocalError
 
     used_sheet_names = set()
     with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
@@ -338,7 +489,14 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             base_name = os.path.splitext(os.path.basename(fpath))[0]
             base_name = base_name.replace(" ", "_")
             # nome base sugerido a partir do nome do arquivo
-            file_based_tab = _format_tab_name_from_filename(fpath)
+            file_based_tab = None
+            is_in_extracted = os.path.abspath(fpath).startswith(os.path.abspath(extracted_root))
+            
+            if is_in_extracted:
+                file_based_tab = _format_tab_name_sicro(fpath)
+
+            if not file_based_tab:
+                file_based_tab = _format_tab_name_from_filename(fpath)
 
             if isinstance(sheets, dict):
                 for sname, df in sheets.items():
