@@ -115,6 +115,10 @@ class SinapiApp:
         # SICRO related
         self.sicro_links_data = sicro.parse_sicro_links()
         self.selected_sicro_state = StringVar(value=estados[0] if estados else "")
+        self.sicro_composicoes = BooleanVar(value=False)
+        self.sicro_equipamentos_desonerado = BooleanVar(value=False)
+        self.sicro_equipamentos = BooleanVar(value=False)
+        self.sicro_materiais = BooleanVar(value=False)
 
 
         # Vars for months 1-4 checkboxes
@@ -386,7 +390,7 @@ class SinapiApp:
         self.baixar_button = Button(bottom_frame, text="Baixar", command=self.execute_sinapi)
         self.baixar_button.pack(side='left', padx=5)
         
-        self.aninhar_button = Button(bottom_frame, text="Aninhar", command=self.execute_aninhar)
+        self.aninhar_button = Button(bottom_frame, text="Juntar", command=self.execute_aninhar)
         self.aninhar_button.pack(side='left', padx=5)
         
         self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
@@ -426,7 +430,7 @@ class SinapiApp:
         type_frame = Frame(radio_frame)
         type_frame.pack(side='left', padx=10)
         
-        Label(type_frame, text="Tipo:").pack(anchor='w')
+        Label(type_frame, text="Tipo para baixar?").pack(anchor='w')
         Radiobutton(type_frame, text="Ambos", variable=self.selected_type, value=0).pack(anchor='w')
         Radiobutton(type_frame, text="Desonerado", variable=self.selected_type, value=1).pack(anchor='w')
         Radiobutton(type_frame, text="Não Desonerado", variable=self.selected_type, value=2).pack(anchor='w')
@@ -434,7 +438,7 @@ class SinapiApp:
         file_type_frame = Frame(radio_frame)
         file_type_frame.pack(side='left', padx=10)
 
-        Label(file_type_frame, text="Tipo de Arquivo:").pack(anchor='w')
+        Label(file_type_frame, text="Quais arquivos juntar?").pack(anchor='w')
         Radiobutton(file_type_frame, text="Ambos", variable=self.selected_file_type, value="Ambos").pack(anchor='w')
         Radiobutton(file_type_frame, text="Insumos", variable=self.selected_file_type, value="Insumos").pack(anchor='w')
         Radiobutton(file_type_frame, text="Sintéticos", variable=self.selected_file_type, value="Sintetico").pack(anchor='w')
@@ -460,13 +464,23 @@ class SinapiApp:
         orse_type_frame = Frame(self.orse_widgets)
         orse_type_frame.pack(pady=5)
         
-        Label(orse_type_frame, text="Tipo de Arquivo:").pack(anchor='w')
+        Label(orse_type_frame, text="Qual tipo baixar?").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Ambos", variable=self.selected_orse_type, value="ambos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Insumos", variable=self.selected_orse_type, value="insumos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Serviços", variable=self.selected_orse_type, value="servicos").pack(anchor='w')
 
         # --- Widgets SICRO ---
         self.sicro_widgets = Frame(content_frame)
+
+        sicro_checkbox_frame = Frame(self.sicro_widgets)
+        sicro_checkbox_frame.pack(pady=5)
+        
+        Label(sicro_checkbox_frame, text="Quais planilhas juntar?").pack(anchor='w')
+        Checkbutton(sicro_checkbox_frame, text="Composições de Custos", variable=self.sicro_composicoes).pack(anchor='w')
+        Checkbutton(sicro_checkbox_frame, text="Equipamentos (com desoneração)", variable=self.sicro_equipamentos_desonerado).pack(anchor='w')
+        Checkbutton(sicro_checkbox_frame, text="Equipamentos", variable=self.sicro_equipamentos).pack(anchor='w')
+        Checkbutton(sicro_checkbox_frame, text="Materiais", variable=self.sicro_materiais).pack(anchor='w')
+
         sicro_state_frame = Frame(self.sicro_widgets)
         sicro_state_frame.pack(pady=5)
         Label(sicro_state_frame, text="Selecione o estado:").pack(anchor='w')
@@ -474,7 +488,23 @@ class SinapiApp:
 
     def execute_aninhar(self):
         tipo_arquivo = self.selected_file_type.get()
-        threading.Thread(target=aninhar_arquivos, args=(None, tipo_arquivo), daemon=True).start()
+        sicro_composicoes = self.sicro_composicoes.get()
+        sicro_equipamentos_desonerado = self.sicro_equipamentos_desonerado.get()
+        sicro_equipamentos = self.sicro_equipamentos.get()
+        sicro_materiais = self.sicro_materiais.get()
+        
+        threading.Thread(
+            target=aninhar_arquivos, 
+            args=(
+                None, 
+                tipo_arquivo,
+                sicro_composicoes,
+                sicro_equipamentos_desonerado,
+                sicro_equipamentos,
+                sicro_materiais
+            ), 
+            daemon=True
+        ).start()
 
     def execute_sicro(self):
         state = self.selected_sicro_state.get()

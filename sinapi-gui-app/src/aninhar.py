@@ -23,7 +23,7 @@ print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
 def apagar_dados_sinapi():
     """Apaga todos os arquivos e pastas da pasta SinapiDownloads."""
     desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
-    base_dir = os.path.join(desktop_dir, "SinapiDownloads")
+    base_dir = os.path.join(desktop_dir, "Arquivos-SINAPI-SICRO-ORSE")
     if os.path.isdir(base_dir):
         for item in os.listdir(base_dir):
             item_path = os.path.join(base_dir, item)
@@ -38,7 +38,14 @@ def apagar_dados_sinapi():
                 
                 
 
-def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos") -> Tuple[List[str], str]:
+def aninhar_arquivos(
+    base_dir: Optional[str] = None,
+    tipo_arquivo: str = "Ambos",
+    sicro_composicoes: bool = False,
+    sicro_equipamentos_desonerado: bool = False,
+    sicro_equipamentos: bool = False,
+    sicro_materiais: bool = False
+) -> Tuple[List[str], str]:
     """
     1) Move todos os arquivos da pasta Downloads cujo nome contém 'sinapi'
        (case-insensitive) para a pasta "Sinapi downloads" na Área de Trabalho
@@ -46,6 +53,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     2) Extrai todos os .zip encontrados diretamente dentro da pasta "Sinapi downloads".
     3) Procura recursivamente por arquivos Excel cujo nome contenha 'sintetico' ou 'insumos'
        (case-insensitive) dentro de base_dir (inclui conteúdo extraído).
+       Para arquivos SICRO, a inclusão é controlada pelos parâmetros booleanos.
     4) Junta todas as abas encontradas em um único arquivo Excel em <base_dir>/aninhar/.
     Retorna (moved_paths, out_path) - moved_paths: lista de arquivos movidos; out_path: caminho do arquivo aninhado
     (out_path será "" se não houve arquivos Excel encontrados).
@@ -53,7 +61,7 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
     # determina base_dir (Sinapi downloads na Área de Trabalho)
     if base_dir is None:
         desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
-        base_dir = os.path.join(desktop_dir, "SinapiDownloads")
+        base_dir = os.path.join(desktop_dir, "Arquivos-SINAPI-SICRO-ORSE")
     os.makedirs(base_dir, exist_ok=True)
     base_dir = os.path.abspath(base_dir)
 
@@ -95,6 +103,11 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             parts.append("SIN")
         else:
             return None  # All target files are "Sintético"
+
+        # append no estado
+        parts.append(state)
+
+
 
         # Rule: Type part based on keyword
         type_part = None
@@ -447,13 +460,64 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             # só considerar arquivos Excel
             if ext not in exts:
                 continue
+
+            # Se o arquivo estiver em uma pasta que começa com "SICRO" dentro de "__extracted_zips__",
+            # adicione-o apenas se contiver as palavras-chave.
+            abs_root = os.path.abspath(root)
+            abs_extracted_root = os.path.abspath(extracted_root)
+            is_in_target_sicro_folder = False
+            if abs_root.startswith(abs_extracted_root):
+                relative_path = os.path.relpath(abs_root, abs_extracted_root)
+                path_parts = relative_path.split(os.sep)
+                if any(part.upper().startswith("SICRO") for part in path_parts):
+                    is_in_target_sicro_folder = True
             
+            
+            
+            if is_in_target_sicro_folder:
+                # Apenas aninhar o arquivo se ele contiver "Relatório", "Sintético" e "Custos"
+                if "relatório" in low and "sintético" in low and "custos" in low and sicro_composicoes:
+                    matches.append(os.path.join(root, fname))
+                if "relatório" in low and "sintético" in low and "equipamentos" in low and "com" in low and sicro_equipamentos_desonerado:
+                    matches.append(os.path.join(root, fname))
+                if "relatório" in low and "sintético" in low and "equipamentos" in low and not "com" in low and sicro_equipamentos:
+                    matches.append(os.path.join(root, fname))
+                if "relatório" in low and "sintético" in low and "materiais" in low and sicro_materiais:
+                    matches.append(os.path.join(root, fname))
+                continue
+
+            # Lógica de filtro anterior para outros arquivos (SINAPI, ORSE, etc.)
             # condições solicitadas com base no tipo_arquivo:
             has_sint = "sintetico" in low
             has_insumos = "insumos" in low
             has_familia = "família" in low or "familia" in low
+            
+            is_sicro_file = low.startswith("sicro-")
 
+            
+
+            # if is_sicro_file:
+            #     print("ENTROU NA LÓGICA DE SICRO")
+            #     # Lógica para arquivos SICRO (fora de __extracted_zips__/SICRO*/), controlada pelos parâmetros booleanos
+            #     # Corrigido para usar lowercase e checagens mais específicas
+            #     has_sintetico_comp_custos = "sintético" in low and ("custos" in low or "composi" in low)
+            #     has_sintetico_equipamentos_desonerado = "sintético" in low and "equipamentos" in low and "com desonera" in low
+            #     has_sintetico_equipamentos = "sintético" in low and "equipamentos" in low and "com desonera" not in low
+            #     has_sintetico_materiais = "sintético" in low and "materiais" in low
+
+            #     if (sicro_composicoes and has_sintetico_comp_custos) or \
+            #        (sicro_equipamentos_desonerado and has_sintetico_equipamentos_desonerado) or \
+            #        (sicro_equipamentos and has_sintetico_equipamentos) or \
+            #        (sicro_materiais and has_sintetico_materiais):
+            #         add_file = True
+            #         matches.append(os.path.join(root, fname))
+            # else:
+               
+                
+            # Flags para tipo de arquivo
             add_file = False
+            
+            # Lógica para arquivos SINAPI, controlada por tipo_arquivo
             if tipo_arquivo == "Insumos":
                 if has_insumos and not has_familia:
                     add_file = True
@@ -463,8 +527,10 @@ def aninhar_arquivos(base_dir: Optional[str] = None, tipo_arquivo: str = "Ambos"
             elif tipo_arquivo == "Ambos":
                 if has_sint or (has_insumos and not has_familia):
                     add_file = True
-            
-            if add_file or low.startswith("orse"):
+
+            # if add_file or low.startswith("orse"):
+            #     matches.append(os.path.join(root, fname))
+            if add_file or low.startswith("orse") or is_in_target_sicro_folder:
                 matches.append(os.path.join(root, fname))
 
     if not matches:
