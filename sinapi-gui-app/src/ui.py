@@ -1,10 +1,13 @@
-from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font
+from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog
 from datetime import datetime
 import threading
 import importlib
 import sys
 import os
 import webbrowser
+from copy import copy
+import openpyxl
+from openpyxl.styles import PatternFill
 
 # Adiciona o diretório raiz ao sys.path para encontrar o módulo orse
 src_dir = os.path.dirname(__file__)
@@ -100,7 +103,7 @@ class SinapiApp:
     def __init__(self, master):
         self.master = master
         master.title("SINAPI, ORSE e SICRO downloads")
-        master.geometry("800x450")
+        master.geometry("800x600")
         master.resizable(False, False)
 
         self.selected_service = StringVar(value="SINAPI")
@@ -193,6 +196,13 @@ class SinapiApp:
         self.aninhar_button = None
         self.add_state_button = None
         self.apagar_button = None
+        
+        # New variables for file comparison
+        self.project_file_path = StringVar()
+        self.database_file_path = StringVar()
+        self.project_full_path = None
+        self.database_full_path = None
+
 
         self.create_widgets()
 
@@ -382,27 +392,15 @@ class SinapiApp:
 
     def create_widgets(self):
         main_frame = Frame(self.master)
-        main_frame.pack(fill='both', expand=True)
+        main_frame.pack(fill='both', expand=True, padx=10, pady=5)
 
-        # --- Botões ---
-        bottom_frame = Frame(main_frame)
-        bottom_frame.pack(side='bottom', fill='x', pady=10)
-
-        self.baixar_button = Button(bottom_frame, text="Baixar", command=self.execute_sinapi)
-        self.baixar_button.pack(side='left', padx=5)
-        
-        self.aninhar_button = Button(bottom_frame, text="Juntar", command=self.execute_aninhar)
-        self.aninhar_button.pack(side='left', padx=5)
-        
-        self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
-        self.add_state_button.pack(side='left', padx=5)
-        
-        self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sinapi)
-        self.apagar_button.pack(side='right', padx=5)
+        # --- Top section for downloading ---
+        download_frame = Frame(main_frame, relief='groove', bd=2)
+        download_frame.pack(fill='x', padx=5, pady=5)
 
         # --- Conteúdo Principal ---
-        content_frame = Frame(main_frame)
-        content_frame.pack(side='top', fill='x')
+        content_frame = Frame(download_frame)
+        content_frame.pack(side='top', fill='x', padx=5, pady=5)
 
         Label(content_frame, text="Selecione a base de dados:").pack()
         OptionMenu(content_frame, self.selected_service, "SINAPI", "SICRO", "ORSE").pack()
@@ -494,8 +492,211 @@ class SinapiApp:
         Label(sicro_state_frame, text="Selecione o estado:").pack(anchor='w')
         OptionMenu(sicro_state_frame, self.selected_sicro_state, *estados).pack(anchor='w')
 
+        # --- Botões de download ---
+        bottom_frame = Frame(download_frame)
+        bottom_frame.pack(side='bottom', fill='x', pady=10)
+
+        self.baixar_button = Button(bottom_frame, text="Baixar", command=self.execute_sinapi)
+        self.baixar_button.pack(side='left', padx=5)
+        
+        self.aninhar_button = Button(bottom_frame, text="Juntar", command=self.execute_aninhar)
+        self.aninhar_button.pack(side='left', padx=5)
+        
+        self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
+        self.add_state_button.pack(side='left', padx=5)
+        
+        self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sinapi)
+        self.apagar_button.pack(side='right', padx=5)
+
+        # --- New Comparison Section ---
+        comparison_frame = Frame(main_frame, relief='groove', bd=2)
+        comparison_frame.pack(fill='x', padx=5, pady=5, side='bottom')
+
+        Label(comparison_frame, text="Comparar Planilhas", font=font.Font(weight='bold')).pack(pady=5)
+
+        # Project file selection
+        proj_frame = Frame(comparison_frame)
+        proj_frame.pack(fill='x', padx=10, pady=2)
+        Button(proj_frame, text="Arquivo do projeto", command=self.select_project_file).pack(side='left')
+        Label(proj_frame, textvariable=self.project_file_path, fg="gray").pack(side='left', padx=10)
+
+        # Database file selection
+        db_frame = Frame(comparison_frame)
+        db_frame.pack(fill='x', padx=10, pady=2)
+        Button(db_frame, text="Arquivo das bases de dados", command=self.select_database_file).pack(side='left')
+        Label(db_frame, textvariable=self.database_file_path, fg="gray").pack(side='left', padx=10)
+        
+        # Start comparison button
+        Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison).pack(pady=10)
+
+
     def open_link(self, event):
         webbrowser.open_new_tab("https://www.caixa.gov.br/site/paginas/downloads.aspx")
+
+    def select_project_file(self):
+        filepath = filedialog.askopenfilename(
+            title="Selecione o arquivo do projeto",
+            filetypes=(("Excel files", "*.xlsx *.xls *.xlsm"), ("All files", "*.*"))
+        )
+        if not filepath:
+            return
+
+        self.project_full_path = filepath
+        self.project_file_path.set(os.path.basename(filepath))
+        
+        try:
+            workbook = openpyxl.load_workbook(filepath, read_only=True)
+            if "Curva ABC" in workbook.sheetnames:
+                print("Curva ABC encontrado!")
+                print("Nome das planilhas encontradas: ", workbook.sheetnames)
+            else:
+                messagebox.showwarning("Aviso", 'A planilha "Curva ABC" não foi encontrada no arquivo do projeto.')
+                self.project_file_path.set("")
+                self.project_full_path = None
+        except Exception as e:
+            messagebox.showerror("Erro ao ler arquivo", f"Não foi possível ler o arquivo do projeto: {e}")
+            self.project_file_path.set("")
+            self.project_full_path = None
+
+    def select_database_file(self):
+        filepath = filedialog.askopenfilename(
+            title="Selecione o arquivo das bases de dados",
+            filetypes=(("Excel files", "*.xlsx *.xls *.xlsm"), ("All files", "*.*"))
+        )
+        if filepath:
+            self.database_full_path = filepath
+            self.database_file_path.set(os.path.basename(filepath))
+            print("Arquivo das bases de dados selecionado:", filepath)
+        else:
+            print("Nenhum arquivo das bases de dados selecionado.")
+
+    def start_comparison(self):
+        print("INICIANDO COMPARAÇÃO!!!")
+        if not self.project_full_path or not self.database_full_path:
+            messagebox.showwarning("Aviso", "Por favor, selecione o arquivo do projeto e o arquivo das bases de dados.")
+            return
+
+        threading.Thread(target=self._run_comparison_thread, daemon=True).start()
+
+    def _run_comparison_thread(self):
+        try:
+            proj_wb = openpyxl.load_workbook(self.project_full_path)
+            db_wb = openpyxl.load_workbook(self.database_full_path, read_only=True)
+
+            # --- 1. Create a new result workbook ---
+            result_wb = openpyxl.Workbook()
+            result_wb.remove(result_wb.active) # Remove default sheet
+
+            # --- 2. Create the result sheet and apply comparison ---
+            proj_ws = proj_wb["Curva ABC"]
+            result_ws = result_wb.create_sheet(title="Resultado da Comparação")
+            
+            # Find column indices
+            header = [cell.value for cell in proj_ws[1]]
+            try:
+                desc_col_idx = header.index("Descrição") + 1
+                price_col_idx = header.index("Preço Unitário") + 1
+            except ValueError:
+                print("Cabeçalhos 'Descrição' e/ou 'Preço Unitário' não encontrados. Usando colunas padrão B e D.")
+                desc_col_idx = 2
+                price_col_idx = 4
+
+            # Build database dictionary
+            db_data = {}
+            for sheet_name in db_wb.sheetnames:
+                sheet = db_wb[sheet_name]
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    desc = row[1]
+                    price = row[3]
+                    if isinstance(desc, str):
+                        db_data[desc.strip()] = (price, sheet_name)
+
+            # Define colors
+            green_fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
+            red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+            blue_fill = PatternFill(start_color="BDE0FE", end_color="BDE0FE", fill_type="solid")
+            gray_fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
+            
+            # Copy header to result sheet and add new columns
+            for col_idx, cell in enumerate(proj_ws[1], 1):
+                result_ws.cell(row=1, column=col_idx, value=cell.value)
+            
+            base_header_col = len(header) + 1
+            result_ws.cell(row=1, column=base_header_col, value="Planilha da Base")
+            result_ws.cell(row=1, column=base_header_col + 1, value="Valor Curva ABC")
+            result_ws.cell(row=1, column=base_header_col + 2, value="Valor Base de Dados")
+            result_ws.cell(row=1, column=base_header_col + 3, value="Diferença")
+
+
+            # Iterate through project data, write to result sheet and apply color
+            for row_idx, proj_row_data in enumerate(proj_ws.iter_rows(min_row=2, values_only=True), 2):
+                # Write the original row to the result sheet first
+                for col_idx, cell_value in enumerate(proj_row_data, 1):
+                    result_ws.cell(row=row_idx, column=col_idx, value=cell_value)
+                
+                proj_desc = proj_row_data[desc_col_idx - 1]
+                proj_price = proj_row_data[price_col_idx - 1]
+
+                fill_color = None
+                if isinstance(proj_desc, str) and proj_desc.strip() in db_data:
+                    db_price, db_sheet_name = db_data[proj_desc.strip()]
+                    result_ws.cell(row=row_idx, column=base_header_col, value=db_sheet_name)
+                    
+                    try:
+                        proj_price_float = float(proj_price)
+                        db_price_float = float(db_price)
+
+                        result_ws.cell(row=row_idx, column=base_header_col + 1, value=proj_price_float)
+                        result_ws.cell(row=row_idx, column=base_header_col + 2, value=db_price_float)
+                        result_ws.cell(row=row_idx, column=base_header_col + 3, value=proj_price_float - db_price_float)
+
+                        if proj_price_float < db_price_float:
+                            fill_color = green_fill
+                        elif proj_price_float > db_price_float:
+                            fill_color = red_fill
+                        else:
+                            fill_color = blue_fill
+                    except (ValueError, TypeError):
+                        fill_color = gray_fill
+                else:
+                    fill_color = gray_fill
+                
+                if fill_color:
+                    for col in range(1, len(proj_row_data) + 1):
+                        result_ws.cell(row=row_idx, column=col).fill = fill_color
+
+            # --- 3. Copy original "Curva ABC" sheet ---
+            original_abc_ws = result_wb.create_sheet(title="Curva ABC (Original)")
+            for r_idx, row in enumerate(proj_ws.iter_rows(), 1):
+                for c_idx, cell in enumerate(row, 1):
+                    new_cell = original_abc_ws.cell(row=r_idx, column=c_idx, value=cell.value)
+                    if hasattr(cell, 'has_style') and cell.has_style:
+                        new_cell.font = copy(cell.font)
+                        new_cell.border = copy(cell.border)
+                        new_cell.fill = copy(cell.fill)
+                        new_cell.number_format = cell.number_format
+                        new_cell.protection = copy(cell.protection)
+                        new_cell.alignment = copy(cell.alignment)
+
+            # --- 4. Copy all sheets from the database workbook ---
+            for db_sheet_name in db_wb.sheetnames:
+                db_ws = db_wb[db_sheet_name]
+                new_db_ws = result_wb.create_sheet(title=db_sheet_name)
+                for r_idx, row in enumerate(db_ws.iter_rows(), 1):
+                    for c_idx, cell in enumerate(row, 1):
+                        new_cell = new_db_ws.cell(row=r_idx, column=c_idx, value=cell.value)
+                        if hasattr(cell, 'has_style') and cell.has_style:
+                            new_cell.font = copy(cell.font)
+                            new_cell.fill = copy(cell.fill)
+                            new_cell.number_format = cell.number_format
+
+            output_filename = "comparacao_resultados.xlsx"
+            result_wb.save(output_filename)
+            messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{os.path.abspath(output_filename)}")
+
+        except Exception as e:
+            messagebox.showerror("Erro na Comparação", f"Ocorreu um erro durante a comparação: {e}")
+
 
 
 
