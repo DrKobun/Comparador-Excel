@@ -53,6 +53,8 @@ sinapi-gui-app
 
 6. Click "Concluir" to generate and open the links based on your selections.
 
+7. A clickable link for more information is available in the SINAPI section, which opens a web page.
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
@@ -60,3 +62,24 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Excel Formatting Scripts
+
+### organizar_excel.py
+
+This script iterates through all Excel files in a specified directory and saves each sheet as a new Excel file. For any sheet that has "EQP" in its name, it will delete columns C, D, E, F, G, H, and I.
+
+This script requires the following libraries:
+- pandas
+- openpyxl
+
+### formatar_aninhados.py
+
+This script automates the formatting of specific Excel spreadsheets. It iterates over all Excel files in the 'Arquivos-SINAPI-SICRO-ORSE/aninhar' folder on the user's desktop.
+
+- For sheets starting with 'SINA-SIN', it performs a series of formatting operations, including deleting columns and rows, and auto-fitting column widths.
+- For sheets starting with 'SINA-INS', it performs a different set of formatting operations.
+- For any sheet that has "EQP" in its name, it will delete columns C, D, E, F, G, H, and I.
+
+This script requires the following libraries:
+- xlwings

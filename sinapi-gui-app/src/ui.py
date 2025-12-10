@@ -1,9 +1,10 @@
-from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame
+from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font
 from datetime import datetime
 import threading
 import importlib
 import sys
 import os
+import webbrowser
 
 # Adiciona o diretório raiz ao sys.path para encontrar o módulo orse
 src_dir = os.path.dirname(__file__)
@@ -457,6 +458,13 @@ class SinapiApp:
             cb = Checkbutton(rows[row_idx], text=estado, variable=self.selected_states[estado])
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
+        # texto de link clicável:
+        link_font = font.Font(size=10, underline=True)
+        link_label = Label(self.sinapi_widgets, text="site de downloads da CAIXA (SINAPI)", fg="blue", cursor="hand2")
+        link_label.pack()
+        link_label.bind("<Button-1>", self.open_link)
+        link_label.config(font=link_font)
+
         # --- Widgets ORSE ---
         self.orse_widgets = Frame(content_frame)
         # Não fazer o pack inicial
@@ -485,6 +493,11 @@ class SinapiApp:
         sicro_state_frame.pack(pady=5)
         Label(sicro_state_frame, text="Selecione o estado:").pack(anchor='w')
         OptionMenu(sicro_state_frame, self.selected_sicro_state, *estados).pack(anchor='w')
+
+    def open_link(self, event):
+        webbrowser.open_new_tab("https://www.caixa.gov.br/site/paginas/downloads.aspx")
+
+
 
     def execute_aninhar(self):
         tipo_arquivo = self.selected_file_type.get()

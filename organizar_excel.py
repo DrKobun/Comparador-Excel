@@ -20,6 +20,14 @@ def separate_excel_sheets(input_directory):
                 for sheet_name in xls.sheet_names:
                     df = pd.read_excel(xls, sheet_name=sheet_name)
                     
+                    # Check if the sheet name contains "EQP"
+                    if "EQP" in sheet_name:
+                        # Delete columns C, D, E, F, G, H, I (indices 2, 3, 4, 5, 6, 7, 8)
+                        df.drop(df.columns[[2, 3, 4, 5, 6, 7, 8]], axis=1, inplace=True)
+                    elif sheet_name.startswith("SICRO"):
+                        # Delete rows 1, 2, 3 (indices 0, 1, 2)
+                        df.drop(index=[0, 1, 2], inplace=True)
+
                     # Sanitize sheet name to create a valid filename by removing illegal characters
                     invalid_chars = '<>:"/\\|?*'
                     sanitized_sheet_name = "".join(c for c in sheet_name if c not in invalid_chars).strip()
@@ -50,3 +58,4 @@ if __name__ == "__main__":
 # 2. Save this code as a Python file (e.g., organizar_excel.py).
 # 3. Run the script from your terminal:
 #    python organizar_excel.py
+# 4. The script will also delete columns C through I for any sheets that have 'EQP' in their name.

@@ -5,7 +5,7 @@ a = Analysis(
     ['src\\main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('src\\LINKS_SICRO.txt', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

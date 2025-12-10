@@ -1,6 +1,18 @@
 import os
 import re
+import sys
 from typing import Dict, List
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # not in bundle, so we can get it from the script's directory
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    return os.path.join(base_path, relative_path)
 
 MONTH_NAME_TO_NUMBER = {
     'janeiro': '01', 'fevereiro': '02', 'marco': '03', 'abril': '04', 
@@ -19,7 +31,7 @@ STATE_NAME_TO_ACRONYM = {
     'tocantins': 'TO'
 }
 
-LINKS_FILE_PATH = os.path.join(os.path.dirname(__file__), 'LINKS_SICRO.txt')
+LINKS_FILE_PATH = resource_path('LINKS_SICRO.txt')
 
 def parse_sicro_links() -> Dict[str, Dict[str, Dict[str, Dict[str, str]]]]:
     """
