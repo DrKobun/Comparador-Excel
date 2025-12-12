@@ -505,51 +505,101 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
         
         tipos = ["Desonerado", "NaoDesonerado"] if tipo == "Ambos" else [tipo]
         for t in tipos:
+            
+            # Correção DF
+            if estado == 'DF' and ano == 2023 and mes in (1, 2):
+                print('valor de tipos:', tipos)
+                print('-------------------')
+                print('VALOR DO ESTADO:', estado)
+                print('VALOR DO TIPO:', t)
+                print('VALOR DO MÊS:', mes)
+                print('VALOR DO ANO:', ano)
+                print('-------------------')
+                url = base_url_ma + f"{t}_Retificacao01.zip"
+                links.append(url)
+                continue
+                
+                
+            # Correção DF MÊS 8
+            if estado == 'DF' and ano == 2023 and mes == 8:
+                
+                url = base_url + f"{t}Retificacao04.zip"
+                links.append(url)
+                continue
+            
+            if estado not in ('AC', 'AM', 'AL', 'RO', 'BA', 'CE', 'PB', 'SC', 'PE', 'PI', 'PR', 'SP', 'TO') and mes == 9 and ano == 2023:
+                url = base_url_ma + f"{t}.zip"
+                links.append(url)
+                continue
+            
+            
+            
+            # Correção do estado 'ES'
+            if estado == 'ES'and ano == 2024 and mes in (1, 2, 3, 4):
+                print('valor de tipos:', tipos)
+                print('-------------------')
+                print('VALOR DO ESTADO:', estado)
+                print('VALOR DO TIPO:', t)
+                print('VALOR DO MÊS:', mes)
+                print('VALOR DO ANO:', ano)
+                print('-------------------')
+                
+                url = base_url + f"{t}_Retificacao01.zip"
+                links.append(url)    
+                continue
+            
+            # Correção do estado "AL"
+            elif estado in ('AL', 'AM', 'RO', 'BA', 'CE', 'PB', 'SC', 'PE', 'PI', 'PR', 'SP', 'TO') and ano == 2023 and mes == 9:
+                url = base_url + f"{t}_Retificacao01.zip"
+                links.append(url)    
+                continue     
+            
+            
             if ano == 2023 and mes == 5:
                 # https://www.caixa.gov.br/Downloads/..._202305_..._Retificacao01.zip
                 url = base_url + f"{t}_Retificacao01.zip"
                 links.append(url)
-
+                continue
             # verifica que ANO == 2023 E MÊS está na lista (ambas verdadeiras)
             elif ano == 2023 and mes in (1, 2, 3, 4, 6, 7, 8):
                 # exemplo: ..._082023_NaoDesonerado.zip (usando base_url_ma)
                 url = base_url_ma + f"{t}.zip"
                 links.append(url)
-                
+                continue
                 
             # com retificação 01 (2022)
             elif ano == 2022 and mes in (1, 2, 3, 4):
                 # exemplo: ..._082023_NaoDesonerado.zip (usando base_url_ma)
                 url = base_url_ma + f"{t}Retificacao01.zip"
                 links.append(url)
-            
+                continue
             # com retificação 02 (2022)
             elif ano == 2022 and mes == 10:
                 # exemplo: ..._082023_NaoDesonerado.zip (usando base_url_ma)
                 url = base_url_ma + f"{t}Retificacao02.zip"
                 links.append(url)
-            
+                continue
             # sem retificação
             elif ano == 2022 and mes in (5,6,7,8,9,11,12):
                 url = base_url_ma + f"{t}.zip"
                 links.append(url)
-                
+                continue  
                 
             # 2021 ✅
             elif ano == 2021 and mes in (7, 8, 9, 10, 11, 12):
                 url = base_url_ma + f"{t}.zip"
                 links.append(url)
-                
+                continue  
             # 2021 com refiticação ✅
             elif ano == 2021 and mes in (5, 6):
                 url = base_url_ma + f"{t}_Retificacao01.zip"
                 links.append(url)
-                
+                continue 
             # exclusivo 2021 (1a4) ✅✅
             elif ano == 2021 and mes in (1,2,3,4):
                 url = base_url_multiplos_meses + f"01a04" + f"_Retificacao01.zip"
                 links.append(url)
-               
+                continue
                 
             
                 
@@ -564,70 +614,71 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
                 print("Valor de estado: ", estado)
                 url = base_url_multiplos_meses + f"09a12_Retificacao01.zip"
                 links.append(url)
-                break
+                continue
             # 2020 5a8 ✅
             elif ano == 2020 and mes in (5, 6, 7, 8):
                 url = base_url_multiplos_meses + f"05a08.zip"
                 links.append(url)
-                break
+                continue
             #2020 1a4 ✅
             elif ano == 2020 and mes in (1, 2, 3, 4):
                 url = base_url_multiplos_meses + f"01a04.zip"
                 links.append(url)
-                break
+                continue
             
             # 2019 ✅
             elif ano == 2019 and mes in (9, 10, 11, 12):
                 print("Valor de estado: ", estado)
                 url = base_url_multiplos_meses + f"09a12_Retificacao02.zip"
                 links.append(url)
-                break
+                continue
             # 2019 5a8 ✅
             elif ano == 2019 and mes in (5, 6, 7, 8):
                 url = base_url_multiplos_meses + f"05a08_Retificacao.zip"
                 links.append(url)
-                break
+                continue
             # 2019 1a4 ✅
             elif ano == 2019 and mes in (1, 2, 3, 4):
                 url = base_url_multiplos_meses + f"01a04_Retificacao.zip"
                 links.append(url)
-                break
+                continue
             
             # 2018 ✅
             elif ano == 2018 and mes in (1, 2, 3, 4, 5, 6):
                 # link: https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_2018_01a06.zip
                 url = base_url_multiplos_meses + "01a06.zip"
                 links.append(url)
-                break
+                continue
             # 2018 7e8 ✅
             elif ano == 2018 and mes in (7, 8):
                 # link: https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_2018_07e08_Retificacao.zip
                 url = base_url_multiplos_meses + "07e08_Retificacao.zip"
                 links.append(url)
-                break
+                continue
             
             # 2018 9a12 ✅
             elif ano == 2018 and mes in (9, 10, 11, 12):
                 # link: https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_2018_09a12_Retificacao.zip
                 url = base_url_multiplos_meses + "09a12_Retificacao.zip"
                 links.append(url)
-                break
+                continue
                 
             # 2017 1a6 ✅
             elif ano == 2017 and mes in (1, 2, 3, 4, 5, 6):
                 # link: https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_01a062017_retific.zip
                 url = base_url_2017 + "01a062017_retific.zip"
                 links.append(url)
-                break
+                continue
             # 2017 7a12 ✅
             elif ano == 2017 and mes in (7, 8, 9, 10, 11, 12):
                 # link: https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-ac/SINAPI_ref_Insumos_Composicoes_AC_07a122017.zip
                 url = base_url_2017 + "07a122017.zip"
                 links.append(url)
-                break
+                continue
                 
-            
+                
             else:
+                print('valor de tipos:' , t)
                 url = base_url + f"{t}.zip"
                 links.append(url)
 
