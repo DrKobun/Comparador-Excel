@@ -1,5 +1,44 @@
 import os
+import re
 import xlwings as xw
+
+def remover_anotacoes_da_planilha(sheet):
+    """
+    Para cada célula de uma planilha, remove textos que estão entre '!' e '!!'
+    e os espaços em branco adjacentes.
+    Exemplo: 'texto !anotação!! texto' se torna 'texto texto'.
+    """
+    print(f"    - Removendo anotações da planilha '{sheet.name}'...")
+    try:
+        used_range = sheet.used_range
+        if used_range.count == 0:
+            print(f"    - Planilha '{sheet.name}' está vazia.")
+            return False
+
+        # Lendo todos os valores de uma vez para otimização
+        # ndim=2 força o retorno a ser sempre uma lista de listas
+        values = used_range.options(ndim=2).value
+
+        annotation_regex = re.compile(r'\s*!.*?!')
+        
+        modified = False
+        for r, row in enumerate(values):
+            for c, cell_value in enumerate(row):
+                if isinstance(cell_value, str) and annotation_regex.search(cell_value):
+                    values[r][c] = annotation_regex.sub('', cell_value).strip()
+                    modified = True
+        
+        # Escreve os dados de volta apenas se houveram modificações
+        if modified:
+            used_range.value = values
+            print("    - Anotações removidas com sucesso.")
+            return True
+        else:
+            print("    - Nenhuma anotação encontrada para remover.")
+            return False
+    except Exception as e:
+        print(f"    - AVISO ao remover anotações: {e}")
+        return False
 
 def format_excel_files():
     """
@@ -43,12 +82,18 @@ def format_excel_files():
                 if wb.api.ReadOnly:
                     print(f"  - AVISO: O arquivo '{filename}' está no modo somente leitura. As alterações não serão salvas.")
                 
-                sheet_formatted = False
+                file_modified = False
                 # Itera sobre todas as planilhas
                 for sheet in wb.sheets:
+                    # Etapa 1: Remover anotações de todas as planilhas
+                    if remover_anotacoes_da_planilha(sheet):
+                        file_modified = True
+
+                    # Etapa 2: Formatação condicional baseada no nome da planilha
+                    sheet_name_formatted = False
                     # Condição para planilhas "SINA-SIN"
                     if sheet.name.startswith('SINA-SIN'):
-                        sheet_formatted = True
+                        sheet_name_formatted = True
                         print(f"  - Formatando planilha (SINA-SIN): '{sheet.name}'")
                         
                         # --- Etapa de Limpeza ---
@@ -147,7 +192,7 @@ def format_excel_files():
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     elif "EQP" in sheet.name:
-                        sheet_formatted = True
+                        sheet_name_formatted = True
                         print(f"  - Formatando planilha (EQP): '{sheet.name}'")
                         
                         # Exclui as colunas C, D, E, F, G, H, I
@@ -171,7 +216,7 @@ def format_excel_files():
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     elif sheet.name.startswith('SICRO'):
-                        sheet_formatted = True
+                        sheet_name_formatted = True
                         print(f"  - Formatando planilha (SICRO): '{sheet.name}'")
                         
                         # Exclui as linhas 1, 2 e 3
@@ -188,7 +233,7 @@ def format_excel_files():
 
                     # Condição para planilhas "SINA-INS"
                     elif sheet.name.startswith('SINA-INS'):
-                        sheet_formatted = True
+                        sheet_name_formatted = True
                         print(f"  - Formatando planilha (SINA-INS): '{sheet.name}'")
                         
                         # Exclui as linhas 1-6
@@ -251,11 +296,14 @@ def format_excel_files():
 
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
-                if sheet_formatted:
+                    if sheet_name_formatted:
+                        file_modified = True
+
+                if file_modified:
                     print(f"Salvando alterações em {filename}...")
                     wb.save()
                 else:
-                    print(f"  - Nenhuma planilha com o prefixo 'SINA-SIN' encontrada em {filename}.")
+                    print(f"  - Nenhuma alteração aplicável encontrada em {filename}.")
 
             except Exception as e:
                 print(f"  ERRO: Não foi possível processar o arquivo {filename}. Motivo: {e}")

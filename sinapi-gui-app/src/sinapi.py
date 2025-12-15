@@ -148,6 +148,7 @@ def obter_valor_junho_2020():
 def definir_valor_junho_2020(valor: bool):
     global _junho_2020
     _junho_2020 = valor
+    print("Valor atual de _junho_2020:", _junho_2020)
 
 def obter_valor_julho_2020():
     return _julho_2020
@@ -695,7 +696,7 @@ def abrir_links_no_navegador(links, intervalo_segundos=1):
 
 if __name__ == "__main__":
     ano = 2024
-    mes = 11
+    mes = 1
     tipo = "Ambos"
     links = gerar_links_sinapi(ano, mes, tipo)
     abrir_links_no_navegador(links, intervalo_segundos=1)

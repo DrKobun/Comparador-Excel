@@ -12,12 +12,12 @@ import sinapi
 ESTADOS_BR = {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
               'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
               'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}
-
-print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
-print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(True))
-print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
-print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(False))
-print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+print('Programa iniciado')
+# print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+# print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(True))
+# print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
+# print("VALOR ALTERADO! ", sinapi.definir_valor_janeiro_2021(False))
+# print("VALOR ATUAL! ", sinapi.obter_valor_janeiro_2021())
 
 
 def apagar_dados_sinapi():
@@ -372,43 +372,74 @@ def aninhar_arquivos(
     # Mapeamento de funções e datas para construir a lista_manter
     date_check_map = [
         #(função_obter, função_definir, ano, mês)
-        (sinapi.obter_valor_janeiro_2021, sinapi.definir_valor_janeiro_2021, "2021", "01"),
-        (sinapi.obter_valor_fevereiro_2021, sinapi.definir_valor_fevereiro_2021, "2021", "02"),
-        (sinapi.obter_valor_marco_2021, sinapi.definir_valor_marco_2021, "2021", "03"),
-        (sinapi.obter_valor_abril_2021, sinapi.definir_valor_abril_2021, "2021", "04"),
-        (sinapi.obter_valor_maio_2020, sinapi.definir_valor_maio_2020, "2020", "05"),
-        (sinapi.obter_valor_junho_2020, sinapi.definir_valor_junho_2020, "2020", "06"),
-        (sinapi.obter_valor_julho_2020, sinapi.definir_valor_julho_2020, "2020", "07"),
-        (sinapi.obter_valor_agosto_2020, sinapi.definir_valor_agosto_2020, "2020", "08"),
-        (sinapi.obter_valor_setembro_2020, sinapi.definir_valor_setembro_2020, "2020", "09"),
-        (sinapi.obter_valor_outubro_2020, sinapi.definir_valor_outubro_2020, "2020", "10"),
-        (sinapi.obter_valor_novembro_2020, sinapi.definir_valor_novembro_2020, "2020", "11"),
-        (sinapi.obter_valor_dezembro_2020, sinapi.definir_valor_dezembro_2020, "2020", "12"),
-        (sinapi.obter_valor_janeiro_2020, sinapi.definir_valor_janeiro_2020, "2020", "01"),
-        (sinapi.obter_valor_fevereiro_2020, sinapi.definir_valor_fevereiro_2020, "2020", "02"),
-        (sinapi.obter_valor_marco_2020, sinapi.definir_valor_marco_2020, "2020", "03"),
-        (sinapi.obter_valor_abril_2020, sinapi.definir_valor_abril_2020, "2020", "04"),
-        (sinapi.obter_valor_janeiro_2019, sinapi.definir_valor_janeiro_2019, "2019", "01"),
-        (sinapi.obter_valor_fevereiro_2019, sinapi.definir_valor_fevereiro_2019, "2019", "02"),
-        (sinapi.obter_valor_marco_2019, sinapi.definir_valor_marco_2019, "2019", "03"),
-        (sinapi.obter_valor_abril_2019, sinapi.definir_valor_abril_2019, "2019", "04"),
-        (sinapi.obter_valor_maio_2019, sinapi.definir_valor_maio_2019, "2019", "05"),
-        (sinapi.obter_valor_junho_2019, sinapi.definir_valor_junho_2019, "2019", "06"),
-        (sinapi.obter_valor_julho_2019, sinapi.definir_valor_julho_2019, "2019", "07"),
-        (sinapi.obter_valor_agosto_2019, sinapi.definir_valor_agosto_2019, "2019", "08"),
-        (sinapi.obter_valor_setembro_2019, sinapi.definir_valor_setembro_2019, "2019", "09"),
-        (sinapi.obter_valor_outubro_2019, sinapi.definir_valor_outubro_2019, "2019", "10"),
-        (sinapi.obter_valor_novembro_2019, sinapi.definir_valor_novembro_2019, "2019", "11"),
-        (sinapi.obter_valor_dezembro_2019, sinapi.definir_valor_dezembro_2019, "2019", "12"),
+        # ALTERAÇÃO DE TESTE, VOLTAR AO TRECHO COMENTADO CASO APRESENTE QUALQUER TIPO DE ERRO:
+        (sinapi.obter_valor_janeiro_2021, "2021", "01"),
+        (sinapi.obter_valor_fevereiro_2021, "2021", "02"),
+        (sinapi.obter_valor_marco_2021, "2021", "03"),
+        (sinapi.obter_valor_abril_2021, "2021", "04"),
+        (sinapi.obter_valor_maio_2020, "2020", "05"),
+        (sinapi.obter_valor_junho_2020, "2020", "06"),
+        (sinapi.obter_valor_julho_2020, "2020", "07"),
+        (sinapi.obter_valor_agosto_2020, "2020", "08"),
+        (sinapi.obter_valor_setembro_2020, "2020", "09"),
+        (sinapi.obter_valor_outubro_2020, "2020", "10"),
+        (sinapi.obter_valor_novembro_2020, "2020", "11"),
+        (sinapi.obter_valor_dezembro_2020, "2020", "12"),
+        (sinapi.obter_valor_janeiro_2020, "2020", "01"),
+        (sinapi.obter_valor_fevereiro_2020, "2020", "02"),
+        (sinapi.obter_valor_marco_2020, "2020", "03"),
+        (sinapi.obter_valor_abril_2020, "2020", "04"),
+        (sinapi.obter_valor_janeiro_2019, "2019", "01"),
+        (sinapi.obter_valor_fevereiro_2019, "2019", "02"),
+        (sinapi.obter_valor_marco_2019, "2019", "03"),
+        (sinapi.obter_valor_abril_2019, "2019", "04"),
+        (sinapi.obter_valor_maio_2019, "2019", "05"),
+        (sinapi.obter_valor_junho_2019, "2019", "06"),
+        (sinapi.obter_valor_julho_2019, "2019", "07"),
+        (sinapi.obter_valor_agosto_2019, "2019", "08"),
+        (sinapi.obter_valor_setembro_2019, "2019", "09"),
+        (sinapi.obter_valor_outubro_2019, "2019", "10"),
+        (sinapi.obter_valor_novembro_2019, "2019", "11"),
+        (sinapi.obter_valor_dezembro_2019, "2019", "12"),
+        # ALTERAÇÃO DE TESTE, VOLTAR AO TRECHO COMENTADO CASO APRESENTE QUALQUER TIPO DE ERRO:
+        # (sinapi.obter_valor_janeiro_2021, sinapi.definir_valor_janeiro_2021, "2021", "01"),
+        # (sinapi.obter_valor_fevereiro_2021, sinapi.definir_valor_fevereiro_2021, "2021", "02"),
+        # (sinapi.obter_valor_marco_2021, sinapi.definir_valor_marco_2021, "2021", "03"),
+        # (sinapi.obter_valor_abril_2021, sinapi.definir_valor_abril_2021, "2021", "04"),
+        # (sinapi.obter_valor_maio_2020, sinapi.definir_valor_maio_2020, "2020", "05"),
+        # (sinapi.obter_valor_junho_2020, sinapi.definir_valor_junho_2020, "2020", "06"),
+        # (sinapi.obter_valor_julho_2020, sinapi.definir_valor_julho_2020, "2020", "07"),
+        # (sinapi.obter_valor_agosto_2020, sinapi.definir_valor_agosto_2020, "2020", "08"),
+        # (sinapi.obter_valor_setembro_2020, sinapi.definir_valor_setembro_2020, "2020", "09"),
+        # (sinapi.obter_valor_outubro_2020, sinapi.definir_valor_outubro_2020, "2020", "10"),
+        # (sinapi.obter_valor_novembro_2020, sinapi.definir_valor_novembro_2020, "2020", "11"),
+        # (sinapi.obter_valor_dezembro_2020, sinapi.definir_valor_dezembro_2020, "2020", "12"),
+        # (sinapi.obter_valor_janeiro_2020, sinapi.definir_valor_janeiro_2020, "2020", "01"),
+        # (sinapi.obter_valor_fevereiro_2020, sinapi.definir_valor_fevereiro_2020, "2020", "02"),
+        # (sinapi.obter_valor_marco_2020, sinapi.definir_valor_marco_2020, "2020", "03"),
+        # (sinapi.obter_valor_abril_2020, sinapi.definir_valor_abril_2020, "2020", "04"),
+        # (sinapi.obter_valor_janeiro_2019, sinapi.definir_valor_janeiro_2019, "2019", "01"),
+        # (sinapi.obter_valor_fevereiro_2019, sinapi.definir_valor_fevereiro_2019, "2019", "02"),
+        # (sinapi.obter_valor_marco_2019, sinapi.definir_valor_marco_2019, "2019", "03"),
+        # (sinapi.obter_valor_abril_2019, sinapi.definir_valor_abril_2019, "2019", "04"),
+        # (sinapi.obter_valor_maio_2019, sinapi.definir_valor_maio_2019, "2019", "05"),
+        # (sinapi.obter_valor_junho_2019, sinapi.definir_valor_junho_2019, "2019", "06"),
+        # (sinapi.obter_valor_julho_2019, sinapi.definir_valor_julho_2019, "2019", "07"),
+        # (sinapi.obter_valor_agosto_2019, sinapi.definir_valor_agosto_2019, "2019", "08"),
+        # (sinapi.obter_valor_setembro_2019, sinapi.definir_valor_setembro_2019, "2019", "09"),
+        # (sinapi.obter_valor_outubro_2019, sinapi.definir_valor_outubro_2019, "2019", "10"),
+        # (sinapi.obter_valor_novembro_2019, sinapi.definir_valor_novembro_2019, "2019", "11"),
+        # (sinapi.obter_valor_dezembro_2019, sinapi.definir_valor_dezembro_2019, "2019", "12"),
         # Adicione outras datas para 2018 e 2017 aqui seguindo o mesmo padrão
     ]
 
     lista_manter = []
-    for get_func, set_func, year, month in date_check_map:
+    # for get_func, set_func, year, month in date_check_map:
+    for get_func, year, month in date_check_map:
         if get_func():
             lista_manter.append(f"{year}{month}")
             lista_manter.append(f"{month}{year}")
-            set_func(False)
+            # set_func(False)
     
     # CORRIGIR FUTURAMENTE LÓGICA DE DELETE DOS ARQUIVOS
     # Deletar arquivos que não estão na lista_manter de forma dinâmica
