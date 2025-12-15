@@ -120,105 +120,191 @@ class SinapiApp:
         self.selected_orse_type = StringVar(value="ambos")
         
         # SICRO related
+        
         self.sicro_links_data = sicro.parse_sicro_links()
-        self.selected_sicro_state = StringVar(value=estados[0] if estados else "")
+        
+        self.selected_sicro_states = {estado: IntVar(value=0) for estado in estados}
+        
         self.sicro_composicoes = BooleanVar(value=False)
+        
         self.sicro_equipamentos_desonerado = BooleanVar(value=False)
+        
         self.sicro_equipamentos = BooleanVar(value=False)
+        
         self.sicro_materiais = BooleanVar(value=False)
-
-
+        
+        
+        
+        
+        
         # Vars for months 1-4 checkboxes
+        
         self.jan_2021 = BooleanVar(value=False)
+        
         self.feb_2021 = BooleanVar(value=False)
+        
         self.mar_2021 = BooleanVar(value=False)
+        
         self.apr_2021 = BooleanVar(value=False)
-
+        
+        
+        
         self.sep_2020 = BooleanVar(value=False)
+        
         self.oct_2020 = BooleanVar(value=False)
+        
         self.nov_2020 = BooleanVar(value=False)
+        
         self.dec_2020 = BooleanVar(value=False)
-
+        
         self.may_2020 = BooleanVar(value=False)
+        
         self.jun_2020 = BooleanVar(value=False)
+        
         self.jul_2020 = BooleanVar(value=False)
+        
         self.aug_2020 = BooleanVar(value=False)
-
+        
+        
+        
         self.jan_2020 = BooleanVar(value=False)
+        
         self.feb_2020 = BooleanVar(value=False)
+        
         self.mar_2020 = BooleanVar(value=False)
+        
         self.apr_2020 = BooleanVar(value=False)
-
+        
+        
+        
         self.jul_2018 = BooleanVar(value=False)
+        
         self.aug_2018 = BooleanVar(value=False)
-
+        
+        
+        
         self.jan_2019 = BooleanVar(value=False)
+        
         self.feb_2019 = BooleanVar(value=False)
+        
         self.mar_2019 = BooleanVar(value=False)
+        
         self.apr_2019 = BooleanVar(value=False)
+        
         self.may_2019 = BooleanVar(value=False)
+        
         self.jun_2019 = BooleanVar(value=False)
+        
         self.jul_2019 = BooleanVar(value=False)
+        
         self.aug_2019 = BooleanVar(value=False)
+        
         self.sep_2019 = BooleanVar(value=False)
+        
         self.oct_2019 = BooleanVar(value=False)
+        
         self.nov_2019 = BooleanVar(value=False)
+        
         self.dec_2019 = BooleanVar(value=False)
-
+        
+        
+        
         self.jan_2018 = BooleanVar(value=False)
+        
         self.feb_2018 = BooleanVar(value=False)
+        
         self.mar_2018 = BooleanVar(value=False)
+        
         self.apr_2018 = BooleanVar(value=False)
+        
         self.may_2018 = BooleanVar(value=False)
+        
         self.jun_2018 = BooleanVar(value=False)
+        
         self.sep_2018 = BooleanVar(value=False)
+        
         self.oct_2018 = BooleanVar(value=False)
+        
         self.nov_2018 = BooleanVar(value=False)
+        
         self.dec_2018 = BooleanVar(value=False)
-
+        
+        
+        
         self.jan_2017 = BooleanVar(value=False)
+        
         self.feb_2017 = BooleanVar(value=False)
+        
         self.mar_2017 = BooleanVar(value=False)
+        
         self.apr_2017 = BooleanVar(value=False)
+        
         self.may_2017 = BooleanVar(value=False)
+        
         self.jun_2017 = BooleanVar(value=False)
         self.jul_2017 = BooleanVar(value=False)
+        
         self.aug_2017 = BooleanVar(value=False)
+        
         self.sep_2017 = BooleanVar(value=False)
+        
         self.oct_2017 = BooleanVar(value=False)
+        
         self.nov_2017 = BooleanVar(value=False)
+        
         self.dec_2017 = BooleanVar(value=False)
-
+        
+        
+        
         self.months_1_to_4_frame = None
+        
         self.month_menu = None
+        
         self.year_menu = None
+        
         self.orse_widgets = None
+        
         self.sinapi_widgets = None
+        
         self.sicro_widgets = None
         self.baixar_button = None
+        
         self.aninhar_button = None
+        
         self.add_state_button = None
         self.apagar_button = None
         self.formatar_button = None
+        
                 
-        # Radio buttons refs for hide/show logic        self.rb_ambos = None
+        
+                # Radio buttons refs for hide/show logic
+        
+        self.rb_ambos = None
         self.rb_desonerado = None
         self.rb_nao_desonerado = None
         
-        # New variables for file comparison
+                
+        
+                # New variables for file comparison
+        
         self.project_file_path = StringVar()
         self.database_file_path = StringVar()
         self.project_full_path = None
         self.database_full_path = None
-
-
+        
+        
+        
+        
+        
         self.create_widgets()
-
+        
+        
+        
         self.selected_year.trace_add("write", self._on_year_change)
+        
         self.selected_month.trace_add("write", self._on_month_change)
+        
         self.selected_service.trace_add("write", self._on_service_change)
-        self.selected_sicro_state.trace_add("write", self._on_sicro_params_change)
-        self.selected_year.trace_add("write", self._on_sicro_params_change)
         
         self._on_year_change()
         self._on_service_change()
@@ -249,7 +335,6 @@ class SinapiApp:
             if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
             if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
-            self._on_sicro_params_change()
 
         else:  # SINAPI
             years = [str(y) for y in range(2017, 2025)]
@@ -276,12 +361,13 @@ class SinapiApp:
         year = self.selected_year.get()
         service = self.selected_service.get()
 
-        if service == "SICRO":
-            self._on_sicro_params_change()
-            return
-        
         new_months = []
-        if service == "ORSE":
+        if service == "SICRO":
+            # Use the first state as a reference for available months
+            reference_state = estados[0] if estados else ""
+            if reference_state:
+                new_months = sicro.get_available_months(self.sicro_links_data, reference_state, year)
+        elif service == "ORSE":
             new_months = [f"{m:02d}" for m in range(1, 13)]
         else:  # Lógica para SINAPI/outros
             months_2021 = ["1 a 4"] + [f"{m:02d}" for m in range(5, 13)]
@@ -306,7 +392,7 @@ class SinapiApp:
                 menu.add_command(label=month, command=lambda value=month: self.selected_month.set(value))
                 
             if current_month not in new_months:
-                self.selected_month.set(new_months[0])
+                self.selected_month.set(new_months[0] if new_months else "")
             else:
                 self.selected_month.set(current_month)
 
@@ -522,10 +608,19 @@ class SinapiApp:
         Checkbutton(sicro_checkbox_frame, text="Equipamentos", variable=self.sicro_equipamentos).pack(anchor='w')
         Checkbutton(sicro_checkbox_frame, text="Materiais", variable=self.sicro_materiais).pack(anchor='w')
 
-        sicro_state_frame = Frame(self.sicro_widgets)
-        sicro_state_frame.pack(pady=5)
-        Label(sicro_state_frame, text="Selecione o estado:").pack(anchor='w')
-        OptionMenu(sicro_state_frame, self.selected_sicro_state, *estados).pack(anchor='w')
+        Label(self.sicro_widgets, text="Selecione os estados:").pack()
+        
+        num_rows_sicro = 3
+        total_sicro = len(estados)
+        chunk_sicro = (total_sicro + num_rows_sicro - 1) // num_rows_sicro
+        sicro_states_rows = [Frame(self.sicro_widgets) for _ in range(num_rows_sicro)]
+        for r in sicro_states_rows:
+            r.pack(fill='x', padx=8, pady=2)
+
+        for i, estado in enumerate(estados):
+            row_idx = min(i // chunk_sicro, num_rows_sicro - 1)
+            cb = Checkbutton(sicro_states_rows[row_idx], text=estado, variable=self.selected_sicro_states[estado])
+            cb.pack(side='left', anchor='w', padx=4, pady=2)
 
         # --- Botões de download ---
         bottom_frame = Frame(download_frame)
@@ -565,7 +660,7 @@ class SinapiApp:
         Label(db_frame, textvariable=self.database_file_path, fg="gray").pack(side='left', padx=10)
         
         # Start comparison button
-        Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison).pack(pady=10)
+        Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison, width=25, height=3).pack(pady=10)
 
     def execute_formatar_aninhados(self):
         self.formatar_button.config(state="disabled")
@@ -773,42 +868,31 @@ class SinapiApp:
         ).start()
 
     def execute_sicro(self):
-        state = self.selected_sicro_state.get()
         year = self.selected_year.get()
         month = self.selected_month.get()
+        
+        target_states = [s for s, v in self.selected_sicro_states.items() if v.get() == 1]
 
-        if not all([state, year, month]):
-            messagebox.showwarning("Aviso", "Por favor, selecione estado, ano e mês.")
+        if not target_states:
+            messagebox.showwarning("Aviso", "Escolha pelo menos um estado.")
             return
 
-        link = sicro.get_sicro_link(self.sicro_links_data, state, year, month)
-        
-        if link:
-            threading.Thread(target=abrir_links_no_navegador, args=([link],), daemon=True).start()
-        else:
-            messagebox.showerror("Erro", f"Link de download não encontrado para {state}/{year}/{month}.")
-
-    def _on_sicro_params_change(self, *args):
-        if self.selected_service.get() != "SICRO":
+        if not all([year, month]):
+            messagebox.showwarning("Aviso", "Por favor, selecione ano e mês.")
             return
 
-        state = self.selected_sicro_state.get()
-        year = self.selected_year.get()
+        links_to_open = []
+        for state in target_states:
+            link = sicro.get_sicro_link(self.sicro_links_data, state, year, month)
+            if link:
+                links_to_open.append(link)
+            else:
+                print(f"AVISO: Link de download não encontrado para SICRO {state}/{year}/{month}.")
         
-        new_months = sicro.get_available_months(self.sicro_links_data, state, year)
-        
-        current_month = self.selected_month.get()
-        menu = self.month_menu["menu"]
-        menu.delete(0, "end")
-        
-        if new_months:
-            for month in new_months:
-                menu.add_command(label=month, command=lambda value=month: self.selected_month.set(value))
-            
-            if current_month not in new_months:
-                self.selected_month.set(new_months[0])
+        if links_to_open:
+            threading.Thread(target=abrir_links_no_navegador, args=(links_to_open,), daemon=True).start()
         else:
-            self.selected_month.set("")
+            messagebox.showerror("Erro", "Nenhum link de download encontrado para os parâmetros selecionados.")
 
     def execute_orse(self):
         try:
