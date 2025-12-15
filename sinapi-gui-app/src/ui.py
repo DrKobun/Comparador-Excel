@@ -82,6 +82,7 @@ try:
         definir_valor_dezembro_2017
     )
     from aninhar import aninhar_arquivos, apagar_dados_sinapi
+    from formatar_aninhados import format_excel_files
     import sicro
 except Exception:
     src_dir = os.path.dirname(__file__)  # pasta src
@@ -90,11 +91,13 @@ except Exception:
     sinapi_mod = importlib.import_module("sinapi")
     aninhar_mod = importlib.import_module("aninhar")
     sicro = importlib.import_module("sicro")
+    formatar_aninhados_mod = importlib.import_module("formatar_aninhados")
     
     gerar_links_sinapi = getattr(sinapi_mod, "gerar_links_sinapi")
     abrir_links_no_navegador = getattr(sinapi_mod, "abrir_links_no_navegador")
     aninhar_arquivos = getattr(aninhar_mod, "aninhar_arquivos")
     apagar_dados_sinapi = getattr(aninhar_mod, "apagar_dados_sinapi")
+    format_excel_files = getattr(formatar_aninhados_mod, "format_excel_files")
 
 
 from resources.states import estados
@@ -196,6 +199,11 @@ class SinapiApp:
         self.aninhar_button = None
         self.add_state_button = None
         self.apagar_button = None
+        self.formatar_button = None
+                
+        # Radio buttons refs for hide/show logic        self.rb_ambos = None
+        self.rb_desonerado = None
+        self.rb_nao_desonerado = None
         
         # New variables for file comparison
         self.project_file_path = StringVar()
@@ -229,6 +237,7 @@ class SinapiApp:
             if self.orse_widgets: self.orse_widgets.pack(pady=2)
             if self.baixar_button: self.baixar_button.config(command=self.execute_orse)
             if self.aninhar_button: self.aninhar_button.pack_forget()
+            if self.formatar_button: self.formatar_button.pack_forget()
             if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack_forget()
 
@@ -237,6 +246,7 @@ class SinapiApp:
             if self.sicro_widgets: self.sicro_widgets.pack(pady=2)
             if self.baixar_button: self.baixar_button.config(command=self.execute_sicro)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
+            if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
             if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
             self._on_sicro_params_change()
@@ -246,6 +256,7 @@ class SinapiApp:
             if self.sinapi_widgets: self.sinapi_widgets.pack(pady=2)
             if self.baixar_button: self.baixar_button.config(command=self.execute_sinapi)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
+            if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
             if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
@@ -303,6 +314,27 @@ class SinapiApp:
         year = self.selected_year.get()
         month = self.selected_month.get()
         service = self.selected_service.get()
+
+        # Logic to hide/show "Ambos" radio button
+        is_grouped_month = " a " in month or " e " in month
+        
+        if service == "SINAPI" and hasattr(self, 'rb_ambos') and self.rb_ambos:
+            is_ambos_visible = self.rb_ambos in self.rb_ambos.master.pack_slaves()
+
+            if is_grouped_month:
+                if is_ambos_visible:
+                    self.rb_ambos.pack_forget()
+                    # Set default to "Desonerado" if "Ambos" was selected
+                    if self.selected_type.get() == 0:
+                        self.selected_type.set(1)
+            else:  # Not a grouped month
+                if not is_ambos_visible:
+                    # Re-pack in the correct order to show "Ambos" at the top
+                    self.rb_desonerado.pack_forget()
+                    self.rb_nao_desonerado.pack_forget()
+                    self.rb_ambos.pack(anchor='w')
+                    self.rb_desonerado.pack(anchor='w')
+                    self.rb_nao_desonerado.pack(anchor='w')
 
         # Limpa os checkboxes de meses específicos
         if self.months_1_to_4_frame:
@@ -430,9 +462,12 @@ class SinapiApp:
         type_frame.pack(side='left', padx=10)
         
         Label(type_frame, text="Tipo para baixar?").pack(anchor='w')
-        Radiobutton(type_frame, text="Ambos", variable=self.selected_type, value=0).pack(anchor='w')
-        Radiobutton(type_frame, text="Desonerado", variable=self.selected_type, value=1).pack(anchor='w')
-        Radiobutton(type_frame, text="Não Desonerado", variable=self.selected_type, value=2).pack(anchor='w')
+        self.rb_ambos = Radiobutton(type_frame, text="Ambos", variable=self.selected_type, value=0)
+        self.rb_ambos.pack(anchor='w')
+        self.rb_desonerado = Radiobutton(type_frame, text="Desonerado", variable=self.selected_type, value=1)
+        self.rb_desonerado.pack(anchor='w')
+        self.rb_nao_desonerado = Radiobutton(type_frame, text="Não Desonerado", variable=self.selected_type, value=2)
+        self.rb_nao_desonerado.pack(anchor='w')
 
         file_type_frame = Frame(radio_frame)
         file_type_frame.pack(side='left', padx=10)
@@ -501,6 +536,9 @@ class SinapiApp:
         
         self.aninhar_button = Button(bottom_frame, text="Juntar", command=self.execute_aninhar)
         self.aninhar_button.pack(side='left', padx=5)
+
+        self.formatar_button = Button(bottom_frame, text="Formatar Aninhados", command=self.execute_formatar_aninhados)
+        self.formatar_button.pack(side='left', padx=5)
         
         self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
         self.add_state_button.pack(side='left', padx=5)
@@ -528,6 +566,20 @@ class SinapiApp:
         
         # Start comparison button
         Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison).pack(pady=10)
+
+    def execute_formatar_aninhados(self):
+        self.formatar_button.config(state="disabled")
+        threading.Thread(target=self._run_formatar_and_reenable, daemon=True).start()
+
+    def _run_formatar_and_reenable(self):
+        try:
+            print("Iniciando formatação de arquivos aninhados...")
+            format_excel_files()
+            messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
+        except Exception as e:
+            messagebox.showerror("Erro na Formatação", f"Ocorreu um erro: {e}")
+        finally:
+            self.master.after(0, lambda: self.formatar_button.config(state="normal"))
 
 
     def open_link(self, event):
@@ -815,7 +867,6 @@ class SinapiApp:
             if self.feb_2021.get(): selected_months_2021.append(2)
             if self.mar_2021.get(): selected_months_2021.append(3)
             if self.apr_2021.get(): selected_months_2021.append(4)
-
             if not selected_months_2021:
                 messagebox.showwarning("Aviso", "Selecione pelo menos um mês de 1 a 4.")
                 return

@@ -506,7 +506,6 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
         
         tipos = ["Desonerado", "NaoDesonerado"] if tipo == "Ambos" else [tipo]
         for t in tipos:
-            
             # Correção DF
             if estado == 'DF' and ano == 2023 and mes in (1, 2):
                 print('valor de tipos:', tipos)
