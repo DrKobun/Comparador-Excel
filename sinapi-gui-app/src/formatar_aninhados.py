@@ -136,7 +136,7 @@ def format_excel_files():
                         try:
                             print("    - Passo 3: Excluindo linhas 1-6...")
                             
-                            sheet.api.Rows(7).Delete()
+                            # sheet.api.Rows(7).Delete()
                             sheet.api.Rows(6).Delete()
                             sheet.api.Rows(5).Delete()
                             sheet.api.Rows(4).Delete()
@@ -189,6 +189,7 @@ def format_excel_files():
                             print(f"    - ERRO CRÍTICO ao converter a coluna D para número: {e}")
                             raise e
 
+                        sheet.range('1:1').insert(shift='down')
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     elif "EQP" in sheet.name:
@@ -213,6 +214,7 @@ def format_excel_files():
                             print(f"    - ERRO CRÍTICO na exclusão de colunas.")
                             raise e
                         
+                        sheet.range('1:1').insert(shift='down')
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     elif sheet.name.startswith('SICRO'):
@@ -229,6 +231,7 @@ def format_excel_files():
                             print(f"    - ERRO CRÍTICO na exclusão de linhas.")
                             raise e
                         
+                        sheet.range('1:1').insert(shift='down')
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     # Condição para planilhas "SINA-INS"
@@ -294,6 +297,7 @@ def format_excel_files():
                             print(f"    - ERRO CRÍTICO ao converter a coluna D para número: {e}")
                             raise e
 
+                        sheet.range('1:1').insert(shift='down')
                         print(f"    - Planilha '{sheet.name}' formatada com sucesso.")
 
                     if sheet_name_formatted:
