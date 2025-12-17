@@ -1,5 +1,6 @@
 import os
 import re
+from tkinter import messagebox
 import xlwings as xw
 
 def remover_anotacoes_da_planilha(sheet):
@@ -67,9 +68,10 @@ def format_excel_files():
     excel_files = [f for f in os.listdir(target_dir) if f.lower().endswith(('.xlsx', '.xls'))]
 
     if not excel_files:
+        messagebox.showinfo("Aviso", "Nenhum arquivo Excel encontrado no diretório.")
         print("Nenhum arquivo Excel encontrado no diretório.")
         return
-        
+    
     # Usar visible=False faz o Excel rodar em segundo plano
     with xw.App(visible=False) as app:
         for filename in excel_files:

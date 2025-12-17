@@ -670,7 +670,7 @@ class SinapiApp:
         try:
             print("Iniciando formatação de arquivos aninhados...")
             format_excel_files()
-            messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
+            # messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Formatação", f"Ocorreu um erro: {e}")
         finally:
