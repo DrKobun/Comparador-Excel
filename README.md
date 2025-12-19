@@ -2,9 +2,9 @@
 <p> Este é o repositório de um programa para comparação de valores entre duas planilhas.</p>
 <p> No momento atual, a comparação pode ser feita com as seguintes bases de dados:</p>
 <ul>
-  <li>SINAPI</li>
-  <li>SICRO</li>
-  <li>ORSE</li>
+  <li>SINAPI (Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil)</li>
+  <li>SICRO (Sistema de Custos Referenciais de Obras)</li>
+  <li>ORSE (Sistema de Orçamento de Obras de Sergipe)</li>
 </ul>
 
 <h2> Fluxo de uso do programa </h2>
@@ -82,7 +82,6 @@
   
 <p>Exemplo de planilha nomeada: <b>SINA-SIN-PB-202006-DES</b></p>
 <p>O exemplo significa que a planilha se refere ao SINAPI, Sintéticos, Paraíba, ano de 2020, mês de Junho, e é Desonerada.</p>
-<h1>
 
 
 <h2>Passo a passo de uso:</h2>
@@ -119,10 +118,14 @@
 <h3>Botão para iniciar a comparação:</h3>
 <img src="/imagens-repo/selecao-iniciar-comparacao.png" alt="Imagem demonstrando botão para iniciar a comparação entre dois arquivos selecionados" height=500/>
 
+<h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
+<img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
+
 <h4>Observações:</h4>
 <ul>
   <li align="justify">
     As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <b><a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1">VeePN</a></b>, usando específicamente a localidade: <b>USA - Virginia</b>.
+    <br>
     <br>
     <b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
     <h3>Para instalar:</h3>
