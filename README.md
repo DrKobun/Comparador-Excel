@@ -28,7 +28,10 @@
 </ul>
 
 <p align="justify">Ao finalizar o download dos arquivos desejados, é necessário agrupá-los em um único arquivo Excel clicando no botão "Juntar". 
-  Após juntar os arquivos desejados, é necessário formatar a planilha agrupada, clicando no botão <b>Formatar</b>, com o arquivo gerado, é possível fazer a comparação com a planilha do projeto. 
+  Após juntar os arquivos desejados, é necessário formatar a planilha agrupada, clicando no botão <b>Formatar</b>. 
+  <br>
+  Com o arquivo gerado, é possível fazer a comparação com a planilha do projeto. 
+  <br>
   <br>
   A classificação de planilhas segue a seguinte regra:</p>
 <h1>
