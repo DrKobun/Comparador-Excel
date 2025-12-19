@@ -88,7 +88,7 @@
 <h3>Para selecionar a base de dados:</h3>
 <img src="/imagens-repo/selecao-base-dados.png" alt="Imagem demonstrando a seleção da base de dados do programa" height=500/>
 
-<h3>Para selecionar a data e o mês desejados:</h3>
+<h3>Para selecionar o ano e o mês desejados:</h3>
 <img src="/imagens-repo/selecao-data.png" alt="Imagem demonstrando local de seleção de mês e ano do arquivo a ser baixado" height=500/>
 
 <h3>Para selecionar o tipo de arquivo para baixar:</h3>
@@ -121,6 +121,7 @@
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
 <img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
+<h2>Para baixar o programa, </h2>
 <h4>Observações:</h4>
 <ul>
   <li align="justify">
