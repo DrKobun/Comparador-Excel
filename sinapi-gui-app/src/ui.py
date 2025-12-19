@@ -632,7 +632,7 @@ class SinapiApp:
         self.aninhar_button = Button(bottom_frame, text="Juntar", command=self.execute_aninhar)
         self.aninhar_button.pack(side='left', padx=5)
 
-        self.formatar_button = Button(bottom_frame, text="Formatar Aninhados", command=self.execute_formatar_aninhados)
+        self.formatar_button = Button(bottom_frame, text="Formatar", command=self.execute_formatar_aninhados)
         self.formatar_button.pack(side='left', padx=5)
         
         self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
