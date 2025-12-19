@@ -128,7 +128,6 @@
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
 <img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
-<h2>Para baixar o programa, </h2>
 <h4>Observações:</h4>
 <ul>
   <li align="justify">
