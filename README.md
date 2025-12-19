@@ -9,7 +9,7 @@
 
 <br>
 
-[![Download](https://img.shields.io/badge/GitHub-Download-green?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/main/sinapi-gui-app/src/dist/main.exe)
+[![Download](https://img.shields.io/badge/GitHub-Download-green?logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/main/sinapi-gui-app/src/dist/main.exe)
 
 
 </p>
