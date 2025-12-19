@@ -131,6 +131,26 @@
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
 <img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
+<p>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
+<br>
+<p>As cores das linhas representam:</p>
+
+<ul>
+  <li><img src="https://img.shields.io/badge/Verde-green" /> -> O valor do item da Curva ABC está <b>MENOR</b> do que a planilha da base de dados.</li>
+  <li><img src="https://img.shields.io/badge/Vermelho-red" /> -> O valor do item da Curva ABC está <b>MAIOR</b> do que a planilha da base de dados.</li>
+  <li><img src="https://img.shields.io/badge/Azul-blue" /> -> O valor do item da Curva ABC está <b>IGUAL</b> à planilha da base de dados.</li>
+  <li><img src="https://img.shields.io/badge/Cinza-gray" /> -> O item da Curva ABC <b>não foi encontrado</b> em nenhuma planilha das bases de dados.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
 <h4>Observações:</h4>
 <ul>
   <li align="justify">
