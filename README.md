@@ -20,8 +20,8 @@
   <li> O usuário faz a comparação da planilha de projeto com a planilha agrupada</li>
 </ul>
 
-<p align="justify">Ao finalizar o download dos arquivos desejados, é hora de agrupá-los em um único arquivo Excel clicando no botão "Juntar". 
-  Ao juntar os arquivos desejados, também é formatado o nome de cada arquivo, para que o usuário saiba o que cada planilha representa. A classificação de planilhas segue a seguinte regra:</p>
+<p align="justify">Ao finalizar o download dos arquivos desejados, é necessário agrupá-los em um único arquivo Excel clicando no botão "Juntar". 
+  Após juntar os arquivos desejados, é necessário formatar a planilha agrupada, clicando no botão <b>Formatar Aninhados</b>. A classificação de planilhas segue a seguinte regra:</p>
 <h1>
   <h3> Prefixos das bases de dados: </h3>
   <ul>
@@ -102,7 +102,7 @@
 <h3>Botão para realizar o download dos arquivos selecionados:</h3>
 <img src="/imagens-repo/selecao-baixar.png" alt="Imagem demonstrando local para download dos arquivos selecionados" height=500/>
 
-<h3>Botão para agrupar arquivos em um único arquivo Excel:</h3>
+<h3>Botão para agrupar planilhas baixadas em um único arquivo Excel:</h3>
 <img src="/imagens-repo/selecao-juntar.png" alt="Imagem demonstrando local para agrupar arquivos das bases de dados baixados" height=500/>
 
 <h3>Botão para formatar arquivos agrupados:</h3>
@@ -114,14 +114,46 @@
 <h3>Botão para selecionar arquivo agrupado e formatado:</h3>
 <img src="/imagens-repo/selecao-base-dados-comparar.png" alt="Imagem demonstrando botão para selecionar arquivo Excel agrupado e formatado" height=500/>
 
+<h3>Botão para iniciar a comparação:</h3>
+<img src="/imagens-repo/selecao-iniciar-comparacao.png" alt="Imagem demonstrando botão para iniciar a comparação entre dois arquivos selecionados" height=500/>
 
 <h4>Observações:</h4>
 <ul>
-  <li>
-    As planilhas da base de dados do ORSE estão armazenadas no Google Drive. Se forem ser baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <b><a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1">VeePN</a></b> , usando específicamente a localidade: <b>USA - Virginia</b>.
+  <li align="justify">
+    As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <b><a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1">VeePN</a></b>, usando específicamente a localidade: <b>USA - Virginia</b>.
+    <br>
+    <b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
+    <h3>Para instalar:</h3>
+    <img src="/imagens-repo/VeePN.png"/>
+    <h3>Para adicionar:</h3>
+    <img src="/imagens-repo/VeePN-adicionar.png"/>
+    <h3>Para fixar:</h3>
+    <img src="/imagens-repo/VeePN-fixar.png"/>
+    <h3>Para selecionar a região (USA - Virginia):</h3>
+    <img src="/imagens-repo/VeePN-localidade.png" height="500"/>
+    <img src="/imagens-repo/VeePN-virginia.png" height="500"/>
+    <h3>Para iniciar conexão com VPN:</h3>
+    <img src="/imagens-repo/VeePN-iniciar.png" height="500"/>
   </li>
-  <li>
-    Para a comapração ser feita corretamente, é NECESSÁRIO que o ARQUIVO DO PROJETO, tenha uma planilha nomeada EXCLUSIVAMENTE como "Curva ABC", seguinto a ordem de colunas: Coluna A - Quantidade de itens OU Código do insumo ou seviço, Coluna B - Descrição, Coluna D - PREÇO UNITÁRIO.   
-  </li>
+  <li align="justify">
+    Para a comparação ser feita corretamente é NECESSÁRIO que o ARQUIVO DO PROJETO tenha uma planilha nomeada EXCLUSIVAMENTE como "Curva ABC" (O nome da planilha precisa respeitar as maiúsculas e minúsculas desse exemplo), seguindo a ordem de colunas: 
+    <br>
+    <br>
+    <ul>
+      <li><b>Coluna A</b> - Quantidade de itens OU Código do insumo ou seviço</li>
+      <li><b>Coluna B</b> - Descrição</li>      
+      <li><b>Coluna D</b> - Preço Unitário</li>
+    </ul>
+      <p>
+        Exemplo de ordem de colunas da planilha <b>"Curva ABC"</b> (da planilha do <b>PROJETO</b>):
+      </p>      
+  <img src="/imagens-repo/excel-exemplo.PNG" />
+  
+  <li>Antes de se fazer um download da base de dados do <b>SINAPI</b>, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado.</li>
+  <br>
+  <b><p>Para abrir o link de downloads do SINAPI rapidamente:</p></b>
+  <img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
+  <br>
+  <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
 </ul>
   
