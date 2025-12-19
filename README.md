@@ -10,18 +10,20 @@
 <h2> Fluxo de uso do programa </h2>
 <p> O fluxo de uso segue, mas não necessariamente, a seguinte ordem:</p>
 <ul>
-  <li> O usuário seleciona qual base de dados deseja fazer o download da planilha</li>
-  <li> O usuário seleciona qual é o ano e o mês de download da planilha da base de dados</li>
-  <li> O usuário seleciona qual tipo de planilha deseja baixar (Desonerado, Não Desonerado ou Ambos)</li>
-  <li> O usuário seleciona qual tipo de arquivos deseja agrupar em um único arquivo Excel (Insumos, Sintéticos ou Ambos)</li>
-  <li> O usuário seleciona quais estados deseja fazer o download. Podem ser baixados mais de um arquivo simultâneamente</li>
-  <li> O usuário agrupa os arquivos baixados em um único arquivo Excel</li>
-  <li> O usuário formata o arquivo Excel gerado após o agrupamento dos outros arquivos</li>
-  <li> O usuário faz a comparação da planilha de projeto com a planilha agrupada</li>
+  <li> O usuário seleciona qual base de dados deseja fazer o download da planilha.</li>
+  <li> O usuário seleciona qual é o ano e o mês de download da planilha da base de dados.</li>
+  <li> O usuário seleciona qual tipo de planilha deseja baixar (Desonerado, Não Desonerado ou Ambos).</li>
+  <li> O usuário seleciona qual tipo de arquivos deseja agrupar em um único arquivo Excel (Insumos, Sintéticos ou Ambos).</li>
+  <li> O usuário seleciona quais estados deseja fazer o download. Podem ser baixados mais de um arquivo simultâneamente.</li>
+  <li> O usuário agrupa os arquivos baixados em um único arquivo Excel.</li>
+  <li> O usuário formata o arquivo Excel gerado após o agrupamento dos outros arquivos.</li>
+  <li> O usuário faz a comparação da planilha de projeto com a planilha agrupada.</li>
 </ul>
 
 <p align="justify">Ao finalizar o download dos arquivos desejados, é necessário agrupá-los em um único arquivo Excel clicando no botão "Juntar". 
-  Após juntar os arquivos desejados, é necessário formatar a planilha agrupada, clicando no botão <b>Formatar Aninhados</b>. A classificação de planilhas segue a seguinte regra:</p>
+  Após juntar os arquivos desejados, é necessário formatar a planilha agrupada, clicando no botão <b>Formatar</b>, com o arquivo gerado, é possível fazer a comparação com a planilha do projeto. 
+  <br>
+  A classificação de planilhas segue a seguinte regra:</p>
 <h1>
   <h3> Prefixos das bases de dados: </h3>
   <ul>
@@ -39,7 +41,7 @@
 <h3> Tipos de dados: </h3>
 <ul>
   <li>
-    SIN = Sintéticos  
+    SIN = Sintéticos
   </li>
   <li>
     SER = Serviços
@@ -55,7 +57,7 @@
       COMP = Composições
     </li>
     <li>
-      EQP = Equipamentos    
+      EQP = Equipamentos
     </li>
     <li>
       DES = Desonerado (EQP)
@@ -155,5 +157,6 @@
   <img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
   <br>
   <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
+  <li>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
 </ul>
   
