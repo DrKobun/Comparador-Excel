@@ -7,6 +7,13 @@
   <li>ORSE (Sistema de Orçamento de Obras de Sergipe)</li>
 </ul>
 
+<br>
+
+[![Download](https://img.shields.io/badge/GitHub-Download-green?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/main/sinapi-gui-app/src/dist/main.exe)
+
+
+</p>
+
 <h2> Fluxo de uso do programa </h2>
 <p> O fluxo de uso segue, mas não necessariamente, a seguinte ordem:</p>
 <ul>
