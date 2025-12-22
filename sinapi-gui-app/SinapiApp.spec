@@ -1,25 +1,32 @@
 # -*- mode: python ; coding: utf-8 -*-
+import os
 
+# Diretório onde o .spec está
+SPEC_DIR = os.path.dirname(os.path.abspath(__file__))
+# Diretório do código fonte
+SRC_DIR = os.path.join(SPEC_DIR, 'src')
 
 a = Analysis(
-    ['src\\main.py'],
-    pathex=[],
+    [os.path.join(SRC_DIR, 'main.py')],
+    pathex=[SRC_DIR],
     binaries=[],
-    datas=[('src\\LINKS_SICRO.txt', '.')],
-    hiddenimports=[],
+    datas=[(os.path.join(SRC_DIR, 'LINKS_SICRO.txt'), '.')],
+    hiddenimports=['pandas._libs.tslibs'],
     hookspath=[],
-    hooksconfig={},
     runtime_hooks=[],
     excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=None,
     noarchive=False,
-    optimize=0,
 )
-pyz = PYZ(a.pure)
+pyz = PYZ(a.pure, a.zipped_data, cipher=None)
 
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
+    a.zipfiles,
     a.datas,
     [],
     name='SinapiApp',
@@ -29,10 +36,6 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
+    console=False,  # Equivalente a --windowed
+    icon=None
 )
