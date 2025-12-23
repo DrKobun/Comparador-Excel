@@ -144,52 +144,43 @@
 
 
 
-
-
-
-
-
-
-
 <h4>Observações:</h4>
 <ul>
-  <li align="justify">
-    As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1" target="_blank">VeePN</a>, usando específicamente a localidade: <b>USA - Virginia</b>.
-    <br>
-    <br>
-    <b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
-    <h3>Para instalar:</h3>
-    <img src="/imagens-repo/VeePN.png"/>
-    <h3>Para adicionar:</h3>
-    <img src="/imagens-repo/VeePN-adicionar.png"/>
-    <h3>Para fixar:</h3>
-    <img src="/imagens-repo/VeePN-fixar.png"/>
-    <h3>Para selecionar a região (USA - Virginia):</h3>
-    <img src="/imagens-repo/VeePN-localidade.png" height="500"/>
-    <img src="/imagens-repo/VeePN-virginia.png" height="500"/>
-    <h3>Para iniciar conexão com VPN:</h3>
-    <img src="/imagens-repo/VeePN-iniciar.png" height="500"/>
-  </li>
-  <li align="justify">
+<li align="justify">
+    As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1" target="_blank">VeePN ↗</a>, usando específicamente a localidade: <b>USA - Virginia</b>. 
+<br>
+<br>
+<b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
+<h3>Para instalar:</h3>
+<img src="/imagens-repo/VeePN.png"/>
+<h3>Para adicionar:</h3>
+<img src="/imagens-repo/VeePN-adicionar.png"/>
+<h3>Para fixar:</h3>
+<img src="/imagens-repo/VeePN-fixar.png"/>
+<h3>Para selecionar a região (USA - Virginia):</h3>
+<img src="/imagens-repo/VeePN-localidade.png" height="500"/>
+<img src="/imagens-repo/VeePN-virginia.png" height="500"/>
+<h3>Para iniciar conexão com VPN:</h3>
+<img src="/imagens-repo/VeePN-iniciar.png" height="500"/>
+</li>
+<li align="justify">
     Para a comparação ser feita corretamente é NECESSÁRIO que o ARQUIVO DO PROJETO tenha uma planilha nomeada EXCLUSIVAMENTE como "Curva ABC" (O nome da planilha precisa respeitar as maiúsculas e minúsculas desse exemplo), seguindo a ordem de colunas: 
-    <br>
-    <br>
-    <ul>
-      <li><b>Coluna A</b> - Quantidade de itens OU Código do insumo ou seviço</li>
-      <li><b>Coluna B</b> - Descrição</li>      
-      <li><b>Coluna D</b> - Preço Unitário</li>
-    </ul>
-      <p>
-        Exemplo de ordem de colunas da planilha <b>"Curva ABC"</b> (da planilha do <b>PROJETO</b>):
-      </p>      
-  <img src="/imagens-repo/excel-exemplo.PNG" />
+<br>
+<br>
+<ul>
+  <li><b>Coluna A</b> - Quantidade de itens OU Código do insumo ou seviço</li>
+  <li><b>Coluna B</b> - Descrição</li>      
+  <li><b>Coluna D</b> - Preço Unitário</li>
+</ul>
+<p>Exemplo de ordem de colunas da planilha <b>"Curva ABC"</b> (da planilha do <b>PROJETO</b>):</p>      
+<img src="/imagens-repo/excel-exemplo.PNG" />
   
-  <li>Antes de se fazer um download da base de dados do <b>SINAPI</b>, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado.</li>
-  <br>
-  <b><p>Para abrir o link de downloads do SINAPI rapidamente:</p></b>
-  <img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
-  <br>
-  <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
+<li>Antes de se fazer um download da base de dados do <b>SINAPI</b>, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado.</li>
+<br>
+<b><p>Para abrir o link de downloads do SINAPI rapidamente:</p></b>
+<img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
+<br>
+<b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
   <li>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
 </ul>
   
