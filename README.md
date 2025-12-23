@@ -154,7 +154,7 @@
 <h4>Observações:</h4>
 <ul>
   <li align="justify">
-    As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <b><a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1" target="_blank">VeePN</a></b>, usando específicamente a localidade: <b>USA - Virginia</b>.
+    As planilhas da base de dados do <b>ORSE</b> estão armazenadas no <b>Google Drive</b>. Se forem baixadas usando a internet do Ministério, é necessário utilizar uma extensão de VPN no navegador. Recomendo a <a href="https://chromewebstore.google.com/detail/free-vpn-for-chrome-vpn-p/majdfhpaihoncoakbjgbdhglocklcgno?pli=1" target="_blank">VeePN</a>, usando específicamente a localidade: <b>USA - Virginia</b>.
     <br>
     <br>
     <b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
