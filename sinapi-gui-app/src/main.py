@@ -1,5 +1,4 @@
 # filepath: sinapi-gui-app/src/main.py
-# Adição de chave de assinatura
 
 import sys
 from ui import run_app
