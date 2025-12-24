@@ -1,103 +1,31 @@
 from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog
 from datetime import datetime
 import threading
-import importlib
-import sys
 import os
 import webbrowser
-from copy import copy
-import openpyxl
-from openpyxl.styles import PatternFill
 
-# Adiciona o diretório raiz ao sys.path para encontrar o módulo orse
-src_dir = os.path.dirname(__file__)
-root_dir = os.path.abspath(os.path.join(src_dir, '..', '..'))
-if root_dir not in sys.path:
-    sys.path.insert(0, root_dir)
+from controllers import (
+    parse_sicro_links,
+    get_available_months,
+    get_sicro_link,
+    gerar_links_sync,
+    abrir_links_sync,
+    funcao_orse_sync,
+    start_aninhar,
+    format_excel_files_sync,
+    compare_workbooks,
+    validate_project_has_curva,
+    apagar_dados_sync,
+)
 
+import importlib
 try:
-    from orse import funcao_orse
-except ImportError:
-    # Fallback para quando executado em um contexto diferente
-    orse_mod = importlib.import_module("orse")
-    funcao_orse = getattr(orse_mod, "funcao_orse")
-
-# tenta import direto; se houver conflito entre dois módulos 'sinapi' no sys.path,
-# força carregar o módulo a partir da pasta do src (garante consistência ao rodar main.py)
-try:
-    from sinapi import (
-        gerar_links_sinapi, 
-        abrir_links_no_navegador,
-        definir_valor_janeiro_2021,
-        definir_valor_fevereiro_2021,
-        definir_valor_marco_2021,
-        definir_valor_abril_2021,
-        definir_valor_setembro_2020,
-        definir_valor_outubro_2020,
-        definir_valor_novembro_2020,
-        definir_valor_dezembro_2020,
-        definir_valor_maio_2020,
-        definir_valor_junho_2020,
-        definir_valor_julho_2020,
-        definir_valor_agosto_2020,
-        definir_valor_janeiro_2020,
-        definir_valor_fevereiro_2020,
-        definir_valor_marco_2020,
-        definir_valor_abril_2020,
-        definir_valor_julho_2018,
-        definir_valor_agosto_2018,
-        definir_valor_janeiro_2019,
-        definir_valor_fevereiro_2019,
-        definir_valor_marco_2019,
-        definir_valor_abril_2019,
-        definir_valor_maio_2019,
-        definir_valor_junho_2019,
-        definir_valor_julho_2019,
-        definir_valor_agosto_2019,
-        definir_valor_setembro_2019,
-        definir_valor_outubro_2019,
-        definir_valor_novembro_2019,
-        definir_valor_dezembro_2019,
-        definir_valor_janeiro_2018,
-        definir_valor_fevereiro_2018,
-        definir_valor_marco_2018,
-        definir_valor_abril_2018,
-        definir_valor_maio_2018,
-        definir_valor_junho_2018,
-        definir_valor_setembro_2018,
-        definir_valor_outubro_2018,
-        definir_valor_novembro_2018,
-        definir_valor_dezembro_2018,
-        definir_valor_janeiro_2017,
-        definir_valor_fevereiro_2017,
-        definir_valor_marco_2017,
-        definir_valor_abril_2017,
-        definir_valor_maio_2017,
-        definir_valor_junho_2017,
-        definir_valor_julho_2017,
-        definir_valor_agosto_2017,
-        definir_valor_setembro_2017,
-        definir_valor_outubro_2017,
-        definir_valor_novembro_2017,
-        definir_valor_dezembro_2017
-    )
-    from aninhar import aninhar_arquivos, apagar_dados_sinapi
-    from formatar_aninhados import format_excel_files
-    import sicro
+    import sinapi
 except Exception:
-    src_dir = os.path.dirname(__file__)  # pasta src
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
-    sinapi_mod = importlib.import_module("sinapi")
-    aninhar_mod = importlib.import_module("aninhar")
-    sicro = importlib.import_module("sicro")
-    formatar_aninhados_mod = importlib.import_module("formatar_aninhados")
-    
-    gerar_links_sinapi = getattr(sinapi_mod, "gerar_links_sinapi")
-    abrir_links_no_navegador = getattr(sinapi_mod, "abrir_links_no_navegador")
-    aninhar_arquivos = getattr(aninhar_mod, "aninhar_arquivos")
-    apagar_dados_sinapi = getattr(aninhar_mod, "apagar_dados_sinapi")
-    format_excel_files = getattr(formatar_aninhados_mod, "format_excel_files")
+    sinapi = importlib.import_module("sinapi")
+
+# Backwards-compat aliases for existing code paths in this file
+# (aliases removed) use controller functions directly
 
 
 from resources.states import estados
@@ -120,8 +48,7 @@ class SinapiApp:
         self.selected_orse_type = StringVar(value="ambos")
         
         # SICRO related
-        
-        self.sicro_links_data = sicro.parse_sicro_links()
+        self.sicro_links_data = parse_sicro_links()
         
         self.selected_sicro_states = {estado: IntVar(value=0) for estado in estados}
         
@@ -140,172 +67,109 @@ class SinapiApp:
         # Vars for months 1-4 checkboxes
         
         self.jan_2021 = BooleanVar(value=False)
-        
         self.feb_2021 = BooleanVar(value=False)
-        
         self.mar_2021 = BooleanVar(value=False)
-        
         self.apr_2021 = BooleanVar(value=False)
         
         
         
         self.sep_2020 = BooleanVar(value=False)
-        
         self.oct_2020 = BooleanVar(value=False)
-        
         self.nov_2020 = BooleanVar(value=False)
-        
         self.dec_2020 = BooleanVar(value=False)
-        
         self.may_2020 = BooleanVar(value=False)
-        
         self.jun_2020 = BooleanVar(value=False)
-        
         self.jul_2020 = BooleanVar(value=False)
-        
         self.aug_2020 = BooleanVar(value=False)
         
         
         
         self.jan_2020 = BooleanVar(value=False)
-        
         self.feb_2020 = BooleanVar(value=False)
-        
         self.mar_2020 = BooleanVar(value=False)
-        
         self.apr_2020 = BooleanVar(value=False)
         
         
         
         self.jul_2018 = BooleanVar(value=False)
-        
         self.aug_2018 = BooleanVar(value=False)
         
         
         
         self.jan_2019 = BooleanVar(value=False)
-        
         self.feb_2019 = BooleanVar(value=False)
-        
         self.mar_2019 = BooleanVar(value=False)
-        
         self.apr_2019 = BooleanVar(value=False)
-        
         self.may_2019 = BooleanVar(value=False)
-        
         self.jun_2019 = BooleanVar(value=False)
-        
         self.jul_2019 = BooleanVar(value=False)
-        
         self.aug_2019 = BooleanVar(value=False)
-        
         self.sep_2019 = BooleanVar(value=False)
-        
         self.oct_2019 = BooleanVar(value=False)
-        
         self.nov_2019 = BooleanVar(value=False)
-        
         self.dec_2019 = BooleanVar(value=False)
         
         
         
         self.jan_2018 = BooleanVar(value=False)
-        
         self.feb_2018 = BooleanVar(value=False)
-        
         self.mar_2018 = BooleanVar(value=False)
-        
         self.apr_2018 = BooleanVar(value=False)
-        
         self.may_2018 = BooleanVar(value=False)
-        
         self.jun_2018 = BooleanVar(value=False)
-        
         self.sep_2018 = BooleanVar(value=False)
-        
         self.oct_2018 = BooleanVar(value=False)
-        
         self.nov_2018 = BooleanVar(value=False)
-        
         self.dec_2018 = BooleanVar(value=False)
         
         
         
         self.jan_2017 = BooleanVar(value=False)
-        
         self.feb_2017 = BooleanVar(value=False)
-        
         self.mar_2017 = BooleanVar(value=False)
-        
         self.apr_2017 = BooleanVar(value=False)
-        
         self.may_2017 = BooleanVar(value=False)
-        
         self.jun_2017 = BooleanVar(value=False)
         self.jul_2017 = BooleanVar(value=False)
-        
         self.aug_2017 = BooleanVar(value=False)
-        
         self.sep_2017 = BooleanVar(value=False)
-        
         self.oct_2017 = BooleanVar(value=False)
-        
         self.nov_2017 = BooleanVar(value=False)
-        
         self.dec_2017 = BooleanVar(value=False)
         
         
         
         self.months_1_to_4_frame = None
-        
         self.month_menu = None
-        
         self.year_menu = None
-        
         self.orse_widgets = None
-        
         self.sinapi_widgets = None
-        
         self.sicro_widgets = None
         self.baixar_button = None
-        
         self.aninhar_button = None
-        
         self.add_state_button = None
         self.apagar_button = None
         self.formatar_button = None
         
                 
         
-                # Radio buttons refs for hide/show logic
-        
+        # Radio buttons refs for hide/show logic
         self.rb_ambos = None
         self.rb_desonerado = None
         self.rb_nao_desonerado = None
         
-                
-        
-                # New variables for file comparison
-        
+        # New variables for file comparison
         self.project_file_path = StringVar()
         self.database_file_path = StringVar()
         self.project_full_path = None
         self.database_full_path = None
         
         
-        
-        
-        
         self.create_widgets()
         
-        
-        
         self.selected_year.trace_add("write", self._on_year_change)
-        
         self.selected_month.trace_add("write", self._on_month_change)
-        
         self.selected_service.trace_add("write", self._on_service_change)
-        
         self._on_year_change()
         self._on_service_change()
 
@@ -363,10 +227,25 @@ class SinapiApp:
 
         new_months = []
         if service == "SICRO":
-            # Use the first state as a reference for available months
-            reference_state = estados[0] if estados else ""
-            if reference_state:
-                new_months = sicro.get_available_months(self.sicro_links_data, reference_state, year)
+            # Prefer months from the selected SICRO states; if none selected, use union across all states
+            selected_states = [s for s, v in self.selected_sicro_states.items() if v.get() == 1]
+            if selected_states:
+                # use months from first selected state
+                new_months = get_available_months(self.sicro_links_data, selected_states[0], year)
+            else:
+                # union months across all states available in sicro_links_data for the year
+                months_set = set()
+                for st in (self.sicro_links_data.keys() if self.sicro_links_data else []):
+                    for m in get_available_months(self.sicro_links_data, st, year):
+                        months_set.add(m)
+                # sort by month number, keeping regular before revisado
+                def _month_sort_key(x):
+                    try:
+                        num = int(x.split(' ')[0])
+                    except Exception:
+                        num = 0
+                    return (num, 'revisado' in x)
+                new_months = sorted(months_set, key=_month_sort_key)
         elif service == "ORSE":
             new_months = [f"{m:02d}" for m in range(1, 13)]
         else:  # Lógica para SINAPI/outros
@@ -432,80 +311,80 @@ class SinapiApp:
             return
 
         if year == "2021" and month == "1 a 4":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2021, command=lambda: definir_valor_janeiro_2021(self.jan_2021.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2021, command=lambda: definir_valor_fevereiro_2021(self.feb_2021.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2021, command=lambda: definir_valor_marco_2021(self.mar_2021.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2021, command=lambda: definir_valor_abril_2021(self.apr_2021.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2021, command=lambda: sinapi.definir_valor_janeiro_2021(self.jan_2021.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2021, command=lambda: sinapi.definir_valor_fevereiro_2021(self.feb_2021.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2021, command=lambda: sinapi.definir_valor_marco_2021(self.mar_2021.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2021, command=lambda: sinapi.definir_valor_abril_2021(self.apr_2021.get())).pack(side='left')
         
         elif year == "2020" and month == "9 a 12":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2020, command=lambda: definir_valor_setembro_2020(self.sep_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2020, command=lambda: definir_valor_outubro_2020(self.oct_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2020, command=lambda: definir_valor_novembro_2020(self.nov_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2020, command=lambda: definir_valor_dezembro_2020(self.dec_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2020, command=lambda: sinapi.definir_valor_setembro_2020(self.sep_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2020, command=lambda: sinapi.definir_valor_outubro_2020(self.oct_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2020, command=lambda: sinapi.definir_valor_novembro_2020(self.nov_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2020, command=lambda: sinapi.definir_valor_dezembro_2020(self.dec_2020.get())).pack(side='left')
 
         elif year == "2020" and month == "5 a 8":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2020, command=lambda: definir_valor_maio_2020(self.may_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2020, command=lambda: definir_valor_junho_2020(self.jun_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2020, command=lambda: definir_valor_julho_2020(self.jul_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2020, command=lambda: definir_valor_agosto_2020(self.aug_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2020, command=lambda: sinapi.definir_valor_maio_2020(self.may_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2020, command=lambda: sinapi.definir_valor_junho_2020(self.jun_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2020, command=lambda: sinapi.definir_valor_julho_2020(self.jul_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2020, command=lambda: sinapi.definir_valor_agosto_2020(self.aug_2020.get())).pack(side='left')
 
         elif year == "2020" and month == "1 a 4":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2020, command=lambda: definir_valor_janeiro_2020(self.jan_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2020, command=lambda: definir_valor_fevereiro_2020(self.feb_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2020, command=lambda: definir_valor_marco_2020(self.mar_2020.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2020, command=lambda: definir_valor_abril_2020(self.apr_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2020, command=lambda: sinapi.definir_valor_janeiro_2020(self.jan_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2020, command=lambda: sinapi.definir_valor_fevereiro_2020(self.feb_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2020, command=lambda: sinapi.definir_valor_marco_2020(self.mar_2020.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2020, command=lambda: sinapi.definir_valor_abril_2020(self.apr_2020.get())).pack(side='left')
 
         elif year == "2018" and month == "7 e 8":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2018, command=lambda: definir_valor_julho_2018(self.jul_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2018, command=lambda: definir_valor_agosto_2018(self.aug_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2018, command=lambda: sinapi.definir_valor_julho_2018(self.jul_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2018, command=lambda: sinapi.definir_valor_agosto_2018(self.aug_2018.get())).pack(side='left')
 
         elif year == "2019" and month == "1 a 4":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2019, command=lambda: definir_valor_janeiro_2019(self.jan_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2019, command=lambda: definir_valor_fevereiro_2019(self.feb_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2019, command=lambda: definir_valor_marco_2019(self.mar_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2019, command=lambda: definir_valor_abril_2019(self.apr_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2019, command=lambda: sinapi.definir_valor_janeiro_2019(self.jan_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2019, command=lambda: sinapi.definir_valor_fevereiro_2019(self.feb_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2019, command=lambda: sinapi.definir_valor_marco_2019(self.mar_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2019, command=lambda: sinapi.definir_valor_abril_2019(self.apr_2019.get())).pack(side='left')
         
         elif year == "2019" and month == "5 a 8":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2019, command=lambda: definir_valor_maio_2019(self.may_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2019, command=lambda: definir_valor_junho_2019(self.jun_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2019, command=lambda: definir_valor_julho_2019(self.jul_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2019, command=lambda: definir_valor_agosto_2019(self.aug_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2019, command=lambda: sinapi.definir_valor_maio_2019(self.may_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2019, command=lambda: sinapi.definir_valor_junho_2019(self.jun_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2019, command=lambda: sinapi.definir_valor_julho_2019(self.jul_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2019, command=lambda: sinapi.definir_valor_agosto_2019(self.aug_2019.get())).pack(side='left')
 
         elif year == "2019" and month == "9 a 12":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2019, command=lambda: definir_valor_setembro_2019(self.sep_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2019, command=lambda: definir_valor_outubro_2019(self.oct_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2019, command=lambda: definir_valor_novembro_2019(self.nov_2019.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2019, command=lambda: definir_valor_dezembro_2019(self.dec_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2019, command=lambda: sinapi.definir_valor_setembro_2019(self.sep_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2019, command=lambda: sinapi.definir_valor_outubro_2019(self.oct_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2019, command=lambda: sinapi.definir_valor_novembro_2019(self.nov_2019.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2019, command=lambda: sinapi.definir_valor_dezembro_2019(self.dec_2019.get())).pack(side='left')
 
         elif year == "2018" and month == "1 a 6":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2018, command=lambda: definir_valor_janeiro_2018(self.jan_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2018, command=lambda: definir_valor_fevereiro_2018(self.feb_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2018, command=lambda: definir_valor_marco_2018(self.mar_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2018, command=lambda: definir_valor_abril_2018(self.apr_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2018, command=lambda: definir_valor_maio_2018(self.may_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2018, command=lambda: definir_valor_junho_2018(self.jun_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2018, command=lambda: sinapi.definir_valor_janeiro_2018(self.jan_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2018, command=lambda: sinapi.definir_valor_fevereiro_2018(self.feb_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2018, command=lambda: sinapi.definir_valor_marco_2018(self.mar_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2018, command=lambda: sinapi.definir_valor_abril_2018(self.apr_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2018, command=lambda: sinapi.definir_valor_maio_2018(self.may_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2018, command=lambda: sinapi.definir_valor_junho_2018(self.jun_2018.get())).pack(side='left')
 
         elif year == "2018" and month == "9 a 12":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2018, command=lambda: definir_valor_setembro_2018(self.sep_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2018, command=lambda: definir_valor_outubro_2018(self.oct_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2018, command=lambda: definir_valor_novembro_2018(self.nov_2018.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2018, command=lambda: definir_valor_dezembro_2018(self.dec_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2018, command=lambda: sinapi.definir_valor_setembro_2018(self.sep_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2018, command=lambda: sinapi.definir_valor_outubro_2018(self.oct_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2018, command=lambda: sinapi.definir_valor_novembro_2018(self.nov_2018.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2018, command=lambda: sinapi.definir_valor_dezembro_2018(self.dec_2018.get())).pack(side='left')
 
         elif year == "2017" and month == "1 a 6":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2017, command=lambda: definir_valor_janeiro_2017(self.jan_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2017, command=lambda: definir_valor_fevereiro_2017(self.feb_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2017, command=lambda: definir_valor_marco_2017(self.mar_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2017, command=lambda: definir_valor_abril_2017(self.apr_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2017, command=lambda: definir_valor_maio_2017(self.may_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2017, command=lambda: definir_valor_junho_2017(self.jun_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 1", variable=self.jan_2017, command=lambda: sinapi.definir_valor_janeiro_2017(self.jan_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 2", variable=self.feb_2017, command=lambda: sinapi.definir_valor_fevereiro_2017(self.feb_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 3", variable=self.mar_2017, command=lambda: sinapi.definir_valor_marco_2017(self.mar_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 4", variable=self.apr_2017, command=lambda: sinapi.definir_valor_abril_2017(self.apr_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 5", variable=self.may_2017, command=lambda: sinapi.definir_valor_maio_2017(self.may_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 6", variable=self.jun_2017, command=lambda: sinapi.definir_valor_junho_2017(self.jun_2017.get())).pack(side='left')
 
         elif year == "2017" and month == "7 a 12":
-            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2017, command=lambda: definir_valor_julho_2017(self.jul_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2017, command=lambda: definir_valor_agosto_2017(self.aug_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2017, command=lambda: definir_valor_setembro_2017(self.sep_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2017, command=lambda: definir_valor_outubro_2017(self.oct_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2017, command=lambda: definir_valor_novembro_2017(self.nov_2017.get())).pack(side='left')
-            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2017, command=lambda: definir_valor_dezembro_2017(self.dec_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 7", variable=self.jul_2017, command=lambda: sinapi.definir_valor_julho_2017(self.jul_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 8", variable=self.aug_2017, command=lambda: sinapi.definir_valor_agosto_2017(self.aug_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 9", variable=self.sep_2017, command=lambda: sinapi.definir_valor_setembro_2017(self.sep_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 10", variable=self.oct_2017, command=lambda: sinapi.definir_valor_outubro_2017(self.oct_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 11", variable=self.nov_2017, command=lambda: sinapi.definir_valor_novembro_2017(self.nov_2017.get())).pack(side='left')
+            Checkbutton(self.months_1_to_4_frame, text="Mês 12", variable=self.dec_2017, command=lambda: sinapi.definir_valor_dezembro_2017(self.dec_2017.get())).pack(side='left')
 
 
     def create_widgets(self):
@@ -638,7 +517,7 @@ class SinapiApp:
         self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
         self.add_state_button.pack(side='left', padx=5)
         
-        self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sinapi)
+        self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sync)
         self.apagar_button.pack(side='right', padx=5)
 
         # --- New Comparison Section ---
@@ -669,7 +548,7 @@ class SinapiApp:
     def _run_formatar_and_reenable(self):
         try:
             print("Iniciando formatação de arquivos aninhados...")
-            format_excel_files()
+            format_excel_files_sync()
             # messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Formatação", f"Ocorreu um erro: {e}")
@@ -691,11 +570,10 @@ class SinapiApp:
         self.project_full_path = filepath
         self.project_file_path.set(os.path.basename(filepath))
         
+        # valida presença da aba 'Curva ABC' via controller
         try:
-            workbook = openpyxl.load_workbook(filepath, read_only=True)
-            if "Curva ABC" in workbook.sheetnames:
+            if validate_project_has_curva(filepath):
                 print("Curva ABC encontrado!")
-                print("Nome das planilhas encontradas: ", workbook.sheetnames)
             else:
                 messagebox.showwarning("Aviso", 'A planilha "Curva ABC" não foi encontrada no arquivo do projeto.')
                 self.project_file_path.set("")
@@ -727,120 +605,8 @@ class SinapiApp:
 
     def _run_comparison_thread(self):
         try:
-            proj_wb = openpyxl.load_workbook(self.project_full_path)
-            db_wb = openpyxl.load_workbook(self.database_full_path, read_only=True)
-
-            # --- 1. Create a new result workbook ---
-            result_wb = openpyxl.Workbook()
-            result_wb.remove(result_wb.active) # Remove default sheet
-
-            # --- 2. Create the result sheet and apply comparison ---
-            proj_ws = proj_wb["Curva ABC"]
-            result_ws = result_wb.create_sheet(title="Resultado da Comparação")
-            
-            # Find column indices
-            header = [cell.value for cell in proj_ws[1]]
-            try:
-                desc_col_idx = header.index("Descrição") + 1
-                price_col_idx = header.index("Preço Unitário") + 1
-            except ValueError:
-                print("Cabeçalhos 'Descrição' e/ou 'Preço Unitário' não encontrados. Usando colunas padrão B e D.")
-                desc_col_idx = 2
-                price_col_idx = 4
-
-            # Build database dictionary
-            db_data = {}
-            for sheet_name in db_wb.sheetnames:
-                sheet = db_wb[sheet_name]
-                for row in sheet.iter_rows(min_row=2, values_only=True):
-                    desc = row[1]
-                    price = row[3]
-                    if isinstance(desc, str):
-                        db_data[desc.strip()] = (price, sheet_name)
-
-            # Define colors
-            green_fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
-            red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-            blue_fill = PatternFill(start_color="BDE0FE", end_color="BDE0FE", fill_type="solid")
-            gray_fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
-            
-            # Copy header to result sheet and add new columns
-            for col_idx, cell in enumerate(proj_ws[1], 1):
-                result_ws.cell(row=1, column=col_idx, value=cell.value)
-            
-            base_header_col = len(header) + 1
-            result_ws.cell(row=1, column=base_header_col, value="Planilha da Base")
-            result_ws.cell(row=1, column=base_header_col + 1, value="Valor Curva ABC")
-            result_ws.cell(row=1, column=base_header_col + 2, value="Valor Base de Dados")
-            result_ws.cell(row=1, column=base_header_col + 3, value="Diferença")
-
-
-            # Iterate through project data, write to result sheet and apply color
-            for row_idx, proj_row_data in enumerate(proj_ws.iter_rows(min_row=2, values_only=True), 2):
-                # Write the original row to the result sheet first
-                for col_idx, cell_value in enumerate(proj_row_data, 1):
-                    result_ws.cell(row=row_idx, column=col_idx, value=cell_value)
-                
-                proj_desc = proj_row_data[desc_col_idx - 1]
-                proj_price = proj_row_data[price_col_idx - 1]
-
-                fill_color = None
-                if isinstance(proj_desc, str) and proj_desc.strip() in db_data:
-                    db_price, db_sheet_name = db_data[proj_desc.strip()]
-                    result_ws.cell(row=row_idx, column=base_header_col, value=db_sheet_name)
-                    
-                    try:
-                        proj_price_float = float(proj_price)
-                        db_price_float = float(db_price)
-
-                        result_ws.cell(row=row_idx, column=base_header_col + 1, value=proj_price_float)
-                        result_ws.cell(row=row_idx, column=base_header_col + 2, value=db_price_float)
-                        result_ws.cell(row=row_idx, column=base_header_col + 3, value=proj_price_float - db_price_float)
-
-                        if proj_price_float < db_price_float:
-                            fill_color = green_fill
-                        elif proj_price_float > db_price_float:
-                            fill_color = red_fill
-                        else:
-                            fill_color = blue_fill
-                    except (ValueError, TypeError):
-                        fill_color = gray_fill
-                else:
-                    fill_color = gray_fill
-                
-                if fill_color:
-                    for col in range(1, len(proj_row_data) + 1):
-                        result_ws.cell(row=row_idx, column=col).fill = fill_color
-
-            # --- 3. Copy original "Curva ABC" sheet ---
-            original_abc_ws = result_wb.create_sheet(title="Curva ABC (Original)")
-            for r_idx, row in enumerate(proj_ws.iter_rows(), 1):
-                for c_idx, cell in enumerate(row, 1):
-                    new_cell = original_abc_ws.cell(row=r_idx, column=c_idx, value=cell.value)
-                    if hasattr(cell, 'has_style') and cell.has_style:
-                        new_cell.font = copy(cell.font)
-                        new_cell.border = copy(cell.border)
-                        new_cell.fill = copy(cell.fill)
-                        new_cell.number_format = cell.number_format
-                        new_cell.protection = copy(cell.protection)
-                        new_cell.alignment = copy(cell.alignment)
-
-            # --- 4. Copy all sheets from the database workbook ---
-            for db_sheet_name in db_wb.sheetnames:
-                db_ws = db_wb[db_sheet_name]
-                new_db_ws = result_wb.create_sheet(title=db_sheet_name)
-                for r_idx, row in enumerate(db_ws.iter_rows(), 1):
-                    for c_idx, cell in enumerate(row, 1):
-                        new_cell = new_db_ws.cell(row=r_idx, column=c_idx, value=cell.value)
-                        if hasattr(cell, 'has_style') and cell.has_style:
-                            new_cell.font = copy(cell.font)
-                            new_cell.fill = copy(cell.fill)
-                            new_cell.number_format = cell.number_format
-
-            output_filename = "comparacao_resultados.xlsx"
-            result_wb.save(output_filename)
-            messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{os.path.abspath(output_filename)}")
-
+            output = compare_workbooks(self.project_full_path, self.database_full_path)
+            messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{output}")
         except Exception as e:
             messagebox.showerror("Erro na Comparação", f"Ocorreu um erro durante a comparação: {e}")
 
@@ -853,19 +619,8 @@ class SinapiApp:
         sicro_equipamentos_desonerado = self.sicro_equipamentos_desonerado.get()
         sicro_equipamentos = self.sicro_equipamentos.get()
         sicro_materiais = self.sicro_materiais.get()
-        
-        threading.Thread(
-            target=aninhar_arquivos, 
-            args=(
-                None, 
-                tipo_arquivo,
-                sicro_composicoes,
-                sicro_equipamentos_desonerado,
-                sicro_equipamentos,
-                sicro_materiais
-            ), 
-            daemon=True
-        ).start()
+        # Delegate to controller which handles threading
+        start_aninhar(tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais)
 
     def execute_sicro(self):
         year = self.selected_year.get()
@@ -883,14 +638,14 @@ class SinapiApp:
 
         links_to_open = []
         for state in target_states:
-            link = sicro.get_sicro_link(self.sicro_links_data, state, year, month)
+            link = get_sicro_link(self.sicro_links_data, state, year, month)
             if link:
                 links_to_open.append(link)
             else:
                 print(f"AVISO: Link de download não encontrado para SICRO {state}/{year}/{month}.")
         
         if links_to_open:
-            threading.Thread(target=abrir_links_no_navegador, args=(links_to_open,), daemon=True).start()
+            threading.Thread(target=abrir_links_sync, args=(links_to_open,), daemon=True).start()
         else:
             messagebox.showerror("Erro", "Nenhum link de download encontrado para os parâmetros selecionados.")
 
@@ -917,7 +672,7 @@ class SinapiApp:
 
     def _run_orse_and_reenable(self, ano, mes, tipo):
         try:
-            funcao_orse(ano, mes, tipo)
+            funcao_orse_sync(ano, mes, tipo)
             # messagebox.showinfo("Sucesso", "Download do ORSE concluído com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Execução", f"Falha ao executar o download do ORSE: {e}")
@@ -957,9 +712,9 @@ class SinapiApp:
             
             first_selected_month = selected_months_2021[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2020 and mes_str == "9 a 12":
             selected_months_2020 = []
@@ -974,9 +729,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2020[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2020 and mes_str == "5 a 8":
             selected_months_2020 = []
@@ -991,9 +746,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2020[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2020 and mes_str == "1 a 4":
             selected_months_2020 = []
@@ -1008,9 +763,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2020[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2018 and mes_str == "7 e 8":
             selected_months_2018 = []
@@ -1023,9 +778,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2018[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2019 and mes_str == "1 a 4":
             selected_months_2019 = []
@@ -1040,9 +795,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2019[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2019 and mes_str == "5 a 8":
             selected_months_2019 = []
@@ -1057,9 +812,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2019[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2019 and mes_str == "9 a 12":
             selected_months_2019 = []
@@ -1074,9 +829,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2019[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2018 and mes_str == "1 a 6":
             selected_months_2018 = []
@@ -1093,9 +848,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2018[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2018 and mes_str == "9 a 12":
             selected_months_2018 = []
@@ -1110,9 +865,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2018[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2017 and mes_str == "1 a 6":
             selected_months_2017 = []
@@ -1129,9 +884,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2017[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         elif ano == 2017 and mes_str == "7 a 12":
             selected_months_2017 = []
@@ -1148,9 +903,9 @@ class SinapiApp:
 
             first_selected_month = selected_months_2017[0]
             for st in target_states:
-                links = gerar_links_sinapi(ano, first_selected_month, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, first_selected_month, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
         else:
             try:
@@ -1160,9 +915,9 @@ class SinapiApp:
                 return
             
             for st in target_states:
-                links = gerar_links_sinapi(ano, mes, tipo, estados_list=[st])
+                links = gerar_links_sync(ano, mes, tipo, estados_list=[st])
                 if links:
-                    threading.Thread(target=abrir_links_no_navegador, args=(links,), daemon=True).start()
+                    threading.Thread(target=abrir_links_sync, args=(links,), daemon=True).start()
 
     def add_state(self):
         # abre outra instância da mesma janela em Toplevel
