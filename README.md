@@ -2,9 +2,9 @@
 <p> Este é o repositório de um programa para comparação de valores entre duas planilhas.</p>
 <p> No momento atual, a comparação pode ser feita com as seguintes bases de dados:</p>
 <ul>
-  <li>SINAPI (Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil)</li>
-  <li>SICRO (Sistema de Custos Referenciais de Obras)</li>
-  <li>ORSE (Sistema de Orçamento de Obras de Sergipe)</li>
+  <li><a href="https://www.caixa.gov.br/site/paginas/downloads.aspx">SINAPI</a> (Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil)</li>
+  <li><a href="https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-referenciais/sistemas-de-custos/sicro/relatorios/relatorios-sicro">SICRO</a> (Sistema de Custos Referenciais de Obras)</li>
+  <li><a href="https://orse.cehop.se.gov.br/">ORSE</a> (Sistema de Orçamento de Obras de Sergipe)</li>
 </ul>
 
 <br>
