@@ -9,10 +9,12 @@
 
 <br>
 
-[![Download](https://img.shields.io/badge/GitHub-Download-green?logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/main/sinapi-gui-app/src/dist/main.exe)
+
+<h6>Download do programa:</h6>
+
+[![Download](https://img.shields.io/badge/GitHub-Download-green?logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/main/sinapi-gui-app/src/dist/main.exe) 
 
 
-</p>
 
 <h2> Fluxo de uso do programa </h2>
 <p> O fluxo de uso segue, mas não necessariamente, a seguinte ordem:</p>
@@ -183,4 +185,25 @@
 <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
   <li>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
 </ul>
+
+<h1>A ser feito:</h1>
+<ul>
+  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button) ⏳</li>
+  <li>Botão para escolher caminho de saída do arquivo gerado ⏳</li>
+  <li>Adicionar link do site do SICRO e ORSE ⏳</li>
+  <li>Limpar arquivos não utilizados do repositório (testar na nova branch primeiro) ⏳</li>
+  <li>Adicionar toggle para selecionar coluna de comparação ⏳
+  <ul>
+    <li>Exemplo:</li>
+    A coluna de Descrição na planilha de projetos está na letra: ~
+    <br>
+    A coluna de Preço Unitário da planilha de projetos está na letra: ~
+    <br>
+    A coluna de Descrição na planilha da base de dados está na letra: ~
+    <br>
+    A coluna de Preço Unitário da planilha da base de dados está na letra: ~
+    <br>
+  </ul>
+  </li>
   
+</ul>
