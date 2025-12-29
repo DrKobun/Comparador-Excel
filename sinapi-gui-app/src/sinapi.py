@@ -506,6 +506,19 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
         
         tipos = ["Desonerado", "NaoDesonerado"] if tipo == "Ambos" else [tipo]
         for t in tipos:
+            
+            # Correção AM 2021
+            if estado == "AM" and ano == 2020 and mes in (9, 10 , 11, 12):
+                url = "https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-am/SINAPI_ref_Insumos_Composicoes_AM_2020_09a12_Retificacao.zip"
+                links.append(url)
+                continue
+            
+            if estado == "SE" and ano == 2017 and mes in (1, 2, 3, 4, 5, 6):
+                url = "https://www.caixa.gov.br/Downloads/sinapi-a-partir-jul-2009-se/SINAPI_ref_Insumos_Composicoes_SE_01a062017_retific2.zip"
+                links.append(url)
+                continue
+            
+            
             # Correção DF
             if estado == 'DF' and ano == 2023 and mes in (1, 2):
                 print('valor de tipos:', tipos)
