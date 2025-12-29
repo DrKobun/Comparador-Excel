@@ -1,4 +1,5 @@
 from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog
+from tkinter.ttk import Combobox
 from datetime import datetime
 import threading
 import os
@@ -209,14 +210,18 @@ class SinapiApp:
             if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
-        # Update year dropdown
-        menu = self.year_menu["menu"]
-        menu.delete(0, "end")
-        for year in years:
-            menu.add_command(label=year, command=lambda value=year: self.selected_year.set(value))
-        
+        # Update year combobox values
+        try:
+            self.year_menu['values'] = years
+        except Exception:
+            pass
+
         if self.selected_year.get() not in years:
             self.selected_year.set(years[-1] if years else "")
+        try:
+            self.year_menu.set(self.selected_year.get())
+        except Exception:
+            pass
         
         # Atualiza os meses com base no serviço selecionado
         self._on_year_change()
@@ -265,15 +270,22 @@ class SinapiApp:
         current_month = self.selected_month.get()
 
         if self.month_menu:
-            menu = self.month_menu["menu"]
-            menu.delete(0, "end")
-            for month in new_months:
-                menu.add_command(label=month, command=lambda value=month: self.selected_month.set(value))
-                
+            # populate Combobox values (works in dev and in PyInstaller exe)
+            try:
+                self.month_menu['values'] = new_months
+            except Exception:
+                pass
+
             if current_month not in new_months:
                 self.selected_month.set(new_months[0] if new_months else "")
             else:
                 self.selected_month.set(current_month)
+
+            try:
+                # ensure displayed value matches variable
+                self.month_menu.set(self.selected_month.get())
+            except Exception:
+                pass
 
     def _on_month_change(self, *args):
         year = self.selected_year.get()
@@ -400,17 +412,29 @@ class SinapiApp:
         content_frame.pack(side='top', fill='x', padx=5, pady=5)
 
         Label(content_frame, text="Selecione a base de dados:").pack()
-        OptionMenu(content_frame, self.selected_service, "SINAPI", "SICRO", "ORSE").pack()
+        # Combobox for service selection
+        self.service_menu = Combobox(content_frame, textvariable=self.selected_service, values=["SINAPI", "SICRO", "ORSE"], state='readonly')
+        self.service_menu.pack()
+        try:
+            self.service_menu.set(self.selected_service.get())
+        except Exception:
+            pass
 
         Label(content_frame, text="Selecione a data:").pack()
         date_frame = Frame(content_frame)
         date_frame.pack(pady=2)
 
         years = [str(y) for y in range(2017, 2025)]
-        self.year_menu = OptionMenu(date_frame, self.selected_year, *years)
+        # Combobox for year selection
+        self.year_menu = Combobox(date_frame, textvariable=self.selected_year, values=years, state='readonly')
         self.year_menu.pack(side='left', padx=(0, 6))
+        try:
+            self.year_menu.set(self.selected_year.get())
+        except Exception:
+            pass
         
-        self.month_menu = OptionMenu(date_frame, self.selected_month, "")
+        # Use ttk Combobox for month selection — more consistent in frozen executables
+        self.month_menu = Combobox(date_frame, textvariable=self.selected_month, values=[], state='readonly')
         self.month_menu.pack(side='left')
 
         self.months_1_to_4_frame = Frame(content_frame)
