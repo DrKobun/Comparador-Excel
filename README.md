@@ -133,7 +133,7 @@
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
 <img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
-<p>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
+<p align=justify>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
 <br>
 <p>As cores das linhas representam:</p>
 
@@ -183,7 +183,7 @@
 <img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
 <br>
 <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
-  <li>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
+  <li align=justify>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
 </ul>
 
 <h1>A ser feito:</h1>
