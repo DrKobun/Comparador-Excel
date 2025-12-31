@@ -2,18 +2,19 @@
 <p> Este é o repositório de um programa para comparação de valores entre duas planilhas.</p>
 <p> No momento atual, a comparação pode ser feita com as seguintes bases de dados:</p>
 <ul>
-  <li>SINAPI (Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil)</li>
-  <li>SICRO (Sistema de Custos Referenciais de Obras)</li>
-  <li>ORSE (Sistema de Orçamento de Obras de Sergipe)</li>
+  <li><a href="https://www.caixa.gov.br/site/paginas/downloads.aspx">SINAPI</a> (Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil)</li>
+  <li><a href="https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-referenciais/sistemas-de-custos/sicro/relatorios/relatorios-sicro">SICRO</a> (Sistema de Custos Referenciais de Obras)</li>
+  <li><a href="https://orse.cehop.se.gov.br/">ORSE</a> (Sistema de Orçamento de Obras de Sergipe)</li>
 </ul>
 
 <br>
 
-[![Download](https://img.shields.io/badge/GitHub-Download-green?logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/producao/sinapi-gui-app/src/dist/SinapiApp.exe)
+
+<h6>Download do programa:</h6>
+
+[![Download](https://img.shields.io/badge/GitHub-Download-green?logo=github&logoColor=white)](https://github.com/DrKobun/Comparador-Excel/raw/refs/heads/producao/sinapi-gui-app/dist/main.exe) 
 
 
-
-</p>
 
 <h2> Fluxo de uso do programa </h2>
 <p> O fluxo de uso segue, mas não necessariamente, a seguinte ordem:</p>
@@ -132,7 +133,7 @@
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
 <img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
-<p>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
+<p align=justify>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
 <br>
 <p>As cores das linhas representam:</p>
 
@@ -182,6 +183,27 @@
 <img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
 <br>
 <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
-  <li>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
+  <li align=justify>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
 </ul>
+
+<h1>A ser feito:</h1>
+<ul>
+  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button) ⏳</li>
+  <li>Botão para escolher caminho de saída do arquivo gerado ⏳</li>
+  <li>Adicionar link do site do SICRO e ORSE ⏳</li>
+  <li>Limpar arquivos não utilizados do repositório (testar na nova branch primeiro) ⏳</li>
+  <li>Adicionar toggle para selecionar coluna de comparação ⏳
+  <ul>
+    <li>Exemplo:</li>
+    A coluna de Descrição na planilha de projetos está na letra: ~
+    <br>
+    A coluna de Preço Unitário da planilha de projetos está na letra: ~
+    <br>
+    A coluna de Descrição na planilha da base de dados está na letra: ~
+    <br>
+    A coluna de Preço Unitário da planilha da base de dados está na letra: ~
+    <br>
+  </ul>
+  </li>
   
+</ul>
