@@ -188,9 +188,9 @@
 
 <h1>A ser feito:</h1>
 <ul>
-  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button) ⏳</li>
+  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button)✔</li>
+  <li>Adicionar link do site do SICRO e ORSE ✔</li>
   <li>Botão para escolher caminho de saída do arquivo gerado ⏳</li>
-  <li>Adicionar link do site do SICRO e ORSE ⏳</li>
   <li>Limpar arquivos não utilizados do repositório (testar na nova branch primeiro) ⏳</li>
   <li>Adicionar toggle para selecionar coluna de comparação ⏳
   <ul>
