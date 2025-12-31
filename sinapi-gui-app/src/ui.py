@@ -46,12 +46,14 @@ class SinapiApp:
         self.selected_type = IntVar(value=0)
         self.selected_file_type = StringVar(value="Ambos")
         self.selected_states = {estado: IntVar(value=0) for estado in estados}
+        self.select_all_states_var = BooleanVar(value=False)
         self.selected_orse_type = StringVar(value="ambos")
         
         # SICRO related
         self.sicro_links_data = parse_sicro_links()
         
         self.selected_sicro_states = {estado: IntVar(value=0) for estado in estados}
+        self.select_all_sicro_states_var = BooleanVar(value=False)
         
         self.sicro_composicoes = BooleanVar(value=False)
         
@@ -466,7 +468,10 @@ class SinapiApp:
         Radiobutton(file_type_frame, text="Insumos", variable=self.selected_file_type, value="Insumos").pack(anchor='w')
         Radiobutton(file_type_frame, text="Sintéticos", variable=self.selected_file_type, value="Sintetico").pack(anchor='w')
 
-        Label(self.sinapi_widgets, text="Selecione os estados:").pack()
+        states_header_frame = Frame(self.sinapi_widgets)
+        states_header_frame.pack(pady=2)
+        Label(states_header_frame, text="Selecione os estados:").pack(side='left')
+        Checkbutton(states_header_frame, text="Selecionar Todos", variable=self.select_all_states_var, command=self.toggle_all_states).pack(side='left', padx=5)
 
         num_rows = 3
         total = len(estados)
@@ -482,7 +487,7 @@ class SinapiApp:
 
         # texto de link clicável:
         link_font = font.Font(size=10, underline=True)
-        link_label = Label(self.sinapi_widgets, text="site de downloads da CAIXA (SINAPI)", fg="blue", cursor="hand2")
+        link_label = Label(self.sinapi_widgets, text="Site de donwloads SINAPI", fg="blue", cursor="hand2")
         link_label.pack()
         link_label.bind("<Button-1>", self.open_link)
         link_label.config(font=link_font)
@@ -498,7 +503,20 @@ class SinapiApp:
         Radiobutton(orse_type_frame, text="Ambos", variable=self.selected_orse_type, value="ambos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Insumos", variable=self.selected_orse_type, value="insumos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Serviços", variable=self.selected_orse_type, value="servicos").pack(anchor='w')
+        
+        orse_links_frame = Frame(self.orse_widgets)
+        orse_links_frame.pack()
 
+        link_label = Label(orse_links_frame, text="Site de downloads ORSE", fg="blue", cursor="hand2")
+        link_label.pack(side='left', padx=5)
+        link_label.bind("<Button-1>", self.open_link_orse)
+        link_label.config(font=link_font) 
+
+        drive_label = Label(orse_links_frame, text="Google Drive", fg="blue", cursor="hand2")
+        drive_label.pack(side='left', padx=5)
+        drive_label.bind("<Button-1>", self.open_link_orse_drive)
+        drive_label.config(font=link_font)
+        
         # --- Widgets SICRO ---
         self.sicro_widgets = Frame(content_frame)
 
@@ -511,7 +529,13 @@ class SinapiApp:
         Checkbutton(sicro_checkbox_frame, text="Equipamentos", variable=self.sicro_equipamentos).pack(anchor='w')
         Checkbutton(sicro_checkbox_frame, text="Materiais", variable=self.sicro_materiais).pack(anchor='w')
 
-        Label(self.sicro_widgets, text="Selecione os estados:").pack()
+        sicro_states_header_frame = Frame(self.sicro_widgets)
+        sicro_states_header_frame.pack(pady=2)
+        Label(sicro_states_header_frame, text="Selecione os estados:").pack(side='left')
+        Checkbutton(sicro_states_header_frame, text="Selecionar Todos", variable=self.select_all_sicro_states_var, command=self.toggle_all_sicro_states).pack(side='left', padx=5)
+        
+        
+        
         
         num_rows_sicro = 3
         total_sicro = len(estados)
@@ -525,6 +549,13 @@ class SinapiApp:
             cb = Checkbutton(sicro_states_rows[row_idx], text=estado, variable=self.selected_sicro_states[estado])
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
+        # texto de link clicável:
+        link_font = font.Font(size=10, underline=True)
+        link_label = Label(self.sicro_widgets, text="Site de downloads SICRO", fg="blue", cursor="hand2")
+        link_label.pack()
+        link_label.bind("<Button-1>", self.open_link_sicro)
+        link_label.config(font=link_font)
+        
         # --- Botões de download ---
         bottom_frame = Frame(download_frame)
         bottom_frame.pack(side='bottom', fill='x', pady=10)
@@ -583,6 +614,19 @@ class SinapiApp:
     def open_link(self, event):
         webbrowser.open_new_tab("https://www.caixa.gov.br/site/paginas/downloads.aspx")
 
+    def open_link_sicro(self, event):
+        webbrowser.open_new_tab("https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-referenciais/sistemas-de-custos/sicro/relatorios/relatorios-sicro")
+        
+    def open_link_orse(self, event):
+        webbrowser.open_new_tab("https://orse.cehop.se.gov.br/default.asp")
+        
+    def open_link_orse_drive(self, event):
+        webbrowser.open_new_tab("https://drive.google.com/drive/folders/1ZqlnNuiCGrnKmj2jtEm1UltncGWgOplc?hl=pt-br")
+        
+        
+        
+        
+        
     def select_project_file(self):
         filepath = filedialog.askopenfilename(
             title="Selecione o arquivo do projeto",
@@ -947,6 +991,16 @@ class SinapiApp:
         # abre outra instância da mesma janela em Toplevel
         new_win = Toplevel(self.master)
         SinapiApp(new_win)
+
+    def toggle_all_states(self):
+        target_value = 1 if self.select_all_states_var.get() else 0
+        for var in self.selected_states.values():
+            var.set(target_value)
+
+    def toggle_all_sicro_states(self):
+        target_value = 1 if self.select_all_sicro_states_var.get() else 0
+        for var in self.selected_sicro_states.values():
+            var.set(target_value)
 
 def run_app():
     root = Tk()
