@@ -4,7 +4,7 @@ import openpyxl
 from openpyxl.styles import PatternFill
 
 
-def compare_workbooks(project_path: str, database_path: str) -> str:
+def compare_workbooks(project_path: str, database_path: str, output_dir: str = None) -> str:
     """Compara 'Curva ABC' do projeto com as bases e gera arquivo de resultado.
     Retorna o caminho do arquivo salvo.
     Replica comportamento atual presente em `ui.py`.
@@ -106,7 +106,11 @@ def compare_workbooks(project_path: str, database_path: str) -> str:
                     new_cell.fill = copy(cell.fill)
                     new_cell.number_format = cell.number_format
 
-    output_filename = "comparacao_resultados.xlsx"
+    filename = "comparacao_resultados.xlsx"
+    if output_dir:
+        output_filename = os.path.join(output_dir, filename)
+    else:
+        output_filename = filename
     result_wb.save(output_filename)
     return os.path.abspath(output_filename)
 

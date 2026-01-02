@@ -1,4 +1,4 @@
-from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog
+from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog, Menu, Menubutton
 from tkinter.ttk import Combobox
 from datetime import datetime
 import threading
@@ -25,6 +25,8 @@ try:
 except Exception:
     sinapi = importlib.import_module("sinapi")
 
+import aninhar
+import formatar_aninhados
 # Backwards-compat aliases for existing code paths in this file
 # (aliases removed) use controller functions directly
 
@@ -150,9 +152,13 @@ class SinapiApp:
         self.sicro_widgets = None
         self.baixar_button = None
         self.aninhar_button = None
-        self.add_state_button = None
+        # self.add_state_button = None
         self.apagar_button = None
         self.formatar_button = None
+        self.saida_btn = None
+        self.custom_aninhar_path = StringVar()
+        self.custom_formatar_path = StringVar()
+        self.custom_comparison_path = StringVar()
         
                 
         
@@ -191,7 +197,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_orse)
             if self.aninhar_button: self.aninhar_button.pack_forget()
             if self.formatar_button: self.formatar_button.pack_forget()
-            if self.add_state_button: self.add_state_button.pack_forget()
+            if self.saida_btn: self.saida_btn.pack_forget()
+            # if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack_forget()
 
         elif service == "SICRO":
@@ -200,7 +207,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_sicro)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
             if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
-            if self.add_state_button: self.add_state_button.pack_forget()
+            if self.saida_btn: self.saida_btn.pack(side='left', padx=5)
+            # if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
         else:  # SINAPI
@@ -209,7 +217,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_sinapi)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
             if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
-            if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
+            if self.saida_btn: self.saida_btn.pack(side='left', padx=5)
+            # if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
         # Update year combobox values
@@ -569,8 +578,16 @@ class SinapiApp:
         self.formatar_button = Button(bottom_frame, text="Formatar", command=self.execute_formatar_aninhados)
         self.formatar_button.pack(side='left', padx=5)
         
-        self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
-        self.add_state_button.pack(side='left', padx=5)
+        self.saida_btn = Menubutton(bottom_frame, text="Saída...", direction='above', relief='solid', bd=1)
+        self.saida_menu = Menu(self.saida_btn, tearoff=0)
+        self.saida_menu.add_command(label="Juntar", command=self.select_aninhar_output)
+        self.saida_menu.add_command(label="Formatar", command=self.select_formatar_output)
+        self.saida_menu.add_command(label="Comparação", command=self.select_comparison_output)
+        self.saida_btn.config(menu=self.saida_menu)
+        self.saida_btn.pack(side='left', padx=5)
+        
+        # self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
+        # self.add_state_button.pack(side='left', padx=5)
         
         self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sync)
         self.apagar_button.pack(side='right', padx=5)
@@ -596,6 +613,21 @@ class SinapiApp:
         # Start comparison button
         Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison, width=25, height=3).pack(pady=10)
 
+    def select_aninhar_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Juntar")
+        if path:
+            self.custom_aninhar_path.set(path)
+
+    def select_formatar_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Formatar")
+        if path:
+            self.custom_formatar_path.set(path)
+
+    def select_comparison_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Comparação")
+        if path:
+            self.custom_comparison_path.set(path)
+
     def execute_formatar_aninhados(self):
         self.formatar_button.config(state="disabled")
         threading.Thread(target=self._run_formatar_and_reenable, daemon=True).start()
@@ -603,7 +635,8 @@ class SinapiApp:
     def _run_formatar_and_reenable(self):
         try:
             print("Iniciando formatação de arquivos aninhados...")
-            format_excel_files_sync()
+            target_dir = self.custom_formatar_path.get() or None
+            formatar_aninhados.format_excel_files(target_directory=target_dir)
             # messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Formatação", f"Ocorreu um erro: {e}")
@@ -673,7 +706,8 @@ class SinapiApp:
 
     def _run_comparison_thread(self):
         try:
-            output = compare_workbooks(self.project_full_path, self.database_full_path)
+            output_dir = self.custom_comparison_path.get() or None
+            output = compare_workbooks(self.project_full_path, self.database_full_path, output_dir=output_dir)
             messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{output}")
         except Exception as e:
             messagebox.showerror("Erro na Comparação", f"Ocorreu um erro durante a comparação: {e}")
@@ -687,8 +721,12 @@ class SinapiApp:
         sicro_equipamentos_desonerado = self.sicro_equipamentos_desonerado.get()
         sicro_equipamentos = self.sicro_equipamentos.get()
         sicro_materiais = self.sicro_materiais.get()
-        # Delegate to controller which handles threading
-        start_aninhar(tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais)
+        
+        base_dir = self.custom_aninhar_path.get() or None
+        
+        # Executa diretamente em thread para suportar o argumento base_dir
+        threading.Thread(target=aninhar.aninhar_arquivos, 
+                         args=(base_dir, tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais), daemon=True).start()
 
     def execute_sicro(self):
         year = self.selected_year.get()

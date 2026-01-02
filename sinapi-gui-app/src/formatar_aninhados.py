@@ -41,7 +41,7 @@ def remover_anotacoes_da_planilha(sheet):
         print(f"    - AVISO ao remover anotações: {e}")
         return False
 
-def format_excel_files():
+def format_excel_files(target_directory=None):
     """
     Automatiza a formatação de planilhas Excel específicas em um diretório.
 
@@ -56,8 +56,11 @@ def format_excel_files():
     
     """
     # Constrói o caminho para o diretório de destino na área de trabalho
-    home_dir = os.path.expanduser('~')
-    target_dir = os.path.join(home_dir, 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'aninhar')
+    if target_directory:
+        target_dir = target_directory
+    else:
+        home_dir = os.path.expanduser('~')
+        target_dir = os.path.join(home_dir, 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'aninhar')
 
     if not os.path.isdir(target_dir):
         print(f"Erro: O diretório não foi encontrado em '{target_dir}'")
