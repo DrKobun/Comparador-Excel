@@ -121,6 +121,9 @@
 <h3>Botão para formatar arquivos agrupados:</h3>
 <img src="/imagens-repo/novas-imagens/selecao-formatar.png" alt="Imagem demonstrando botão para formatar arquivos agrupados" height=500/>
 
+<h3>Botão para escolha de pasta dos arquivos agrupados, formatados e comparados</h3>
+<img src="/imagens-repo/novas-imagens/saida-opcoes.png" alt="Imagem demonstrando botão para escolha de pastas" height=500 />
+
 <h3>Botão para selecionar arquivo Excel do projeto:</h3>
 <img src="/imagens-repo/novas-imagens/selecao-projeto.png" alt="Imagem demonstrando botão para selecionar arquivo Excel do Projeto" height=500/>
 
