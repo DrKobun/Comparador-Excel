@@ -59,6 +59,8 @@ def aninhar_arquivos(
     (out_path será "" se não houve arquivos Excel encontrados).
     """
     # determina base_dir (Sinapi downloads na Área de Trabalho)
+    is_custom_path = base_dir is not None
+
     if base_dir is None:
         desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
         base_dir = os.path.join(desktop_dir, "Arquivos-SINAPI-SICRO-ORSE")
@@ -478,12 +480,16 @@ def aninhar_arquivos(
     # 3) localizar arquivos Excel relevantes (recursivo, inclui conteúdo extraído)
     exts = {'.xls', '.xlsx', '.xlsm', '.xlsb'}
     matches: List[str] = []
-    output_dir = os.path.join(base_dir, "aninhar")
+    
+    if is_custom_path:
+        output_dir = base_dir
+    else:
+        output_dir = os.path.join(base_dir, "aninhar")
     os.makedirs(output_dir, exist_ok=True)
 
     for root, _, files in os.walk(base_dir):
         # evita procurar dentro da própria pasta de saída
-        if os.path.abspath(root).startswith(os.path.abspath(output_dir)):
+        if not is_custom_path and os.path.abspath(root).startswith(os.path.abspath(output_dir)):
             continue
         for fname in files:
             low = fname.lower()

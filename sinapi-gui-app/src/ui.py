@@ -1,4 +1,4 @@
-from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog
+from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog, Menu, Menubutton
 from tkinter.ttk import Combobox
 from datetime import datetime
 import threading
@@ -25,6 +25,8 @@ try:
 except Exception:
     sinapi = importlib.import_module("sinapi")
 
+import aninhar
+import formatar_aninhados
 # Backwards-compat aliases for existing code paths in this file
 # (aliases removed) use controller functions directly
 
@@ -46,12 +48,14 @@ class SinapiApp:
         self.selected_type = IntVar(value=0)
         self.selected_file_type = StringVar(value="Ambos")
         self.selected_states = {estado: IntVar(value=0) for estado in estados}
+        self.select_all_states_var = BooleanVar(value=False)
         self.selected_orse_type = StringVar(value="ambos")
         
         # SICRO related
         self.sicro_links_data = parse_sicro_links()
         
         self.selected_sicro_states = {estado: IntVar(value=0) for estado in estados}
+        self.select_all_sicro_states_var = BooleanVar(value=False)
         
         self.sicro_composicoes = BooleanVar(value=False)
         
@@ -148,9 +152,13 @@ class SinapiApp:
         self.sicro_widgets = None
         self.baixar_button = None
         self.aninhar_button = None
-        self.add_state_button = None
+        # self.add_state_button = None
         self.apagar_button = None
         self.formatar_button = None
+        self.saida_btn = None
+        self.custom_aninhar_path = StringVar()
+        self.custom_formatar_path = StringVar()
+        self.custom_comparison_path = StringVar()
         
                 
         
@@ -189,7 +197,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_orse)
             if self.aninhar_button: self.aninhar_button.pack_forget()
             if self.formatar_button: self.formatar_button.pack_forget()
-            if self.add_state_button: self.add_state_button.pack_forget()
+            if self.saida_btn: self.saida_btn.pack_forget()
+            # if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack_forget()
 
         elif service == "SICRO":
@@ -198,7 +207,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_sicro)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
             if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
-            if self.add_state_button: self.add_state_button.pack_forget()
+            if self.saida_btn: self.saida_btn.pack(side='left', padx=5)
+            # if self.add_state_button: self.add_state_button.pack_forget()
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
         else:  # SINAPI
@@ -207,7 +217,8 @@ class SinapiApp:
             if self.baixar_button: self.baixar_button.config(command=self.execute_sinapi)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
             if self.formatar_button: self.formatar_button.pack(side='left', padx=5)
-            if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
+            if self.saida_btn: self.saida_btn.pack(side='left', padx=5)
+            # if self.add_state_button: self.add_state_button.pack(side='left', padx=5)
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
         # Update year combobox values
@@ -466,7 +477,10 @@ class SinapiApp:
         Radiobutton(file_type_frame, text="Insumos", variable=self.selected_file_type, value="Insumos").pack(anchor='w')
         Radiobutton(file_type_frame, text="Sintéticos", variable=self.selected_file_type, value="Sintetico").pack(anchor='w')
 
-        Label(self.sinapi_widgets, text="Selecione os estados:").pack()
+        states_header_frame = Frame(self.sinapi_widgets)
+        states_header_frame.pack(pady=2)
+        Label(states_header_frame, text="Selecione os estados:").pack(side='left')
+        Checkbutton(states_header_frame, text="Selecionar Todos", variable=self.select_all_states_var, command=self.toggle_all_states).pack(side='left', padx=5)
 
         num_rows = 3
         total = len(estados)
@@ -482,7 +496,7 @@ class SinapiApp:
 
         # texto de link clicável:
         link_font = font.Font(size=10, underline=True)
-        link_label = Label(self.sinapi_widgets, text="site de downloads da CAIXA (SINAPI)", fg="blue", cursor="hand2")
+        link_label = Label(self.sinapi_widgets, text="Site de donwloads SINAPI", fg="blue", cursor="hand2")
         link_label.pack()
         link_label.bind("<Button-1>", self.open_link)
         link_label.config(font=link_font)
@@ -498,7 +512,20 @@ class SinapiApp:
         Radiobutton(orse_type_frame, text="Ambos", variable=self.selected_orse_type, value="ambos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Insumos", variable=self.selected_orse_type, value="insumos").pack(anchor='w')
         Radiobutton(orse_type_frame, text="Serviços", variable=self.selected_orse_type, value="servicos").pack(anchor='w')
+        
+        orse_links_frame = Frame(self.orse_widgets)
+        orse_links_frame.pack()
 
+        link_label = Label(orse_links_frame, text="Site de downloads ORSE", fg="blue", cursor="hand2")
+        link_label.pack(side='left', padx=5)
+        link_label.bind("<Button-1>", self.open_link_orse)
+        link_label.config(font=link_font) 
+
+        drive_label = Label(orse_links_frame, text="Google Drive", fg="blue", cursor="hand2")
+        drive_label.pack(side='left', padx=5)
+        drive_label.bind("<Button-1>", self.open_link_orse_drive)
+        drive_label.config(font=link_font)
+        
         # --- Widgets SICRO ---
         self.sicro_widgets = Frame(content_frame)
 
@@ -511,7 +538,13 @@ class SinapiApp:
         Checkbutton(sicro_checkbox_frame, text="Equipamentos", variable=self.sicro_equipamentos).pack(anchor='w')
         Checkbutton(sicro_checkbox_frame, text="Materiais", variable=self.sicro_materiais).pack(anchor='w')
 
-        Label(self.sicro_widgets, text="Selecione os estados:").pack()
+        sicro_states_header_frame = Frame(self.sicro_widgets)
+        sicro_states_header_frame.pack(pady=2)
+        Label(sicro_states_header_frame, text="Selecione os estados:").pack(side='left')
+        Checkbutton(sicro_states_header_frame, text="Selecionar Todos", variable=self.select_all_sicro_states_var, command=self.toggle_all_sicro_states).pack(side='left', padx=5)
+        
+        
+        
         
         num_rows_sicro = 3
         total_sicro = len(estados)
@@ -525,6 +558,13 @@ class SinapiApp:
             cb = Checkbutton(sicro_states_rows[row_idx], text=estado, variable=self.selected_sicro_states[estado])
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
+        # texto de link clicável:
+        link_font = font.Font(size=10, underline=True)
+        link_label = Label(self.sicro_widgets, text="Site de downloads SICRO", fg="blue", cursor="hand2")
+        link_label.pack()
+        link_label.bind("<Button-1>", self.open_link_sicro)
+        link_label.config(font=link_font)
+        
         # --- Botões de download ---
         bottom_frame = Frame(download_frame)
         bottom_frame.pack(side='bottom', fill='x', pady=10)
@@ -538,8 +578,16 @@ class SinapiApp:
         self.formatar_button = Button(bottom_frame, text="Formatar", command=self.execute_formatar_aninhados)
         self.formatar_button.pack(side='left', padx=5)
         
-        self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
-        self.add_state_button.pack(side='left', padx=5)
+        self.saida_btn = Menubutton(bottom_frame, text="Saída...", direction='above', relief='solid', bd=1)
+        self.saida_menu = Menu(self.saida_btn, tearoff=0)
+        self.saida_menu.add_command(label="Juntar", command=self.select_aninhar_output)
+        self.saida_menu.add_command(label="Formatar", command=self.select_formatar_output)
+        self.saida_menu.add_command(label="Comparação", command=self.select_comparison_output)
+        self.saida_btn.config(menu=self.saida_menu)
+        self.saida_btn.pack(side='left', padx=5)
+        
+        # self.add_state_button = Button(bottom_frame, text="+1", command=self.add_state)
+        # self.add_state_button.pack(side='left', padx=5)
         
         self.apagar_button = Button(bottom_frame, text="apagar dados", command=apagar_dados_sync)
         self.apagar_button.pack(side='right', padx=5)
@@ -565,6 +613,21 @@ class SinapiApp:
         # Start comparison button
         Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison, width=25, height=3).pack(pady=10)
 
+    def select_aninhar_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Juntar")
+        if path:
+            self.custom_aninhar_path.set(path)
+
+    def select_formatar_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Formatar")
+        if path:
+            self.custom_formatar_path.set(path)
+
+    def select_comparison_output(self):
+        path = filedialog.askdirectory(title="Selecione pasta de saída para Comparação")
+        if path:
+            self.custom_comparison_path.set(path)
+
     def execute_formatar_aninhados(self):
         self.formatar_button.config(state="disabled")
         threading.Thread(target=self._run_formatar_and_reenable, daemon=True).start()
@@ -572,7 +635,8 @@ class SinapiApp:
     def _run_formatar_and_reenable(self):
         try:
             print("Iniciando formatação de arquivos aninhados...")
-            format_excel_files_sync()
+            target_dir = self.custom_formatar_path.get() or None
+            formatar_aninhados.format_excel_files(target_directory=target_dir)
             # messagebox.showinfo("Sucesso", "Formatação concluída com sucesso!")
         except Exception as e:
             messagebox.showerror("Erro na Formatação", f"Ocorreu um erro: {e}")
@@ -583,6 +647,19 @@ class SinapiApp:
     def open_link(self, event):
         webbrowser.open_new_tab("https://www.caixa.gov.br/site/paginas/downloads.aspx")
 
+    def open_link_sicro(self, event):
+        webbrowser.open_new_tab("https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-referenciais/sistemas-de-custos/sicro/relatorios/relatorios-sicro")
+        
+    def open_link_orse(self, event):
+        webbrowser.open_new_tab("https://orse.cehop.se.gov.br/default.asp")
+        
+    def open_link_orse_drive(self, event):
+        webbrowser.open_new_tab("https://drive.google.com/drive/folders/1ZqlnNuiCGrnKmj2jtEm1UltncGWgOplc?hl=pt-br")
+        
+        
+        
+        
+        
     def select_project_file(self):
         filepath = filedialog.askopenfilename(
             title="Selecione o arquivo do projeto",
@@ -629,7 +706,8 @@ class SinapiApp:
 
     def _run_comparison_thread(self):
         try:
-            output = compare_workbooks(self.project_full_path, self.database_full_path)
+            output_dir = self.custom_comparison_path.get() or None
+            output = compare_workbooks(self.project_full_path, self.database_full_path, output_dir=output_dir)
             messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{output}")
         except Exception as e:
             messagebox.showerror("Erro na Comparação", f"Ocorreu um erro durante a comparação: {e}")
@@ -643,8 +721,12 @@ class SinapiApp:
         sicro_equipamentos_desonerado = self.sicro_equipamentos_desonerado.get()
         sicro_equipamentos = self.sicro_equipamentos.get()
         sicro_materiais = self.sicro_materiais.get()
-        # Delegate to controller which handles threading
-        start_aninhar(tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais)
+        
+        base_dir = self.custom_aninhar_path.get() or None
+        
+        # Executa diretamente em thread para suportar o argumento base_dir
+        threading.Thread(target=aninhar.aninhar_arquivos, 
+                         args=(base_dir, tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais), daemon=True).start()
 
     def execute_sicro(self):
         year = self.selected_year.get()
@@ -947,6 +1029,16 @@ class SinapiApp:
         # abre outra instância da mesma janela em Toplevel
         new_win = Toplevel(self.master)
         SinapiApp(new_win)
+
+    def toggle_all_states(self):
+        target_value = 1 if self.select_all_states_var.get() else 0
+        for var in self.selected_states.values():
+            var.set(target_value)
+
+    def toggle_all_sicro_states(self):
+        target_value = 1 if self.select_all_sicro_states_var.get() else 0
+        for var in self.selected_sicro_states.values():
+            var.set(target_value)
 
 def run_app():
     root = Tk()

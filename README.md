@@ -98,40 +98,43 @@
 
 <h2>Passo a passo de uso:</h2>
 <h3>Para selecionar a base de dados:</h3>
-<img src="/imagens-repo/selecao-base-dados.png" alt="Imagem demonstrando a seleção da base de dados do programa" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-base-dados.png" alt="Imagem demonstrando a seleção da base de dados do programa" height=500/>
 
 <h3>Para selecionar o ano e o mês desejados:</h3>
-<img src="/imagens-repo/selecao-data.png" alt="Imagem demonstrando local de seleção de mês e ano do arquivo a ser baixado" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-data.png" alt="Imagem demonstrando local de seleção de mês e ano do arquivo a ser baixado" height=500/>
 
 <h3>Para selecionar o tipo de arquivo para baixar:</h3>
-<img src="/imagens-repo/selecao-tipo-baixar.png" alt="Imagem demonstrando a seleção do tipo de arquivo que será baixado" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-tipo-baixar.png" alt="Imagem demonstrando a seleção do tipo de arquivo que será baixado" height=500/>
 
 <h3>Para selecionar os tipos de arquivo que serão agrupados:</h3>
-<img src="/imagens-repo/selecao-tipo-juntar.png" alt="Imagem demonstrando os tipo de arquivos serão agrupados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-tipo-juntar.png" alt="Imagem demonstrando os tipo de arquivos serão agrupados" height=500/>
 
 <h3>Seleção de estados para serem baixados:</h3>
-<img src="/imagens-repo/selecao-estados.png" alt="Imagem demonstrando local para seleção de estados para serem baixados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-estados.png" alt="Imagem demonstrando local para seleção de estados para serem baixados" height=500/>
 
 <h3>Botão para realizar o download dos arquivos selecionados:</h3>
-<img src="/imagens-repo/selecao-baixar.png" alt="Imagem demonstrando local para download dos arquivos selecionados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-baixar.png" alt="Imagem demonstrando local para download dos arquivos selecionados" height=500/>
 
 <h3>Botão para agrupar planilhas baixadas em um único arquivo Excel:</h3>
-<img src="/imagens-repo/selecao-juntar.png" alt="Imagem demonstrando local para agrupar arquivos das bases de dados baixados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-juntar.png" alt="Imagem demonstrando local para agrupar arquivos das bases de dados baixados" height=500/>
 
 <h3>Botão para formatar arquivos agrupados:</h3>
-<img src="/imagens-repo/selecao-formatar.png" alt="Imagem demonstrando botão para formatar arquivos agrupados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-formatar.png" alt="Imagem demonstrando botão para formatar arquivos agrupados" height=500/>
+
+<h3>Botão para escolha de pasta dos arquivos agrupados, formatados e comparados</h3>
+<img src="/imagens-repo/novas-imagens/saida-opcoes.png" alt="Imagem demonstrando botão para escolha de pastas" height=500 />
 
 <h3>Botão para selecionar arquivo Excel do projeto:</h3>
-<img src="/imagens-repo/selecao-projeto.png" alt="Imagem demonstrando botão para selecionar arquivo Excel do Projeto" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-projeto.png" alt="Imagem demonstrando botão para selecionar arquivo Excel do Projeto" height=500/>
 
 <h3>Botão para selecionar arquivo agrupado e formatado:</h3>
-<img src="/imagens-repo/selecao-base-dados-comparar.png" alt="Imagem demonstrando botão para selecionar arquivo Excel agrupado e formatado" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-base-dados-comparar.png" alt="Imagem demonstrando botão para selecionar arquivo Excel agrupado e formatado" height=500/>
 
 <h3>Botão para iniciar a comparação:</h3>
-<img src="/imagens-repo/selecao-iniciar-comparacao.png" alt="Imagem demonstrando botão para iniciar a comparação entre dois arquivos selecionados" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-iniciar-comparacao.png" alt="Imagem demonstrando botão para iniciar a comparação entre dois arquivos selecionados" height=500/>
 
 <h3>Para apagar dados das pastas do fluxo de funcionamento do programa:</h3>
-<img src="/imagens-repo/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
+<img src="/imagens-repo/novas-imagens/selecao-apagar.png" alt="Imagem demonstrando botão para apagar pastas do fluxo de funcionamento do programa, para ser feito uma nova comparação" height=500/>
 
 <p align=justify>Após serem escolhidos os arquivos para ser feita a comparação, o algoritmo procura na pasta de projetos, se existe alguma planilha nomeada como "Curva ABC", se o encontrar, é feita a comparação de todas as linhas da coluna B (Descrição) e todas as linhas da coluna D (Valor). O resultado da comparação é gerado em uma nova planilha nomeada como "Resultado da Comparação".</p>
 <br>
@@ -180,7 +183,7 @@
 <li>Antes de se fazer um download da base de dados do <b>SINAPI</b>, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado.</li>
 <br>
 <b><p>Para abrir o link de downloads do SINAPI rapidamente:</p></b>
-<img src="/imagens-repo/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
+<img src="/imagens-repo/novas-imagens/SINAPI-site.png" alt="Imagem demonstrando local para abrir rapidamente o site de downloads do SINAPI" height=500/>
 <br>
 <b><p align="justify">Caso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.</p></b>
   <li align=justify>Para fazer uma nova comparação, ou gerar um novo arquivo agrupado e formatado, clique no botão "apagar dados", serão apagados quaisquer arquivos que estejam nas pastas de funcionamento do programa, apagar esses arquivos para fazer uma nova comparação é necessário, pois o programa leva em consideração quaisquer arquivos Excel que estejam na pasta do fluxo de funcionamento.</li>
@@ -188,10 +191,10 @@
 
 <h1>A ser feito:</h1>
 <ul>
-  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button)✔</li>
+  <li>Adicionar botão "Selecionar todos / Desmarcar Todos" (toggle button) ✔</li>
+  <li>Botão para escolher caminho de saída do arquivo gerado ✔</li>
   <li>Adicionar link do site do SICRO e ORSE ✔</li>
-  <li>Botão para escolher caminho de saída do arquivo gerado ⏳</li>
-  <li>Limpar arquivos não utilizados do repositório (testar na nova branch primeiro) ⏳</li>
+  <li>Limpar arquivos não utilizados do repositório (branch produção) ⏳</li>
   <li>Adicionar toggle para selecionar coluna de comparação ⏳
   <ul>
     <li>Exemplo:</li>
