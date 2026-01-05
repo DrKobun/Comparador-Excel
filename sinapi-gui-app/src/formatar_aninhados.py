@@ -60,7 +60,7 @@ def format_excel_files(target_directory=None):
         target_dir = target_directory
     else:
         home_dir = os.path.expanduser('~')
-        target_dir = os.path.join(home_dir, 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'aninhar')
+        target_dir = os.path.join(home_dir, 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'agrupado')
 
     if not os.path.isdir(target_dir):
         print(f"Erro: O diretório não foi encontrado em '{target_dir}'")
@@ -329,7 +329,7 @@ if __name__ == '__main__':
     print("1. A biblioteca 'xlwings' deve ser instalada (pip install xlwings).")
     print("2. Microsoft Excel deve estar instalado neste computador.")
     print("3. Os arquivos a serem formatados devem estar em:")
-    print(f"   {os.path.join(os.path.expanduser('~'), 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'aninhar')}")
+    print(f"   {os.path.join(os.path.expanduser('~'), 'Desktop', 'Arquivos-SINAPI-SICRO-ORSE', 'agrupado')}")
     print("------------------------------------------------------------------\n")
     
     try:

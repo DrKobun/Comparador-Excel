@@ -55,7 +55,7 @@ def aninhar_arquivos(
        (case-insensitive) dentro de base_dir (inclui conteúdo extraído).
        Para arquivos SICRO, a inclusão é controlada pelos parâmetros booleanos.
     4) Junta todas as abas encontradas em um único arquivo Excel em <base_dir>/aninhar/.
-    Retorna (moved_paths, out_path) - moved_paths: lista de arquivos movidos; out_path: caminho do arquivo aninhado
+    Retorna (moved_paths, out_path) - moved_paths: lista de arquivos movidos; out_path: caminho do arquivo agrupado
     (out_path será "" se não houve arquivos Excel encontrados).
     """
     # determina base_dir (Sinapi downloads na Área de Trabalho)
@@ -484,7 +484,7 @@ def aninhar_arquivos(
     if is_custom_path:
         output_dir = base_dir
     else:
-        output_dir = os.path.join(base_dir, "aninhar")
+        output_dir = os.path.join(base_dir, "agrupado")
     os.makedirs(output_dir, exist_ok=True)
 
     for root, _, files in os.walk(base_dir):
@@ -576,7 +576,7 @@ def aninhar_arquivos(
 
     # 4) unir abas em um único arquivo Excel de saída
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_path = os.path.join(output_dir, f"aninhado_{timestamp}.xlsx")
+    out_path = os.path.join(output_dir, f"agrupado_{timestamp}.xlsx")
 
     # Helper functions moved to the top of aninhar_arquivos to fix UnboundLocalError
 
@@ -641,5 +641,5 @@ def aninhar_arquivos(
                 except Exception as e:
                     print(f"Erro ao escrever aba '{candidate}' de '{fpath}': {e}")
 
-    print(f"Arquivo aninhado criado em: {out_path}")
+    print(f"Arquivo agrupado criado em: {out_path}")
     return moved, out_path
