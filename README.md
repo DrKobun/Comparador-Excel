@@ -157,16 +157,16 @@
 <br>
 <b>Segue um rápido passo a passo para instalar a extensão no navegador (Google Chrome):</b>
 <h3>Para instalar:</h3>
-<img src="/imagens-repo/VeePN.png"/>
+<img src="/imagens-repo/novas-imagens/VeePN.png"/>
 <h3>Para adicionar:</h3>
-<img src="/imagens-repo/VeePN-adicionar.png"/>
+<img src="/imagens-repo/novas-imagens/VeePN-adicionar.png"/>
 <h3>Para fixar:</h3>
-<img src="/imagens-repo/VeePN-fixar.png"/>
+<img src="/imagens-repo/novas-imagens/VeePN-fixar.png"/>
 <h3>Para selecionar a região (USA - Virginia):</h3>
-<img src="/imagens-repo/VeePN-localidade.png" height="500"/>
-<img src="/imagens-repo/VeePN-virginia.png" height="500"/>
+<img src="/imagens-repo/novas-imagens/VeePN-localidade.png" height="500"/>
+<img src="/imagens-repo/novas-imagens/VeePN-virginia.png" height="500"/>
 <h3>Para iniciar conexão com VPN:</h3>
-<img src="/imagens-repo/VeePN-iniciar.png" height="500"/>
+<img src="/imagens-repo/novas-imagens/VeePN-iniciar.png" height="500"/>
 </li>
 <li align="justify">
     Para a comparação ser feita corretamente é NECESSÁRIO que o ARQUIVO DO PROJETO tenha uma planilha nomeada EXCLUSIVAMENTE como "Curva ABC" (O nome da planilha precisa respeitar as maiúsculas e minúsculas desse exemplo), seguindo a ordem de colunas: 
@@ -178,7 +178,7 @@
   <li><b>Coluna D</b> - Preço Unitário</li>
 </ul>
 <p>Exemplo de ordem de colunas da planilha <b>"Curva ABC"</b> (da planilha do <b>PROJETO</b>):</p>      
-<img src="/imagens-repo/excel-exemplo.PNG" />
+<img src="/imagens-repo/novas-imagens/excel-exemplo.PNG" />
   
 <li>Antes de se fazer um download da base de dados do <b>SINAPI</b>, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado.</li>
 <br>
