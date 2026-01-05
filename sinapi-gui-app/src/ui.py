@@ -1,4 +1,4 @@
-from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog, Menu, Menubutton
+from tkinter import Tk, StringVar, IntVar, BooleanVar, Label, OptionMenu, Radiobutton, Checkbutton, Button, Toplevel, messagebox, Frame, font, filedialog, Menu, Menubutton, Entry
 from tkinter.ttk import Combobox
 from datetime import datetime
 import threading
@@ -173,6 +173,13 @@ class SinapiApp:
         self.project_full_path = None
         self.database_full_path = None
         
+        # New vars for comparison columns
+        self.project_code_col = StringVar()
+        self.project_value_col = StringVar()
+        self.database_code_col = StringVar()
+        self.database_value_col = StringVar()
+
+        self.vcmd = (self.master.register(self.validate_alpha), '%P')
         
         self.create_widgets()
         
@@ -181,6 +188,11 @@ class SinapiApp:
         self.selected_service.trace_add("write", self._on_service_change)
         self._on_year_change()
         self._on_service_change()
+
+    def validate_alpha(self, P):
+        if P == "" or P.isalpha():
+            return True
+        return False
 
     def _on_service_change(self, *args):
         service = self.selected_service.get()
@@ -602,13 +614,22 @@ class SinapiApp:
         proj_frame = Frame(comparison_frame)
         proj_frame.pack(fill='x', padx=10, pady=2)
         Button(proj_frame, text="Arquivo do projeto", command=self.select_project_file).pack(side='left')
-        Label(proj_frame, textvariable=self.project_file_path, fg="gray").pack(side='left', padx=10)
+        
+        Label(proj_frame, text="Coluna do código do INSUMO/SERVIÇO:").pack(side='left', padx=(10, 0))
+        Entry(proj_frame, textvariable=self.project_code_col, width=5, validate='key', validatecommand=self.vcmd).pack(side='left')
+        Label(proj_frame, text="Coluna do valor do INSUMO/SERVIÇO:").pack(side='left', padx=(10, 0))
+        Entry(proj_frame, textvariable=self.project_value_col, width=5, validate='key', validatecommand=self.vcmd).pack(side='left')
+
 
         # Database file selection
         db_frame = Frame(comparison_frame)
         db_frame.pack(fill='x', padx=10, pady=2)
         Button(db_frame, text="Arquivo das bases de dados", command=self.select_database_file).pack(side='left')
-        Label(db_frame, textvariable=self.database_file_path, fg="gray").pack(side='left', padx=10)
+        
+        Label(db_frame, text="Coluna do código do INSUMO/SERVIÇO:").pack(side='left', padx=(10, 0))
+        Entry(db_frame, textvariable=self.database_code_col, width=5, validate='key', validatecommand=self.vcmd).pack(side='left')
+        Label(db_frame, text="Coluna do valor do INSUMO/SERVIÇO:").pack(side='left', padx=(10, 0))
+        Entry(db_frame, textvariable=self.database_value_col, width=5, validate='key', validatecommand=self.vcmd).pack(side='left')
         
         # Start comparison button
         Button(comparison_frame, text="Iniciar Comparação", command=self.start_comparison, width=25, height=3).pack(pady=10)
@@ -669,19 +690,16 @@ class SinapiApp:
             return
 
         self.project_full_path = filepath
-        self.project_file_path.set(os.path.basename(filepath))
         
         # valida presença da aba 'Curva ABC' via controller
         try:
             if validate_project_has_curva(filepath):
-                print("Curva ABC encontrado!")
+                messagebox.showinfo("Sucesso", "Arquivo do projeto selecionado com sucesso!")
             else:
                 messagebox.showwarning("Aviso", 'A planilha "Curva ABC" não foi encontrada no arquivo do projeto.')
-                self.project_file_path.set("")
                 self.project_full_path = None
         except Exception as e:
             messagebox.showerror("Erro ao ler arquivo", f"Não foi possível ler o arquivo do projeto: {e}")
-            self.project_file_path.set("")
             self.project_full_path = None
 
     def select_database_file(self):
@@ -691,8 +709,7 @@ class SinapiApp:
         )
         if filepath:
             self.database_full_path = filepath
-            self.database_file_path.set(os.path.basename(filepath))
-            print("Arquivo das bases de dados selecionado:", filepath)
+            messagebox.showinfo("Sucesso", "Arquivo das bases de dados selecionado com sucesso!")
         else:
             print("Nenhum arquivo das bases de dados selecionado.")
 
@@ -707,7 +724,21 @@ class SinapiApp:
     def _run_comparison_thread(self):
         try:
             output_dir = self.custom_comparison_path.get() or None
-            output = compare_workbooks(self.project_full_path, self.database_full_path, output_dir=output_dir)
+            
+            project_code_col = self.project_code_col.get().upper()
+            project_value_col = self.project_value_col.get().upper()
+            database_code_col = self.database_code_col.get().upper()
+            database_value_col = self.database_value_col.get().upper()
+
+            output = compare_workbooks(
+                self.project_full_path, 
+                self.database_full_path, 
+                output_dir=output_dir,
+                project_code_col=project_code_col,
+                project_value_col=project_value_col,
+                db_code_col=database_code_col,
+                db_value_col=database_value_col
+            )
             messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{output}")
         except Exception as e:
             messagebox.showerror("Erro na Comparação", f"Ocorreu um erro durante a comparação: {e}")
