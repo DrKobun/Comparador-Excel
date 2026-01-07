@@ -2,6 +2,7 @@ import os
 import re
 from tkinter import messagebox
 import xlwings as xw
+import openpyxl
 
 def remover_anotacoes_da_planilha(sheet):
     """
@@ -41,6 +42,50 @@ def remover_anotacoes_da_planilha(sheet):
         print(f"    - AVISO ao remover anotações: {e}")
         return False
 
+def corrigir_numeros_como_texto(sheet):
+    """
+    Percorre todas as células da planilha e tenta converter strings numéricas para números.
+    Lógica baseada em formatar_conversao.py.
+    """
+    print(f"    - Corrigindo números armazenados como texto na planilha '{sheet.name}'...")
+    try:
+        used_range = sheet.used_range
+        if used_range.count == 0:
+            return False
+
+        # Lendo todos os valores
+        values = used_range.options(ndim=2).value
+        
+        modified = False
+        new_values = []
+        
+        for row in values:
+            new_row = []
+            for cell in row:
+                new_cell = cell
+                if cell is not None and isinstance(cell, str):
+                    valor_limpo = cell.strip()
+                    try:
+                        if '.' in valor_limpo or ',' in valor_limpo:
+                            valor_num = float(valor_limpo.replace(',', '.'))
+                        else:
+                            valor_num = int(valor_limpo)
+                        new_cell = valor_num
+                        modified = True
+                    except ValueError:
+                        pass
+                new_row.append(new_cell)
+            new_values.append(new_row)
+
+        if modified:
+            used_range.value = new_values
+            print("    - Correção de números concluída.")
+            return True
+        return False
+    except Exception as e:
+        print(f"    - AVISO ao corrigir números: {e}")
+        return False
+
 def format_excel_files(target_directory=None):
     """
     Automatiza a formatação de planilhas Excel específicas em um diretório.
@@ -75,11 +120,16 @@ def format_excel_files(target_directory=None):
         print("Nenhum arquivo Excel encontrado no diretório.")
         return
     
+    
+    
     # Usar visible=False faz o Excel rodar em segundo plano
     with xw.App(visible=False) as app:
+            
         for filename in excel_files:
+                
             file_path = os.path.join(target_dir, filename)
             wb = None  # Inicializa wb como None
+            
             try:
                 print(f"\nAbrindo arquivo: {filename}...")
                 wb = app.books.open(file_path)
@@ -90,6 +140,16 @@ def format_excel_files(target_directory=None):
                 file_modified = False
                 # Itera sobre todas as planilhas
                 for sheet in wb.sheets:
+                    # Nova regra: Remover painéis congelados de qualquer planilha que termine com "NDS"
+                    if sheet.name.endswith('NDS'):
+                        try:
+                            print(f"  - Removendo painéis congelados da planilha '{sheet.name}' (regra NDS)...")
+                            sheet.activate()
+                            wb.app.api.ActiveWindow.FreezePanes = False
+                            file_modified = True
+                        except Exception as e:
+                            print(f"    - AVISO ao remover painéis congelados (regra NDS): {e}")
+
                     # Etapa 1: Remover anotações de todas as planilhas
                     if remover_anotacoes_da_planilha(sheet):
                         file_modified = True
@@ -244,6 +304,14 @@ def format_excel_files(target_directory=None):
                         sheet_name_formatted = True
                         print(f"  - Formatando planilha (SINA-INS): '{sheet.name}'")
                         
+                        # --- Etapa de Limpeza ---
+                        try:
+                            print("    - Removendo painéis congelados...")
+                            sheet.activate()
+                            wb.app.api.ActiveWindow.FreezePanes = False
+                        except Exception as e:
+                            print(f"    - AVISO ao remover painéis congelados: {e}")
+
                         # Exclui as linhas 1-6
                         try:
                             print("    - Excluindo linhas 1-6...")
@@ -308,17 +376,26 @@ def format_excel_files(target_directory=None):
                     if sheet_name_formatted:
                         file_modified = True
 
+                    # Aplica a correção de números como texto para todas as planilhas
+                    if corrigir_numeros_como_texto(sheet):
+                        file_modified = True
+
                 if file_modified:
                     print(f"Salvando alterações em {filename}...")
                     wb.save()
                 else:
                     print(f"  - Nenhuma alteração aplicável encontrada em {filename}.")
 
+                
+                
+                
+                
             except Exception as e:
                 print(f"  ERRO: Não foi possível processar o arquivo {filename}. Motivo: {e}")
             finally:
                 if wb:
                     wb.close()
+
 
     print("\nProcesso concluído.")
 

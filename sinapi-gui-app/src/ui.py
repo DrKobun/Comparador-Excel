@@ -33,11 +33,41 @@ import formatar_aninhados
 
 from resources.states import estados
 
+
+class ToolTip:
+    def __init__(self, widget, text, wraplength=0):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        self.wraplength = wraplength
+        self.widget.bind("<Enter>", self.show_tooltip)
+        self.widget.bind("<Leave>", self.hide_tooltip)
+
+    def show_tooltip(self, event=None):
+        if self.tooltip_window or not self.text:
+            return
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 25
+        y += self.widget.winfo_rooty() + 25
+        self.tooltip_window = Toplevel(self.widget)
+        self.tooltip_window.wm_overrideredirect(True)
+        self.tooltip_window.wm_geometry(f"+{x}+{y}")
+        label = Label(self.tooltip_window, text=self.text, justify='left',
+                      background="#ffffe0", relief='solid', borderwidth=1,
+                      font=("Segoe UI", 9, "normal"), wraplength=self.wraplength)
+        label.pack(ipadx=1)
+
+    def hide_tooltip(self, event=None):
+        if self.tooltip_window:
+            self.tooltip_window.destroy()
+        self.tooltip_window = None
+
+
 class SinapiApp:
     def __init__(self, master):
         self.master = master
-        master.title("SINAPI, ORSE e SICRO downloads")
-        master.geometry("800x600")
+        master.title("SINAPI, ORSE & SICRO")
+        master.geometry("800x650")
         master.resizable(False, False)
 
         self.selected_service = StringVar(value="SINAPI")
@@ -159,6 +189,7 @@ class SinapiApp:
         self.custom_aninhar_path = StringVar()
         self.custom_formatar_path = StringVar()
         self.custom_comparison_path = StringVar()
+        self.info_icon = None
         
                 
         
@@ -201,6 +232,13 @@ class SinapiApp:
         if self.sinapi_widgets: self.sinapi_widgets.pack_forget()
         if self.orse_widgets: self.orse_widgets.pack_forget()
         if self.sicro_widgets: self.sicro_widgets.pack_forget()
+
+        # Mostra/esconde o ícone de informação
+        if self.info_icon:
+            if service == "SINAPI":
+                self.info_icon.pack(side='left', padx=5)
+            else:
+                self.info_icon.pack_forget()
         
         # Configure UI based on selected service
         if service == "ORSE":
@@ -434,7 +472,14 @@ class SinapiApp:
         content_frame = Frame(download_frame)
         content_frame.pack(side='top', fill='x', padx=5, pady=5)
 
-        Label(content_frame, text="Selecione a base de dados:").pack()
+        base_dados_frame = Frame(content_frame)
+        base_dados_frame.pack()
+
+        Label(base_dados_frame, text="Selecione a base de dados:").pack(side='left')
+        
+        self.info_icon = Label(base_dados_frame, text="\u24D8", font=("Segoe UI Symbol", 14, "bold"), fg="#0078D7", cursor="hand2")
+        ToolTip(self.info_icon, text="Antes de se fazer um download da base de dados do SINAPI, é necessário abrir uma janela do navegador do site de download, caso contrário o download é negado. É possível acessar o site clicando sobre o texto sublinhado nesta tela. \n\nCaso os downloads ainda não funcionem após abrir o site de downloads do SINAPI, reabra o programa (mantendo o site do SINAPI aberto), e tente baixar os arquivos desejados novamente.", wraplength=500)
+        
         # Combobox for service selection
         self.service_menu = Combobox(content_frame, textvariable=self.selected_service, values=["SINAPI", "SICRO", "ORSE"], state='readonly')
         self.service_menu.pack()
@@ -507,11 +552,18 @@ class SinapiApp:
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
         # texto de link clicável:
-        link_font = font.Font(size=10, underline=True)
-        link_label = Label(self.sinapi_widgets, text="Site de donwloads SINAPI", fg="blue", cursor="hand2")
-        link_label.pack()
+        link_font = font.Font(size=9, underline=True)
+        sinapi_links_frame = Frame(self.sinapi_widgets)
+        sinapi_links_frame.pack()
+        link_label = Label(sinapi_links_frame, text="Site de donwloads SINAPI", fg="#0000FF", cursor="hand2")
+        link_label.pack(side='left', padx=5)
         link_label.bind("<Button-1>", self.open_link)
         link_label.config(font=link_font)
+
+        doc_label = Label(sinapi_links_frame, text="Documentação", fg="#0000FF", cursor="hand2")
+        doc_label.pack(side='left', padx=5)
+        doc_label.bind("<Button-1>", self.open_doc_link)
+        doc_label.config(font=link_font)
 
         # --- Widgets ORSE ---
         self.orse_widgets = Frame(content_frame)
@@ -528,15 +580,20 @@ class SinapiApp:
         orse_links_frame = Frame(self.orse_widgets)
         orse_links_frame.pack()
 
-        link_label = Label(orse_links_frame, text="Site de downloads ORSE", fg="blue", cursor="hand2")
+        link_label = Label(orse_links_frame, text="Site de downloads ORSE", fg="#0000FF", cursor="hand2")
         link_label.pack(side='left', padx=5)
         link_label.bind("<Button-1>", self.open_link_orse)
         link_label.config(font=link_font) 
 
-        drive_label = Label(orse_links_frame, text="Google Drive", fg="blue", cursor="hand2")
-        drive_label.pack(side='left', padx=5)
-        drive_label.bind("<Button-1>", self.open_link_orse_drive)
-        drive_label.config(font=link_font)
+        doc_label_orse = Label(orse_links_frame, text="Google Drive", fg="#0000FF", cursor="hand2")
+        doc_label_orse.pack(side='left', padx=5)
+        doc_label_orse.bind("<Button-1>", self.open_link_orse_drive)
+        doc_label_orse.config(font=link_font)
+
+        doc_label_orse = Label(orse_links_frame, text="Documentação", fg="#0000FF", cursor="hand2")
+        doc_label_orse.pack(side='left', padx=5)
+        doc_label_orse.bind("<Button-1>", self.open_doc_link)
+        doc_label_orse.config(font=link_font)
         
         # --- Widgets SICRO ---
         self.sicro_widgets = Frame(content_frame)
@@ -571,11 +628,18 @@ class SinapiApp:
             cb.pack(side='left', anchor='w', padx=4, pady=2)
 
         # texto de link clicável:
-        link_font = font.Font(size=10, underline=True)
-        link_label = Label(self.sicro_widgets, text="Site de downloads SICRO", fg="blue", cursor="hand2")
-        link_label.pack()
+        link_font = font.Font(size=9, underline=True)
+        sicro_links_frame = Frame(self.sicro_widgets)
+        sicro_links_frame.pack()
+        link_label = Label(sicro_links_frame, text="Site de downloads SICRO", fg="#0000FF", cursor="hand2")
+        link_label.pack(side='left', padx=5)
         link_label.bind("<Button-1>", self.open_link_sicro)
         link_label.config(font=link_font)
+
+        doc_label = Label(sicro_links_frame, text="Documentação", fg="#0000FF", cursor="hand2")
+        doc_label.pack(side='left', padx=5)
+        doc_label.bind("<Button-1>", self.open_doc_link)
+        doc_label.config(font=link_font)
         
         # --- Botões de download ---
         bottom_frame = Frame(download_frame)
@@ -608,7 +672,7 @@ class SinapiApp:
         comparison_frame = Frame(main_frame, relief='groove', bd=2)
         comparison_frame.pack(fill='x', padx=5, pady=5, side='bottom')
 
-        Label(comparison_frame, text="Comparar Planilhas", font=font.Font(weight='bold')).pack(pady=5)
+        Label(comparison_frame, text="Comparador de Planilhas", font=("Segoe UI", 12, "bold"), fg="#4F4F4F").pack(pady=5)
 
         # Project file selection
         proj_frame = Frame(comparison_frame)
@@ -676,6 +740,9 @@ class SinapiApp:
         
     def open_link_orse_drive(self, event):
         webbrowser.open_new_tab("https://drive.google.com/drive/folders/1ZqlnNuiCGrnKmj2jtEm1UltncGWgOplc?hl=pt-br")
+        
+    def open_doc_link(self, event):
+        webbrowser.open_new_tab("https://github.com/DrKobun/Comparador-Excel/tree/producao")
         
         
         

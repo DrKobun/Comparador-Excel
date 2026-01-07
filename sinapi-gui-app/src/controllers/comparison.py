@@ -40,13 +40,15 @@ def compare_workbooks(
 
     if proj_code_idx is None:
         try:
-            proj_code_idx = header.index("Descrição")
+            # proj_code_idx = header.index("Descrição")
+            proj_code_idx = header.index("Código")
         except ValueError:
             proj_code_idx = 1  # Fallback to column B
     
     if proj_price_idx is None:
         try:
-            proj_price_idx = header.index("Preço Unitário")
+            # proj_price_idx = header.index("Preço Unitário")
+            proj_price_idx = header.index("Valor Unit")
         except ValueError:
             proj_price_idx = 3  # Fallback to column D
 
