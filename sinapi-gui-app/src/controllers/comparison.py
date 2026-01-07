@@ -19,9 +19,10 @@ def compare_workbooks(
     db_code_col: str = None,
     db_value_col: str = None
 ) -> str:
-    """Compara 'Curva ABC' do projeto com as bases e gera arquivo de resultado.
-    Retorna o caminho do arquivo salvo.
-    Replica comportamento atual presente em `ui.py`.
+    """
+    Compara a aba 'Curva ABC' de um projeto com todas as abas de uma base de dados.
+    Garante que todos os itens sejam procurados e que valores de texto e numéricos sejam comparados.
+    Retorna o caminho do arquivo de resultado salvo.
     """
     proj_wb = openpyxl.load_workbook(project_path)
     db_wb = openpyxl.load_workbook(database_path, read_only=True)
@@ -34,46 +35,49 @@ def compare_workbooks(
 
     header = [cell.value for cell in proj_ws[1]]
     
-    # Determine project column indices
+    # Determina os índices das colunas do projeto
     proj_code_idx = col_to_idx(project_code_col)
-    proj_price_idx = col_to_idx(project_value_col)
-
     if proj_code_idx is None:
         try:
-            # proj_code_idx = header.index("Descrição")
             proj_code_idx = header.index("Código")
         except ValueError:
-            proj_code_idx = 1  # Fallback to column B
-    
+            raise ValueError("Coluna de código do projeto não fornecida ou 'Código' não encontrado no cabeçalho.")
+
+    proj_price_idx = col_to_idx(project_value_col)
     if proj_price_idx is None:
         try:
-            # proj_price_idx = header.index("Preço Unitário")
             proj_price_idx = header.index("Valor Unit")
         except ValueError:
-            proj_price_idx = 3  # Fallback to column D
+            raise ValueError("Coluna de valor do projeto não fornecida ou 'Valor Unit' não encontrado no cabeçalho.")
 
-    # Determine database column indices
+    # Determina os índices das colunas da base de dados
     db_code_idx = col_to_idx(db_code_col)
-    db_price_idx = col_to_idx(db_value_col)
-
     if db_code_idx is None:
-        db_code_idx = 1 # Fallback to column B
+        raise ValueError("A coluna de código da base de dados deve ser fornecida (e.g., 'A', 'B').")
     
+    db_price_idx = col_to_idx(db_value_col)
     if db_price_idx is None:
-        db_price_idx = 3 # Fallback to column D
+        raise ValueError("A coluna de valor da base de dados deve ser fornecida (e.g., 'A', 'B').")
 
-
+    # Etapa 1: Mapeia todos os dados de TODAS as planilhas da base de dados.
     db_data = {}
+    print("Mapeando a base de dados... Isso pode levar um momento.")
     for sheet_name in db_wb.sheetnames:
+        print(f"  - Lendo planilha: {sheet_name}")
         sheet = db_wb[sheet_name]
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            # Ensure row has enough columns
             if len(row) > max(db_code_idx, db_price_idx):
-                desc = row[db_code_idx]
+                code_val = row[db_code_idx]
                 price = row[db_price_idx]
-                if isinstance(desc, str):
-                    db_data[desc.strip()] = (price, sheet_name)
+                
+                # REFORÇO: Garante que o código seja tratado como texto para a comparação.
+                if code_val is not None and str(code_val).strip() != '':
+                    key = str(code_val).strip()
+                    if key not in db_data: # Armazena apenas a primeira ocorrência encontrada
+                        db_data[key] = (price, sheet_name)
 
+    print("Mapeamento da base de dados concluído.")
+    
     green_fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
     red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
     blue_fill = PatternFill(start_color="BDE0FE", end_color="BDE0FE", fill_type="solid")
@@ -88,16 +92,23 @@ def compare_workbooks(
     result_ws.cell(row=1, column=base_header_col + 2, value="Valor Base de Dados")
     result_ws.cell(row=1, column=base_header_col + 3, value="Diferença")
 
+    print(f"Iniciando comparação da planilha '{proj_ws.title}'...")
+    # Etapa 2: Compara TODAS as linhas do projeto com o mapa da base de dados.
     for row_idx, proj_row_data in enumerate(proj_ws.iter_rows(min_row=2, values_only=True), 2):
         for col_idx, cell_value in enumerate(proj_row_data, 1):
             result_ws.cell(row=row_idx, column=col_idx, value=cell_value)
 
-        proj_desc = proj_row_data[proj_code_idx]
+        proj_code_val = proj_row_data[proj_code_idx]
         proj_price = proj_row_data[proj_price_idx]
 
-        fill_color = None
-        if isinstance(proj_desc, str) and proj_desc.strip() in db_data:
-            db_price, db_sheet_name = db_data[proj_desc.strip()]
+        # REFORÇO: Garante que o código do projeto seja tratado como texto para a busca.
+        lookup_key = None
+        if proj_code_val is not None and str(proj_code_val).strip() != '':
+            lookup_key = str(proj_code_val).strip()
+
+        fill_color = gray_fill # Cor padrão para 'não encontrado'
+        if lookup_key and lookup_key in db_data:
+            db_price, db_sheet_name = db_data[lookup_key]
             result_ws.cell(row=row_idx, column=base_header_col, value=db_sheet_name)
             try:
                 proj_price_float = float(proj_price)
@@ -114,14 +125,14 @@ def compare_workbooks(
                 else:
                     fill_color = blue_fill
             except (ValueError, TypeError):
-                fill_color = gray_fill
-        else:
-            fill_color = gray_fill
+                # Mantém cinza se os preços não forem numéricos
+                pass
+        
+        # Aplica a cor determinada
+        for col in range(1, len(proj_row_data) + 1):
+            result_ws.cell(row=row_idx, column=col).fill = fill_color
 
-        if fill_color:
-            for col in range(1, len(proj_row_data) + 1):
-                result_ws.cell(row=row_idx, column=col).fill = fill_color
-
+    print("Comparação finalizada. Copiando dados originais...")
     original_abc_ws = result_wb.create_sheet(title="Curva ABC (Original)")
     for r_idx, row in enumerate(proj_ws.iter_rows(), 1):
         for c_idx, cell in enumerate(row, 1):
@@ -151,6 +162,7 @@ def compare_workbooks(
     else:
         output_filename = filename
     result_wb.save(output_filename)
+    print(f"Arquivo de resultado salvo em: {os.path.abspath(output_filename)}")
     return os.path.abspath(output_filename)
 
 
