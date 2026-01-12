@@ -821,11 +821,14 @@ class SinapiApp:
         sicro_equipamentos = self.sicro_equipamentos.get()
         sicro_materiais = self.sicro_materiais.get()
         
+        # Mapeia o valor do radio button de tipo (desonerado/não) para uma string
+        tipo_desoneracao = ["Ambos", "Desonerado", "NaoDesonerado"][self.selected_type.get()]
+        
         base_dir = self.custom_aninhar_path.get() or None
         
         # Executa diretamente em thread para suportar o argumento base_dir
         threading.Thread(target=aninhar.aninhar_arquivos, 
-                         args=(base_dir, tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais), daemon=True).start()
+                         args=(base_dir, tipo_arquivo, sicro_composicoes, sicro_equipamentos_desonerado, sicro_equipamentos, sicro_materiais, tipo_desoneracao), daemon=True).start()
 
     def execute_sicro(self):
         year = self.selected_year.get()

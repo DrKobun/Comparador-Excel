@@ -44,7 +44,8 @@ def aninhar_arquivos(
     sicro_composicoes: bool = False,
     sicro_equipamentos_desonerado: bool = False,
     sicro_equipamentos: bool = False,
-    sicro_materiais: bool = False
+    sicro_materiais: bool = False,
+    tipo_desoneracao: str = "Ambos"
 ) -> Tuple[List[str], str]:
     """
     1) Move todos os arquivos da pasta Downloads cujo nome contém 'sinapi'
@@ -567,7 +568,7 @@ def aninhar_arquivos(
 
             # if add_file or low.startswith("orse"):
             #     matches.append(os.path.join(root, fname))
-            if add_file or low.startswith("orse") or is_in_target_sicro_folder:
+            if add_file or low.startswith("orse") or is_in_target_sicro_folder or ("2025" in low and "sinapi_referência" in low):
                 matches.append(os.path.join(root, fname))
 
     if not matches:
@@ -583,8 +584,26 @@ def aninhar_arquivos(
     used_sheet_names = set()
     with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
         for fpath in matches:
+            is_2025_target_file = "2025" in os.path.basename(fpath) and "sinapi_referência" in os.path.basename(fpath).lower()
             try:
-                sheets = pd.read_excel(fpath, sheet_name=None)
+                if is_2025_target_file:
+                    # Nova regra para 2025: ler as abas ISD, ICD, CSD, CCD
+                    target_sheets_2025 = ["ISD", "ICD", "CSD", "CCD"]
+                    print(f"Arquivo 2025 encontrado. Procurando por abas {target_sheets_2025} em: {os.path.basename(fpath)}")
+                    
+                    xls = pd.ExcelFile(fpath)
+                    available_target_sheets = [s for s in target_sheets_2025 if s in xls.sheet_names]
+                    
+                    if not available_target_sheets:
+                        print(f"AVISO: Nenhuma das abas alvo {target_sheets_2025} foi encontrada em '{os.path.basename(fpath)}'. Pulando arquivo.")
+                        continue
+                    
+                    print(f"  -> Lendo abas encontradas: {available_target_sheets}")
+                    # Ler as abas encontradas. O resultado será um dicionário.
+                    sheets = pd.read_excel(fpath, sheet_name=available_target_sheets)
+                else:
+                    # Lógica original para outros anos
+                    sheets = pd.read_excel(fpath, sheet_name=None)
             except Exception as e:
                 print(f"Falha ao ler '{fpath}': {e}. Pulando.")
                 continue
@@ -599,19 +618,54 @@ def aninhar_arquivos(
                 file_based_tab = _format_tab_name_sicro(fpath)
 
             if not file_based_tab:
-                file_based_tab = _format_tab_name_from_filename(fpath)
+                if os.path.basename(fpath).lower().startswith("orse"):
+                    file_based_tab = base_name
+                else:
+                    file_based_tab = _format_tab_name_from_filename(fpath)
 
             if isinstance(sheets, dict):
                 for sname, df in sheets.items():
-                    # preferir nome baseado em arquivo; adicionar sufixo da aba original se necessário para distinguir
-                    if file_based_tab:
-                        candidate = file_based_tab
-                        if len(sheets) > 1:
-                            # anexar parte da aba original curta para evitar colisão quando múltiplas abas por arquivo
-                            candidate = _safe_sheet_name(f"{candidate}_{sname}")[:31]
-                    else:
-                        candidate = _safe_sheet_name(sname)
+                    candidate = None  # Inicia sem nome definido
+
+                    # Regra de nomeação específica para SINAPI 2025
+                    if is_2025_target_file:
+                        # Extrai ano e mês do nome do arquivo, ex: ..._2025_01.xlsx
+                        match = re.search(r'(\d{4})_(\d{2})', os.path.basename(fpath))
+                        if match:
+                            year, month = match.groups()
+                            if sname == "ISD":
+                                candidate = f"SINA-INS-{month}-{year}-NDS"
+                            elif sname == "ICD":
+                                candidate = f"SINA-INS-{month}-{year}-DES"
+                            elif sname == "CSD":
+                                candidate = f"SINA-SIN-{month}-{year}-NDS"
+                            elif sname == "CCD":
+                                candidate = f"SINA-SIN-{month}-{year}-DES"
+
+                    # Se a regra de 2025 não foi aplicada, usa a lógica original
+                    if not candidate:
+                        if file_based_tab:
+                            candidate = file_based_tab
+                            if len(sheets) > 1:
+                                candidate = _safe_sheet_name(f"{candidate}_{sname}")[:31]
+                        else:
+                            candidate = _safe_sheet_name(sname)
                     
+                    # Filtro adicional baseado nos radio buttons da UI
+                    if candidate:
+                        # Filtro para Insumos/Sintético
+                        if tipo_arquivo == "Insumos" and "-INS-" not in candidate:
+                            continue
+                        if tipo_arquivo == "Sintetico" and "-SIN-" not in candidate:
+                            continue
+
+                        # Filtro para Desonerado/Não Desonerado
+                        if tipo_desoneracao == "Desonerado" and "DES" not in candidate:
+                            continue
+                        if tipo_desoneracao == "NaoDesonerado" and "NDS" not in candidate:
+                            continue
+
+                    # Lógica de unicidade para evitar nomes de abas duplicados
                     orig = candidate
                     i = 1
                     while candidate in used_sheet_names:
