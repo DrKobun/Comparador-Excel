@@ -17,7 +17,8 @@ def compare_workbooks(
     project_code_col: str = None,
     project_value_col: str = None,
     db_code_col: str = None,
-    db_value_col: str = None
+    db_value_col: str = None,
+    selected_sinapi_state: str = None
 ) -> str:
     """
     Compara a aba 'Curva ABC' de um projeto com todas as abas de uma base de dados.
@@ -50,25 +51,54 @@ def compare_workbooks(
         except ValueError:
             raise ValueError("Coluna de valor do projeto não fornecida ou 'Valor Unit' não encontrado no cabeçalho.")
 
-    # Determina os índices das colunas da base de dados
-    db_code_idx = col_to_idx(db_code_col)
-    if db_code_idx is None:
-        raise ValueError("A coluna de código da base de dados deve ser fornecida (e.g., 'A', 'B').")
-    
-    db_price_idx = col_to_idx(db_value_col)
-    if db_price_idx is None:
-        raise ValueError("A coluna de valor da base de dados deve ser fornecida (e.g., 'A', 'B').")
-
     # Etapa 1: Mapeia todos os dados de TODAS as planilhas da base de dados.
     db_data = {}
     print("Mapeando a base de dados... Isso pode levar um momento.")
     for sheet_name in db_wb.sheetnames:
         print(f"  - Lendo planilha: {sheet_name}")
         sheet = db_wb[sheet_name]
+
+        # Determina os índices das colunas da base de dados para a planilha atual
+        current_db_code_idx = None
+        current_db_price_idx = None
+
+        if "2025" in sheet_name:
+            print(f"    -> Aplicando regras de 2025 para a planilha '{sheet_name}'.")
+            current_db_code_idx = 1  # Coluna B (0-based index 1)
+
+            if not selected_sinapi_state:
+                print(f"    - AVISO: Nenhum estado SINAPI selecionado. Não é possível determinar a coluna de valor para 2025. Pulando planilha '{sheet_name}'.")
+                continue
+            
+            # Procura o estado na linha 10 para encontrar a coluna de valor
+            found_col = False
+            for cell in sheet[10]:  # Itera sobre as células da linha 10
+                if cell.value and selected_sinapi_state in str(cell.value):
+                    current_db_price_idx = cell.column - 1  # Índice 0-based
+                    print(f"    - Estado '{selected_sinapi_state}' encontrado. Usando coluna {openpyxl.utils.get_column_letter(cell.column)} para valores.")
+                    found_col = True
+                    break
+            
+            if not found_col:
+                print(f"    - AVISO: Estado '{selected_sinapi_state}' não encontrado na linha 10. Pulando planilha '{sheet_name}'.")
+                continue
+        else:
+            # Lógica original para planilhas de 2024 e anteriores
+            current_db_code_idx = col_to_idx(db_code_col)
+            if current_db_code_idx is None:
+                print(f"    - AVISO: Coluna de código da base de dados inválida ou não fornecida ('{db_code_col}'). Pulando planilha '{sheet_name}'.")
+                continue
+            
+            current_db_price_idx = col_to_idx(db_value_col)
+            if current_db_price_idx is None:
+                print(f"    - AVISO: Coluna de valor da base de dados inválida ou não fornecida ('{db_value_col}'). Pulando planilha '{sheet_name}'.")
+                continue
+
+        # Usa os índices determinados para mapear os dados desta planilha
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            if len(row) > max(db_code_idx, db_price_idx):
-                code_val = row[db_code_idx]
-                price = row[db_price_idx]
+            if len(row) > max(current_db_code_idx, current_db_price_idx):
+                code_val = row[current_db_code_idx]
+                price = row[current_db_price_idx]
                 
                 # REFORÇO: Garante que o código seja tratado como texto para a comparação.
                 if code_val is not None and str(code_val).strip() != '':

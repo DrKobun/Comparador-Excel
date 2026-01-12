@@ -787,9 +787,16 @@ class SinapiApp:
             messagebox.showwarning("Aviso", "Por favor, selecione o arquivo do projeto e o arquivo das bases de dados.")
             return
 
-        threading.Thread(target=self._run_comparison_thread, daemon=True).start()
+        # Pega o primeiro estado SINAPI selecionado para a lógica de 2025
+        selected_sinapi_state = None
+        for state, var in self.selected_states.items():
+            if var.get() == 1:
+                selected_sinapi_state = state
+                break
 
-    def _run_comparison_thread(self):
+        threading.Thread(target=self._run_comparison_thread, args=(selected_sinapi_state,), daemon=True).start()
+
+    def _run_comparison_thread(self, selected_sinapi_state=None):
         try:
             output_dir = self.custom_comparison_path.get() or None
             
@@ -805,7 +812,8 @@ class SinapiApp:
                 project_code_col=project_code_col,
                 project_value_col=project_value_col,
                 db_code_col=database_code_col,
-                db_value_col=database_value_col
+                db_value_col=database_value_col,
+                selected_sinapi_state=selected_sinapi_state
             )
             messagebox.showinfo("Sucesso", f"Comparação concluída! Resultados salvos em:\n{output}")
         except Exception as e:
