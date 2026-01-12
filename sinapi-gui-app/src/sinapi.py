@@ -791,7 +791,67 @@ def gerar_links_sinapi(ano: int, mes: int, tipo: str, estados_list: list = None)
                 links.append(url)
                 continue
                 
+            elif ano == 2025 and mes == 1:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-01-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 2:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-02-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 3:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-03-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 4:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-04-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 5:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-05-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 6:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-06-formato-xlsx.zip"
+                links.append(url)
+                continue    
                 
+            elif ano == 2025 and mes == 7:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-07-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 8:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-08-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 9:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-09-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 10:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-10-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 11:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-11-formato-xlsx.zip"
+                links.append(url)
+                continue    
+            
+            elif ano == 2025 and mes == 12:
+                url = "https://www.caixa.gov.br/Downloads/sinapi-relatorios-mensais/SINAPI-2025-12-formato-xlsx.zip"
+                links.append(url)
+                continue    
+                  
+            
             else:
                 print('valor de tipos:' , t)
                 url = base_url + f"{t}.zip"
@@ -809,7 +869,7 @@ def abrir_links_no_navegador(links, intervalo_segundos=1):
         time.sleep(intervalo_segundos)
 
 if __name__ == "__main__":
-    ano = 2024
+    ano = 2025
     mes = 1
     tipo = "Ambos"
     links = gerar_links_sinapi(ano, mes, tipo)

@@ -72,7 +72,7 @@ class SinapiApp:
 
         self.selected_service = StringVar(value="SINAPI")
         current_year = datetime.now().year
-        default_year = str(current_year if 2017 <= current_year <= 2024 else 2024)
+        default_year = str(current_year if 2017 <= current_year <= 2025 else 2025) # alterado de 2024 para 2025
         self.selected_year = StringVar(value=default_year)
         self.selected_month = StringVar(value=datetime.now().strftime("%m"))
         self.selected_type = IntVar(value=0)
@@ -262,7 +262,7 @@ class SinapiApp:
             if self.apagar_button: self.apagar_button.pack(side='right', padx=5)
 
         else:  # SINAPI
-            years = [str(y) for y in range(2017, 2025)]
+            years = [str(y) for y in range(2017, 2026)] # 2025
             if self.sinapi_widgets: self.sinapi_widgets.pack(pady=2)
             if self.baixar_button: self.baixar_button.config(command=self.execute_sinapi)
             if self.aninhar_button: self.aninhar_button.pack(side='left', padx=5)
@@ -340,7 +340,8 @@ class SinapiApp:
             if current_month not in new_months:
                 self.selected_month.set(new_months[0] if new_months else "")
             else:
-                self.selected_month.set(current_month)
+                # Manually trigger month-change logic because the month value itself hasn't changed.
+                self._on_month_change()
 
             try:
                 # ensure displayed value matches variable
@@ -359,7 +360,7 @@ class SinapiApp:
         if service == "SINAPI" and hasattr(self, 'rb_ambos') and self.rb_ambos:
             is_ambos_visible = self.rb_ambos in self.rb_ambos.master.pack_slaves()
 
-            if is_grouped_month:
+            if is_grouped_month or (year == "2025"):
                 if is_ambos_visible:
                     self.rb_ambos.pack_forget()
                     # Set default to "Desonerado" if "Ambos" was selected
