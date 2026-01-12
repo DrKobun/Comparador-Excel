@@ -360,7 +360,7 @@ class SinapiApp:
         if service == "SINAPI" and hasattr(self, 'rb_ambos') and self.rb_ambos:
             is_ambos_visible = self.rb_ambos in self.rb_ambos.master.pack_slaves()
 
-            if is_grouped_month or (year == "2025"):
+            if is_grouped_month:
                 if is_ambos_visible:
                     self.rb_ambos.pack_forget()
                     # Set default to "Desonerado" if "Ambos" was selected

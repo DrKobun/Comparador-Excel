@@ -140,6 +140,12 @@ def format_excel_files(target_directory=None):
                 file_modified = False
                 # Itera sobre todas as planilhas
                 for sheet in wb.sheets:
+                    # Nova regra: Pular qualquer planilha que contenha "2025" no nome
+                    if "2025" in sheet.name:
+                        print(f"  - Pulando formatação da planilha '{sheet.name}' (regra de 2025).")
+                        continue
+
+
                     # Nova regra: Remover painéis congelados de qualquer planilha que termine com "NDS"
                     if sheet.name.endswith('NDS'):
                         try:
