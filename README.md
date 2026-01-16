@@ -208,5 +208,19 @@
     <br>
   </ul>
   </li>
+
+<li>Mostrar percentual de cada item da Curva ABC ⏳</li>
+<li>Remover/Ignorar "Administração", "adm" da Curva ABC ⏳</li>
+<li>Arquivos SICRO não estão sendo agrupados no arquivo "agrupado" apenas ano 2025 (corrigir) ⏳</li>
+<li>Enviar arquivo atualizado de comparação para o Vitor ⏳</li>
+<li>Resolver Formatação de arquivos SICRO ⏳</li>
+<li>Descrever melhor siglas e datas no arquivo de saída. ⏳</li>
+<li>Usar a base de dados referente a planilha. Ex: banco ORSE, use a planilha ORSE para ser feita a comparação ⏳</li>
+<li>Criar nova planilha com respectivos valores de quantidade e valores totais. ⏳</li>
+<li>Marcar TODOS os checkboxes de SICRO para true como padrão ⏳</li>
+<li>EVITAR FORMATAÇÃO PARA SICRO 2025, APENAS PARA SINAPI 2025. EVITAR PROCURA DE ESTADO NA LINHA 9 e 10 PARA SICRO ⏳</li>
+<li>Adicionar, uma nova coluna na saída do programa, que indica a classificação do item da Cuva ABC. (se ele é A, B ou C) ⏳</li>
+<li>Criar nova planilha com respectivos valores de quantidade e valores totais. ⏳</li>
+<li>Atualizar botão de download do GitHub ⏳</li>
   
 </ul>
