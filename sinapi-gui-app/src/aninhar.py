@@ -91,7 +91,9 @@ def aninhar_arquivos(
         low_name = parse_name.lower()
         
         # Rule: Must match pattern like "AC 01-2024..." and be a valid state
-        match = re.match(r"([A-Z]{2})\s+(\d{2})-(\d{4})", parse_name, re.IGNORECASE)
+        # O padrão foi flexibilizado para aceitar espaço, underscore (_) ou hífen (-) como separadores.
+        # Ex: "AC 01-2024", "AC_01-2024", "AC-01-2024"
+        match = re.match(r"([A-Z]{2})[\s_-]+(\d{2})[\s_-]+(\d{4})", parse_name, re.IGNORECASE)
         if not (match and match.group(1).upper() in ESTADOS_BR):
             return None  # Not a target file if it doesn't start with a valid State and Date pattern
 
@@ -335,6 +337,58 @@ def aninhar_arquivos(
                 print(f"Falha ao extrair zip interno {zip_path}: {e}")
 
     # ==============================================================================
+    # NOVA REGRA 2025: Extrair código de hiperlinks na coluna B para arquivos SINAPI 2025 Sintético.
+    # Esta abordagem usa openpyxl e regex para ser compatível com ambientes sem MS Excel (como LibreOffice).
+    # ==============================================================================
+    print("\nIniciando pré-processamento de arquivos SINAPI 2025 (Extração de Códigos)...")
+    for root, _, files in os.walk(base_dir):
+        for filename in files:
+            # Identificar se é um arquivo SINAPI 2025
+            is_2025_target_file = "2025" in filename and "sinapi_referência" in filename.lower()
+
+            if is_2025_target_file:
+                fpath = os.path.join(root, filename)
+                try:
+                    print(f"  -> Verificando e extraindo códigos de hiperlinks em: {os.path.basename(fpath)}")
+                    workbook = openpyxl.load_workbook(fpath)
+
+                    # As planilhas de tipo "Sintético" em arquivos 2025 são "CSD" e "CCD"
+                    target_sheets_2025_sin = ["CSD", "CCD"]
+                    sheets_to_process = [s for s in target_sheets_2025_sin if s in workbook.sheetnames]
+
+                    if sheets_to_process:
+                        print(f"    -> Analisando abas: {', '.join(sheets_to_process)}")
+                        
+                        # Regex para encontrar o código, que é o último argumento da função HIPERLINK/HYPERLINK.
+                        # Procura por ; ou , como separador de argumento final.
+                        hyperlink_regex = re.compile(r"=(?:HIPERLINK|HYPERLINK)\(.*[;,]\s*(\d+)\s*\)", re.IGNORECASE)
+                        
+                        changes_made = False
+                        for sheet_name in sheets_to_process:
+                            sheet = workbook[sheet_name]
+
+                            # Itera sobre todas as células da coluna B
+                            for cell in sheet['B']:
+                                # Processa apenas células que contêm uma fórmula (string)
+                                if isinstance(cell.value, str) and cell.value.strip().startswith('='):
+                                    formula = cell.value
+                                    match = hyperlink_regex.search(formula)
+                                    if match:
+                                        # O código é o grupo capturado pela regex
+                                        code = match.group(1)
+                                        # Converte o código extraído para número e atualiza a célula
+                                        cell.value = int(code)
+                                        changes_made = True
+                        
+                        if changes_made:
+                            workbook.save(fpath)
+                            print(f"    -> Extração e salvamento concluídos para {os.path.basename(fpath)}")
+
+                except Exception as e:
+                    print(f"ERRO: Falha ao processar hiperlinks no arquivo '{os.path.basename(fpath)}': {e}")
+
+    print("Pré-processamento de arquivos SINAPI 2025 concluído.\n")
+    # ==============================================================================
     # NOVA ETAPA: Renomear abas dos arquivos SICRO originais (in-place)
     # Esta lógica é baseada no script abas_sicro.py
     # ==============================================================================
@@ -346,7 +400,8 @@ def aninhar_arquivos(
 
         if is_in_sicro_path:
             for filename in files:
-                if not filename.lower().endswith(('.xlsx', '.xls')):
+                # A biblioteca openpyxl, usada para renomear, só consegue manipular arquivos .xlsx. Arquivos .xls causarão erro.
+                if not filename.lower().endswith('.xlsx'):
                     continue
 
                 # A função _format_tab_name_sicro espera o caminho completo
@@ -503,72 +558,52 @@ def aninhar_arquivos(
             # adicione-o apenas se contiver as palavras-chave.
             abs_root = os.path.abspath(root)
             abs_extracted_root = os.path.abspath(extracted_root)
-            is_in_target_sicro_folder = False
+            is_in_sicro_extraction = False
             if abs_root.startswith(abs_extracted_root):
                 relative_path = os.path.relpath(abs_root, abs_extracted_root)
                 path_parts = relative_path.split(os.sep)
                 if any(part.upper().startswith("SICRO") for part in path_parts):
-                    is_in_target_sicro_folder = True
+                    is_in_sicro_extraction = True
             
-            
-            
-            if is_in_target_sicro_folder:
-                # Apenas aninhar o arquivo se ele contiver "Relatório", "Sintético" e "Custos"
-                if "relatório" in low and "sintético" in low and "custos" in low and sicro_composicoes:
-                    matches.append(os.path.join(root, fname))
-                if "relatório" in low and "sintético" in low and "equipamentos" in low and "com" in low and sicro_equipamentos_desonerado:
-                    matches.append(os.path.join(root, fname))
-                if "relatório" in low and "sintético" in low and "equipamentos" in low and not "com" in low and sicro_equipamentos:
-                    matches.append(os.path.join(root, fname))
-                if "relatório" in low and "sintético" in low and "materiais" in low and sicro_materiais:
-                    matches.append(os.path.join(root, fname))
-                continue
-
-            # Lógica de filtro anterior para outros arquivos (SINAPI, ORSE, etc.)
-            # condições solicitadas com base no tipo_arquivo:
-            has_sint = "sintetico" in low
-            has_insumos = "insumos" in low
-            has_familia = "família" in low or "familia" in low
-            
-            is_sicro_file = low.startswith("sicro-")
-
-            
-
-            # if is_sicro_file:
-            #     print("ENTROU NA LÓGICA DE SICRO")
-            #     # Lógica para arquivos SICRO (fora de __extracted_zips__/SICRO*/), controlada pelos parâmetros booleanos
-            #     # Corrigido para usar lowercase e checagens mais específicas
-            #     has_sintetico_comp_custos = "sintético" in low and ("custos" in low or "composi" in low)
-            #     has_sintetico_equipamentos_desonerado = "sintético" in low and "equipamentos" in low and "com desonera" in low
-            #     has_sintetico_equipamentos = "sintético" in low and "equipamentos" in low and "com desonera" not in low
-            #     has_sintetico_materiais = "sintético" in low and "materiais" in low
-
-            #     if (sicro_composicoes and has_sintetico_comp_custos) or \
-            #        (sicro_equipamentos_desonerado and has_sintetico_equipamentos_desonerado) or \
-            #        (sicro_equipamentos and has_sintetico_equipamentos) or \
-            #        (sicro_materiais and has_sintetico_materiais):
-            #         add_file = True
-            #         matches.append(os.path.join(root, fname))
-            # else:
-               
-                
-            # Flags para tipo de arquivo
+            is_sicro_file = low.startswith("sicro-") or is_in_sicro_extraction
             add_file = False
-            
-            # Lógica para arquivos SINAPI, controlada por tipo_arquivo
-            if tipo_arquivo == "Insumos":
-                if has_insumos and not has_familia:
-                    add_file = True
-            elif tipo_arquivo == "Sintetico":
-                if has_sint:
-                    add_file = True
-            elif tipo_arquivo == "Ambos":
-                if has_sint or (has_insumos and not has_familia):
-                    add_file = True
 
-            # if add_file or low.startswith("orse"):
-            #     matches.append(os.path.join(root, fname))
-            if add_file or low.startswith("orse") or is_in_target_sicro_folder or ("2025" in low and "sinapi_referência" in low):
+            if is_sicro_file:
+                # Lógica para arquivos SICRO, controlada pelos parâmetros booleanos da UI.
+                # As palavras-chave são baseadas nos nomes de arquivo do SICRO (ex: "Relatório Sintético de Composições de Custos").
+                has_sintetico_comp = "sintético" in low and ("custos" in low or "composi" in low)
+                has_sintetico_equip_des = "sintético" in low and "equipamentos" in low and "com desonera" in low
+                has_sintetico_equip = "sintético" in low and "equipamentos" in low and "com desonera" not in low
+                has_sintetico_mat = "sintético" in low and "materiais" in low
+
+                if (sicro_composicoes and has_sintetico_comp) or \
+                   (sicro_equipamentos_desonerado and has_sintetico_equip_des) or \
+                   (sicro_equipamentos and has_sintetico_equip) or \
+                   (sicro_materiais and has_sintetico_mat):
+                    add_file = True
+            else:
+                # Lógica para arquivos SINAPI, ORSE, etc.
+                has_sint = "sintetico" in low
+                has_insumos = "insumos" in low
+                has_familia = "família" in low or "familia" in low
+                is_orse = low.startswith("orse")
+                is_2025_sinapi = "2025" in low and "sinapi_referência" in low
+
+                if is_orse or is_2025_sinapi:
+                    add_file = True
+                else:
+                    # Lógica para arquivos SINAPI, controlada por tipo_arquivo
+                    if tipo_arquivo == "Insumos":
+                        if has_insumos and not has_familia:
+                            add_file = True
+                    elif tipo_arquivo == "Sintetico":
+                        if has_sint:
+                            add_file = True
+                    elif tipo_arquivo == "Ambos":
+                        if has_sint or (has_insumos and not has_familia):
+                            add_file = True
+            
+            if add_file:
                 matches.append(os.path.join(root, fname))
 
     if not matches:
@@ -586,12 +621,23 @@ def aninhar_arquivos(
         for fpath in matches:
             is_2025_target_file = "2025" in os.path.basename(fpath) and "sinapi_referência" in os.path.basename(fpath).lower()
             try:
+                # Determinar o motor de leitura do pandas com base na extensão do arquivo
+                # para evitar que o pandas tente usar um motor baseado em COM que pode falhar.
+                file_ext = os.path.splitext(fpath)[1].lower()
+                engine = None
+                if file_ext in ['.xlsx', '.xlsm']:
+                    engine = 'openpyxl'
+                elif file_ext == '.xls':
+                    engine = 'xlrd'
+                elif file_ext == '.xlsb':
+                    engine = 'pyxlsb'
+
                 if is_2025_target_file:
                     # Nova regra para 2025: ler as abas ISD, ICD, CSD, CCD
                     target_sheets_2025 = ["ISD", "ICD", "CSD", "CCD"]
                     print(f"Arquivo 2025 encontrado. Procurando por abas {target_sheets_2025} em: {os.path.basename(fpath)}")
                     
-                    xls = pd.ExcelFile(fpath)
+                    xls = pd.ExcelFile(fpath, engine=engine)
                     available_target_sheets = [s for s in target_sheets_2025 if s in xls.sheet_names]
                     
                     if not available_target_sheets:
@@ -600,10 +646,10 @@ def aninhar_arquivos(
                     
                     print(f"  -> Lendo abas encontradas: {available_target_sheets}")
                     # Ler as abas encontradas. O resultado será um dicionário.
-                    sheets = pd.read_excel(fpath, sheet_name=available_target_sheets)
+                    sheets = pd.read_excel(fpath, sheet_name=available_target_sheets, engine=engine)
                 else:
                     # Lógica original para outros anos
-                    sheets = pd.read_excel(fpath, sheet_name=None)
+                    sheets = pd.read_excel(fpath, sheet_name=None, engine=engine)
             except Exception as e:
                 print(f"Falha ao ler '{fpath}': {e}. Pulando.")
                 continue
@@ -653,17 +699,20 @@ def aninhar_arquivos(
                     
                     # Filtro adicional baseado nos radio buttons da UI
                     if candidate:
-                        # Filtro para Insumos/Sintético
-                        if tipo_arquivo == "Insumos" and "-INS-" not in candidate:
-                            continue
-                        if tipo_arquivo == "Sintetico" and "-SIN-" not in candidate:
-                            continue
+                        # O filtro de tipo de arquivo e desoneração só se aplica a abas SINAPI
+                        is_sinapi_tab = candidate.startswith("SINA-")
+                        if is_sinapi_tab:
+                            # Filtro para Insumos/Sintético
+                            if tipo_arquivo == "Insumos" and "-INS-" not in candidate:
+                                continue
+                            if tipo_arquivo == "Sintetico" and "-SIN-" not in candidate:
+                                continue
 
-                        # Filtro para Desonerado/Não Desonerado
-                        if tipo_desoneracao == "Desonerado" and "DES" not in candidate:
-                            continue
-                        if tipo_desoneracao == "NaoDesonerado" and "NDS" not in candidate:
-                            continue
+                            # Filtro para Desonerado/Não Desonerado
+                            if tipo_desoneracao == "Desonerado" and "DES" not in candidate:
+                                continue
+                            if tipo_desoneracao == "NaoDesonerado" and "NDS" not in candidate:
+                                continue
 
                     # Lógica de unicidade para evitar nomes de abas duplicados
                     orig = candidate

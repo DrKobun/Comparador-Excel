@@ -70,17 +70,21 @@ def compare_workbooks(
                 print(f"    - AVISO: Nenhum estado SINAPI selecionado. Não é possível determinar a coluna de valor para 2025. Pulando planilha '{sheet_name}'.")
                 continue
             
-            # Procura o estado na linha 10 para encontrar a coluna de valor
+            # Procura o estado primeiro na linha 9 e, se não encontrar, na linha 10.
             found_col = False
-            for cell in sheet[10]:  # Itera sobre as células da linha 10
-                if cell.value and selected_sinapi_state in str(cell.value):
-                    current_db_price_idx = cell.column - 1  # Índice 0-based
-                    print(f"    - Estado '{selected_sinapi_state}' encontrado. Usando coluna {openpyxl.utils.get_column_letter(cell.column)} para valores.")
-                    found_col = True
-                    break
+            search_rows = [9, 10]
+            for row_num in search_rows:
+                for cell in sheet[row_num]:  # Itera sobre as células da linha atual
+                    if cell.value and selected_sinapi_state in str(cell.value):
+                        current_db_price_idx = cell.column - 1  # Índice 0-based
+                        print(f"    - Estado '{selected_sinapi_state}' encontrado na linha {row_num}. Usando coluna {openpyxl.utils.get_column_letter(cell.column)} para valores.")
+                        found_col = True
+                        break  # Sai do loop de células
+                if found_col:
+                    break  # Sai do loop de linhas (já encontrou)
             
             if not found_col:
-                print(f"    - AVISO: Estado '{selected_sinapi_state}' não encontrado na linha 10. Pulando planilha '{sheet_name}'.")
+                print(f"    - AVISO: Estado '{selected_sinapi_state}' não encontrado nas linhas 9 ou 10. Pulando planilha '{sheet_name}'.")
                 continue
         else:
             # Lógica original para planilhas de 2024 e anteriores
